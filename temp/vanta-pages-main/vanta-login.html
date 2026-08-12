@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log In — VANTA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;900&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --black: #0B0B0C;
+    --panel: #141416;
+    --bone: #EDEDE8;
+    --bone-dim: #A6A6A0;
+    --copper: #B8703F;
+    --copper-bright: #D98B52;
+    --line: rgba(237,237,232,0.14);
+    --error: #C24B3F;
+    --mono: 'IBM Plex Mono', monospace;
+    --display: 'Archivo Expanded', sans-serif;
+    --body: 'Archivo', sans-serif;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  body{
+    background:var(--black);
+    color:var(--bone);
+    font-family:var(--body);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+
+  a{ color:inherit; text-decoration:none; }
+  ::selection{ background:var(--copper); color:var(--black); }
+  :focus-visible{ outline:2px solid var(--copper-bright); outline-offset:3px; }
+
+  .wrap{ max-width:1280px; margin:0 auto; padding:0 32px; }
+
+  /* ---------- NAV ---------- */
+  nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:22px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .logo{ font-family:var(--display); font-weight:900; font-size:22px; letter-spacing:0.02em; }
+  .logo span{ color:var(--copper); }
+  .nav-note{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--bone-dim);
+  }
+  .nav-note a{ color:var(--bone); border-bottom:1px solid var(--bone-dim); }
+  .nav-note a:hover{ color:var(--copper-bright); border-color:var(--copper-bright); }
+
+  /* ---------- MAIN SPLIT ---------- */
+  .auth-split{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    min-height:calc(100vh - 73px);
+  }
+
+  /* LEFT: form */
+  .auth-form-side{
+    display:flex;
+    align-items:center;
+    padding:60px 0;
+    border-right:1px solid var(--line);
+  }
+  .auth-box{ width:100%; max-width:400px; margin:0 auto; }
+
+  .auth-eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--copper-bright);
+    letter-spacing:0.08em;
+    margin-bottom:18px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+  }
+  .auth-eyebrow::before{ content:''; width:6px; height:6px; background:var(--copper-bright); display:inline-block; }
+
+  .auth-box h1{
+    font-family:var(--display);
+    font-weight:900;
+    font-size:clamp(30px, 3.4vw, 40px);
+    text-transform:uppercase;
+    line-height:1.02;
+    letter-spacing:-0.01em;
+    margin-bottom:12px;
+  }
+  .auth-sub{
+    color:var(--bone-dim);
+    font-size:14.5px;
+    line-height:1.6;
+    margin-bottom:36px;
+  }
+
+  form{ display:flex; flex-direction:column; gap:20px; }
+
+  .field label{
+    display:flex;
+    justify-content:space-between;
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--bone-dim);
+    margin-bottom:9px;
+  }
+  .field label .opt{ color:var(--bone-dim); text-transform:none; letter-spacing:0; }
+  .field label a{
+    color:var(--copper-bright);
+    text-transform:none;
+    letter-spacing:0;
+    font-size:12.5px;
+  }
+  .field label a:hover{ color:var(--bone); }
+
+  .field input{
+    width:100%;
+    background:var(--panel);
+    border:1px solid var(--line);
+    color:var(--bone);
+    font-family:var(--body);
+    font-size:15px;
+    padding:14px 16px;
+    transition:border-color .15s ease;
+  }
+  .field input::placeholder{ color:#5A5A57; }
+  .field input:focus{
+    outline:none;
+    border-color:var(--copper);
+  }
+  .field input.error{ border-color:var(--error); }
+  .field-error{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--error);
+    margin-top:7px;
+    display:none;
+  }
+  .field-error.show{ display:block; }
+
+  .remember-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:13.5px;
+    color:var(--bone-dim);
+    margin-top:2px;
+  }
+  .remember-row input[type="checkbox"]{
+    appearance:none;
+    width:16px; height:16px;
+    border:1px solid var(--bone-dim);
+    background:var(--panel);
+    cursor:pointer;
+    position:relative;
+    flex-shrink:0;
+  }
+  .remember-row input[type="checkbox"]:checked{ background:var(--copper); border-color:var(--copper); }
+  .remember-row input[type="checkbox"]:checked::after{
+    content:'';
+    position:absolute;
+    left:5px; top:1px;
+    width:4px; height:9px;
+    border:solid var(--black);
+    border-width:0 2px 2px 0;
+    transform:rotate(40deg);
+  }
+  .remember-row label{ cursor:pointer; }
+
+  .btn-solid{
+    font-family:var(--mono);
+    font-size:13.5px;
+    letter-spacing:0.03em;
+    background:var(--copper);
+    color:var(--black);
+    padding:15px 26px;
+    border:1px solid var(--copper);
+    cursor:pointer;
+    transition:background .15s ease, transform .1s ease;
+    margin-top:6px;
+  }
+  .btn-solid:hover{ background:var(--copper-bright); }
+  .btn-solid:active{ transform:translateY(1px); }
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin:28px 0;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--bone-dim);
+    letter-spacing:0.06em;
+  }
+  .divider::before, .divider::after{ content:''; flex:1; height:1px; background:var(--line); }
+
+  .btn-outline-full{
+    width:100%;
+    font-family:var(--mono);
+    font-size:13.5px;
+    color:var(--bone);
+    border:1px solid var(--bone-dim);
+    background:none;
+    padding:14px 20px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .btn-outline-full:hover{ border-color:var(--bone); color:var(--copper-bright); }
+
+  .signup-note{
+    margin-top:32px;
+    font-size:14px;
+    color:var(--bone-dim);
+    text-align:center;
+  }
+  .signup-note a{ color:var(--copper-bright); border-bottom:1px solid var(--copper-bright); }
+  .signup-note a:hover{ color:var(--bone); border-color:var(--bone); }
+
+  /* RIGHT: readout panel */
+  .auth-info-side{
+    background:var(--panel);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:60px 56px;
+  }
+  .info-top .tag{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--copper-bright);
+    letter-spacing:0.08em;
+    margin-bottom:20px;
+  }
+  .info-top h2{
+    font-family:var(--display);
+    font-weight:900;
+    font-size:clamp(24px, 2.4vw, 32px);
+    text-transform:uppercase;
+    line-height:1.15;
+    max-width:14ch;
+    margin-bottom:20px;
+  }
+  .info-top h2 em{ font-style:normal; color:var(--copper); }
+  .info-top p{ color:var(--bone-dim); font-size:14.5px; line-height:1.6; max-width:38ch; }
+
+  .session-log{ margin-top:50px; }
+  .session-log .label{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--bone-dim);
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .log-row{
+    display:flex;
+    justify-content:space-between;
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--bone-dim);
+    padding:11px 0;
+    border-top:1px solid var(--line);
+  }
+  .log-row:last-child{ border-bottom:1px solid var(--line); }
+  .log-row b{ color:var(--bone); font-weight:500; }
+  .log-row .ok{ color:var(--copper-bright); }
+
+  .info-bottom{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--bone-dim);
+    display:flex;
+    justify-content:space-between;
+    padding-top:24px;
+    border-top:1px solid var(--line);
+  }
+
+  @media (max-width: 880px){
+    .wrap{ padding:0 20px; }
+    .auth-split{ grid-template-columns:1fr; }
+    .auth-form-side{ border-right:none; border-bottom:1px solid var(--line); padding:50px 0; }
+    .auth-info-side{ padding:44px 20px; }
+    .nav-note{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="wrap">
+    <nav>
+      <div class="logo">VAN<span>TA</span></div>
+      <div class="nav-note">New to Vanta? <a href="#">Create an account</a></div>
+    </nav>
+  </div>
+
+  <div class="auth-split">
+    <div class="auth-form-side">
+      <div class="wrap" style="padding:0 32px;">
+        <div class="auth-box">
+          <div class="auth-eyebrow">ACCOUNT ACCESS</div>
+          <h1>Log in to<br>Vanta</h1>
+          <p class="auth-sub">Track orders, save builds, and get restock alerts on the parts you're watching.</p>
+
+          <form id="loginForm" novalidate>
+            <div class="field">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="you@domain.com" autocomplete="email" required>
+              <div class="field-error" id="emailError">Enter a valid email address.</div>
+            </div>
+
+            <div class="field">
+              <label for="password">Password <a href="#">Forgot password?</a></label>
+              <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+              <div class="field-error" id="passwordError">Password is required.</div>
+            </div>
+
+            <div class="remember-row">
+              <input type="checkbox" id="remember" name="remember">
+              <label for="remember">Keep me logged in on this device</label>
+            </div>
+
+            <button type="submit" class="btn-solid">LOG IN →</button>
+          </form>
+
+          <div class="divider">OR CONTINUE WITH</div>
+
+          <button type="button" class="btn-outline-full">
+            <span>G</span> Continue with Google
+          </button>
+
+          <div class="signup-note">Don't have an account? <a href="#">Sign up free</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-info-side">
+      <div class="info-top">
+        <div class="tag">WHY VANTA</div>
+        <h2>Every part <em>bench-tested</em> before it ships.</h2>
+        <p>Sign in to see your order history, saved builds, and restock alerts for the components you're tracking.</p>
+
+        <div class="session-log">
+          <div class="label">Recent Account Activity</div>
+          <div class="log-row"><span>Order #VN-40218 shipped</span><b>2 days ago</b></div>
+          <div class="log-row"><span>Restock alert: Torrent 360</span><span class="ok">Notified</span></div>
+          <div class="log-row"><span>Saved build "1440p Render Rig"</span><b>Updated</b></div>
+        </div>
+      </div>
+
+      <div class="info-bottom">
+        <span>© 2026 VANTA HARDWARE CO.</span>
+        <span>SECURE LOGIN · 256-BIT TLS</span>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const form = document.getElementById('loginForm');
+  const email = document.getElementById('email');
+  const password = document.getElementById('password');
+  const emailError = document.getElementById('emailError');
+  const passwordError = document.getElementById('passwordError');
+
+  function validEmail(v){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    let ok = true;
+
+    if(!validEmail(email.value.trim())){
+      email.classList.add('error');
+      emailError.classList.add('show');
+      ok = false;
+    } else {
+      email.classList.remove('error');
+      emailError.classList.remove('show');
+    }
+
+    if(password.value.length === 0){
+      password.classList.add('error');
+      passwordError.classList.add('show');
+      ok = false;
+    } else {
+      password.classList.remove('error');
+      passwordError.classList.remove('show');
+    }
+
+    if(ok){
+      // Placeholder: wire this up to your actual auth endpoint.
+      alert('Login submitted (demo only — connect this to your backend).');
+    }
+  });
+
+  [email, password].forEach(function(input){
+    input.addEventListener('input', function(){
+      input.classList.remove('error');
+      const errEl = input.id === 'email' ? emailError : passwordError;
+      errEl.classList.remove('show');
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Receipt — VANTA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;900&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --black: #0B0B0C;
+    --panel: #141416;
+    --bone: #EDEDE8;
+    --bone-dim: #A6A6A0;
+    --copper: #B8703F;
+    --copper-bright: #D98B52;
+    --line: rgba(237,237,232,0.14);
+    --ok: #7FA871;
+    --mono: 'IBM Plex Mono', monospace;
+    --display: 'Archivo Expanded', sans-serif;
+    --body: 'Archivo', sans-serif;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  body{
+    background:var(--black);
+    color:var(--bone);
+    font-family:var(--body);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:60px 20px;
+  }
+
+  ::selection{ background:var(--copper); color:var(--black); }
+
+  .receipt{
+    width:100%;
+    max-width:440px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    position:relative;
+  }
+
+  /* jagged perforated top/bottom edge */
+  .zigzag{
+    height:12px;
+    width:100%;
+    background:
+      linear-gradient(135deg, var(--black) 50%, transparent 50%) 0 0/16px 16px,
+      linear-gradient(-135deg, var(--black) 50%, transparent 50%) 0 0/16px 16px;
+    background-color:var(--panel);
+  }
+  .zigzag.bottom{ transform:rotate(180deg); }
+
+  .receipt-inner{ padding:8px 34px 34px; }
+
+  .r-head{
+    text-align:center;
+    padding:26px 0 22px;
+    border-bottom:1px dashed var(--line);
+  }
+  .r-head .logo{
+    font-family:var(--display);
+    font-weight:900;
+    font-size:24px;
+    letter-spacing:0.03em;
+  }
+  .r-head .logo span{ color:var(--copper); }
+  .r-head .sub{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--bone-dim);
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    margin-top:8px;
+  }
+
+  .r-status{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin:22px 0 4px;
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ok);
+  }
+  .r-status::before{ content:''; width:7px; height:7px; background:var(--ok); display:inline-block; }
+
+  .r-code{
+    text-align:center;
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--bone-dim);
+    margin-bottom:22px;
+  }
+  .r-code b{ color:var(--copper-bright); font-weight:500; letter-spacing:0.04em; }
+
+  .r-meta{
+    padding:20px 0;
+    border-top:1px dashed var(--line);
+    border-bottom:1px dashed var(--line);
+  }
+  .r-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-family:var(--mono);
+    font-size:13px;
+    padding:8px 0;
+  }
+  .r-row .k{ color:var(--bone-dim); letter-spacing:0.02em; }
+  .r-row .v{ color:var(--bone); text-align:right; }
+  .r-row .v.highlight{ color:var(--copper-bright); }
+
+  .r-items{ padding:20px 0; border-bottom:1px dashed var(--line); }
+  .r-items .label{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--bone-dim);
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .item-row{
+    display:grid;
+    grid-template-columns:1fr auto auto;
+    gap:12px;
+    font-size:13.5px;
+    padding:9px 0;
+  }
+  .item-row .name{ color:var(--bone); }
+  .item-row .qty{ font-family:var(--mono); color:var(--bone-dim); text-align:center; min-width:28px; }
+  .item-row .price{ font-family:var(--mono); color:var(--bone); text-align:right; }
+
+  .r-totals{ padding:20px 0; }
+  .r-totals .r-row.total{
+    font-size:17px;
+    padding-top:14px;
+    margin-top:6px;
+    border-top:1px solid var(--line);
+  }
+  .r-totals .r-row.total .k{ color:var(--bone); font-family:var(--display); font-weight:700; letter-spacing:0.02em; text-transform:uppercase; font-size:14px; }
+  .r-totals .r-row.total .v{ font-size:20px; color:var(--copper-bright); }
+
+  .r-cash-block{
+    background:var(--black);
+    border:1px solid var(--line);
+    padding:16px 18px;
+    margin:18px 0 6px;
+  }
+  .r-cash-block .r-row .k{ color:var(--bone-dim); }
+  .r-cash-block .r-row .v{ font-size:15px; }
+  .r-cash-block .r-row.change .v{ color:var(--ok); }
+
+  .r-footer{
+    text-align:center;
+    padding-top:26px;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--bone-dim);
+    letter-spacing:0.04em;
+    line-height:1.8;
+  }
+  .r-footer .thanks{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:13px;
+    color:var(--bone);
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+
+  .barcode{
+    display:flex;
+    justify-content:center;
+    gap:2px;
+    margin:22px 0 10px;
+    height:38px;
+    align-items:flex-end;
+  }
+  .barcode div{ background:var(--bone); width:2px; }
+
+  .actions{
+    display:flex;
+    gap:10px;
+    margin-top:28px;
+  }
+  .btn{
+    flex:1;
+    font-family:var(--mono);
+    font-size:12.5px;
+    letter-spacing:0.03em;
+    padding:13px 18px;
+    cursor:pointer;
+    transition:all .15s ease;
+    text-align:center;
+  }
+  .btn-solid{
+    background:var(--copper);
+    color:var(--black);
+    border:1px solid var(--copper);
+  }
+  .btn-solid:hover{ background:var(--copper-bright); }
+  .btn-outline{
+    background:none;
+    color:var(--bone);
+    border:1px solid var(--bone-dim);
+  }
+  .btn-outline:hover{ border-color:var(--bone); color:var(--copper-bright); }
+
+  @media print{
+    body{ background:#fff; padding:0; }
+    .actions{ display:none; }
+    .receipt{ border:none; }
+  }
+
+  @media (max-width: 480px){
+    .receipt-inner{ padding:8px 22px 26px; }
+  }
+</style>
+</head>
+<body>
+
+  <div>
+    <div class="receipt">
+      <div class="zigzag"></div>
+      <div class="receipt-inner">
+
+        <div class="r-head">
+          <div class="logo">VAN<span>TA</span></div>
+          <div class="sub">Order Receipt</div>
+        </div>
+
+        <div class="r-status">Delivered</div>
+        <div class="r-code">Ref <b>#VN-40218-7X</b></div>
+
+        <div class="r-meta">
+          <div class="r-row"><span class="k">Reference Code</span><span class="v highlight">VN-40218-7X</span></div>
+          <div class="r-row"><span class="k">Time of Order</span><span class="v">Jul 21, 2026 · 10:42 AM</span></div>
+          <div class="r-row"><span class="k">Time of Delivery</span><span class="v">Jul 21, 2026 · 3:15 PM</span></div>
+        </div>
+
+        <div class="r-items">
+          <div class="label">Items</div>
+          <div class="item-row">
+            <span class="name">Ridgeline RX-7800</span>
+            <span class="qty">×1</span>
+            <span class="price">$649.00</span>
+          </div>
+          <div class="item-row">
+            <span class="name">Vanta Torrent 360</span>
+            <span class="qty">×2</span>
+            <span class="price">$278.00</span>
+          </div>
+          <div class="item-row">
+            <span class="name">Fathom G5 2TB</span>
+            <span class="qty">×1</span>
+            <span class="price">$189.00</span>
+          </div>
+        </div>
+
+        <div class="r-totals">
+          <div class="r-row"><span class="k">Subtotal</span><span class="v">$1,116.00</span></div>
+          <div class="r-row"><span class="k">Shipping</span><span class="v">$0.00</span></div>
+          <div class="r-row"><span class="k">Tax</span><span class="v">$89.28</span></div>
+          <div class="r-row total"><span class="k">Total</span><span class="v">$1,205.28</span></div>
+        </div>
+
+        <div class="r-cash-block">
+          <div class="r-row"><span class="k">Quantity (Total Items)</span><span class="v">4</span></div>
+          <div class="r-row"><span class="k">Cash Received</span><span class="v">$1,300.00</span></div>
+          <div class="r-row change"><span class="k">Change</span><span class="v">$94.72</span></div>
+        </div>
+
+        <div class="barcode" id="barcode"></div>
+
+        <div class="r-footer">
+          <div class="thanks">Thank you for building with Vanta</div>
+          All SKUs bench-tested in-house before shipping.<br>
+          Questions about this order? support@vanta.com
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-outline" onclick="window.print()">PRINT</button>
+          <button class="btn btn-solid">DOWNLOAD PDF</button>
+        </div>
+
+      </div>
+      <div class="zigzag bottom"></div>
+    </div>
+  </div>
+
+<script>
+  // generate a pseudo-random barcode pattern
+  const barcode = document.getElementById('barcode');
+  for(let i = 0; i < 60; i++){
+    const bar = document.createElement('div');
+    const height = Math.random() > 0.5 ? '100%' : (Math.random() * 60 + 30) + '%';
+    bar.style.height = height;
+    barcode.appendChild(bar);
+  }
+</script>
+
+</body>
+</html>
