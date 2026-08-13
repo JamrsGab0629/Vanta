@@ -1,342 +1,570 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout — VANTA</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;900&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — VANTA</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;900&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
-  :root{
-    --black: #0B0B0C;
-    --panel: #141416;
-    --bone: #EDEDE8;
-    --bone-dim: #A6A6A0;
-    --copper: #B8703F;
-    --copper-bright: #D98B52;
-    --line: rgba(237,237,232,0.14);
-    --error: #C24B3F;
-    --ok: #7FA871;
-    --mono: 'IBM Plex Mono', monospace;
-    --display: 'Archivo Expanded', sans-serif;
-    --body: 'Archivo', sans-serif;
-  }
+    :root {
+      --black: #0B0B0C;
+      --panel: #141416;
+      --bone: #EDEDE8;
+      --bone-dim: #A6A6A0;
+      --copper: #B8703F;
+      --copper-bright: #D98B52;
+      --line: rgba(237, 237, 232, 0.14);
+      --error: #C24B3F;
+      --ok: #7FA871;
+      --mono: 'IBM Plex Mono', monospace;
+      --display: 'Archivo Expanded', sans-serif;
+      --body: 'Archivo', sans-serif;
+    }
 
-  *{ margin:0; padding:0; box-sizing:border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  body{
-    background:var(--black);
-    color:var(--bone);
-    font-family:var(--body);
-    -webkit-font-smoothing:antialiased;
-    min-height:100vh;
-  }
+    body {
+      background: var(--black);
+      color: var(--bone);
+      font-family: var(--body);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
 
-  a{ color:inherit; text-decoration:none; }
-  ::selection{ background:var(--copper); color:var(--black); }
-  :focus-visible{ outline:2px solid var(--copper-bright); outline-offset:3px; }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-  .wrap{ max-width:1280px; margin:0 auto; padding:0 32px; }
+    ::selection {
+      background: var(--copper);
+      color: var(--black);
+    }
 
-  /* ---------- NAV ---------- */
-  nav{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:22px 0;
-    border-bottom:1px solid var(--line);
-  }
-  .logo{ font-family:var(--display); font-weight:900; font-size:22px; letter-spacing:0.02em; }
-  .logo span{ color:var(--copper); }
-  .nav-secure{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--bone-dim);
-    display:flex;
-    align-items:center;
-    gap:8px;
-    letter-spacing:0.04em;
-  }
-  .nav-secure::before{ content:'●'; color:var(--ok); font-size:9px; }
+    :focus-visible {
+      outline: 2px solid var(--copper-bright);
+      outline-offset: 3px;
+    }
 
-  /* ---------- PROGRESS ---------- */
-  .progress{
-    display:flex;
-    align-items:center;
-    padding:22px 0;
-    border-bottom:1px solid var(--line);
-    font-family:var(--mono);
-    font-size:12.5px;
-    letter-spacing:0.03em;
-  }
-  .progress .step{ color:var(--bone-dim); display:flex; align-items:center; gap:8px; }
-  .progress .step.done{ color:var(--bone); }
-  .progress .step.active{ color:var(--copper-bright); }
-  .progress .step .n{
-    width:20px; height:20px;
-    border:1px solid var(--bone-dim);
-    display:flex; align-items:center; justify-content:center;
-    font-size:11px;
-    border-radius:50%;
-  }
-  .progress .step.done .n{ background:var(--ok); border-color:var(--ok); color:var(--black); }
-  .progress .step.active .n{ border-color:var(--copper-bright); }
-  .progress .sep{ width:40px; height:1px; background:var(--line); margin:0 14px; }
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
 
-  /* ---------- MAIN GRID ---------- */
-  .checkout-grid{
-    display:grid;
-    grid-template-columns:1.3fr 1fr;
-    gap:0;
-    align-items:start;
-  }
-  .checkout-main{ padding:44px 0; border-right:1px solid var(--line); padding-right:56px; }
-  .checkout-side{ padding:44px 0 44px 56px; position:sticky; top:0; }
+    /* ---------- NAV ---------- */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+    }
 
-  .block{ border-bottom:1px solid var(--line); padding-bottom:36px; margin-bottom:36px; }
-  .block:last-child{ border-bottom:none; }
+    .logo {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: 0.02em;
+    }
 
-  .block-head{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    margin-bottom:22px;
-  }
-  .block-head .idx{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--copper-bright);
-    border:1px solid var(--copper);
-    width:24px; height:24px;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .block-head h2{
-    font-family:var(--display);
-    font-weight:900;
-    font-size:19px;
-    text-transform:uppercase;
-    letter-spacing:0.01em;
-  }
+    .logo span {
+      color: var(--copper);
+    }
 
-  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-  .field{ margin-bottom:16px; }
-  .field label{
-    display:block;
-    font-family:var(--mono);
-    font-size:11.5px;
-    letter-spacing:0.05em;
-    text-transform:uppercase;
-    color:var(--bone-dim);
-    margin-bottom:9px;
-  }
-  .field input, .field select{
-    width:100%;
-    background:var(--panel);
-    border:1px solid var(--line);
-    color:var(--bone);
-    font-family:var(--body);
-    font-size:14.5px;
-    padding:13px 14px;
-    transition:border-color .15s ease;
-  }
-  .field input::placeholder{ color:#5A5A57; }
-  .field input:focus, .field select:focus{ outline:none; border-color:var(--copper); }
-  .field input.error{ border-color:var(--error); }
-  .field-error{
-    font-family:var(--mono);
-    font-size:11.5px;
-    color:var(--error);
-    margin-top:6px;
-    display:none;
-  }
-  .field-error.show{ display:block; }
+    .nav-secure {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--bone-dim);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.04em;
+    }
 
-  /* payment method cards */
-  .pay-options{ display:flex; flex-direction:column; gap:10px; }
-  .pay-option{
-    border:1px solid var(--line);
-    padding:16px 18px;
-    display:flex;
-    align-items:center;
-    gap:14px;
-    cursor:pointer;
-    transition:border-color .15s ease, background .15s ease;
-  }
-  .pay-option:hover{ border-color:var(--bone-dim); }
-  .pay-option.selected{ border-color:var(--copper); background:var(--panel); }
-  .pay-option input[type="radio"]{
-    appearance:none;
-    width:16px; height:16px;
-    border:1px solid var(--bone-dim);
-    border-radius:50%;
-    position:relative;
-    cursor:pointer;
-    flex-shrink:0;
-  }
-  .pay-option input[type="radio"]:checked{ border-color:var(--copper-bright); }
-  .pay-option input[type="radio"]:checked::after{
-    content:'';
-    position:absolute;
-    top:3px; left:3px;
-    width:8px; height:8px;
-    border-radius:50%;
-    background:var(--copper-bright);
-  }
-  .pay-option .info{ flex:1; }
-  .pay-option .info h4{ font-size:14.5px; font-weight:600; margin-bottom:3px; }
-  .pay-option .info p{ font-size:12.5px; color:var(--bone-dim); }
-  .pay-option .tag{
-    font-family:var(--mono);
-    font-size:10.5px;
-    color:var(--copper-bright);
-    border:1px solid var(--copper);
-    padding:3px 8px;
-    letter-spacing:0.04em;
-    text-transform:uppercase;
-  }
+    .nav-secure::before {
+      content: '●';
+      color: var(--ok);
+      font-size: 9px;
+    }
 
-  .card-fields{
-    margin-top:16px;
-    padding-top:16px;
-    border-top:1px dashed var(--line);
-    display:none;
-  }
-  .card-fields.show{ display:block; }
+    /* ---------- PROGRESS ---------- */
+    .progress {
+      display: flex;
+      align-items: center;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 12.5px;
+      letter-spacing: 0.03em;
+    }
 
-  .cash-note{
-    margin-top:14px;
-    padding:14px 16px;
-    background:var(--panel);
-    border:1px solid var(--line);
-    font-family:var(--mono);
-    font-size:12.5px;
-    color:var(--bone-dim);
-    line-height:1.6;
-    display:none;
-  }
-  .cash-note.show{ display:block; }
-  .cash-note b{ color:var(--copper-bright); font-weight:500; }
+    .progress .step {
+      color: var(--bone-dim);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-  /* ---------- ORDER SUMMARY (sidebar) ---------- */
-  .summary-box{
-    background:var(--panel);
-    border:1px solid var(--line);
-    padding:28px;
-  }
-  .summary-box h3{
-    font-family:var(--display);
-    font-weight:900;
-    font-size:16px;
-    text-transform:uppercase;
-    margin-bottom:20px;
-    letter-spacing:0.01em;
-  }
-  .sum-item{
-    display:grid;
-    grid-template-columns:1fr auto auto;
-    gap:10px;
-    align-items:start;
-    font-size:13.5px;
-    padding:12px 0;
-    border-top:1px solid var(--line);
-  }
-  .sum-item:first-of-type{ border-top:none; }
-  .sum-item .name{ color:var(--bone); }
-  .sum-item .sku{ font-family:var(--mono); font-size:11px; color:var(--bone-dim); margin-top:3px; }
-  .sum-item .qty{ font-family:var(--mono); color:var(--bone-dim); text-align:center; }
-  .sum-item .price{ font-family:var(--mono); color:var(--bone); text-align:right; }
+    .progress .step.done {
+      color: var(--bone);
+    }
 
-  .sum-totals{ margin-top:18px; padding-top:18px; border-top:1px solid var(--line); }
-  .sum-row{
-    display:flex;
-    justify-content:space-between;
-    font-family:var(--mono);
-    font-size:13px;
-    color:var(--bone-dim);
-    padding:6px 0;
-  }
-  .sum-row.total{
-    font-size:16px;
-    color:var(--bone);
-    padding-top:14px;
-    margin-top:6px;
-    border-top:1px solid var(--line);
-  }
-  .sum-row.total .v{ color:var(--copper-bright); font-size:19px; }
+    .progress .step.active {
+      color: var(--copper-bright);
+    }
 
-  .promo-row{
-    display:flex;
-    gap:8px;
-    margin-top:18px;
-  }
-  .promo-row input{
-    flex:1;
-    background:var(--black);
-    border:1px solid var(--line);
-    color:var(--bone);
-    font-family:var(--mono);
-    font-size:13px;
-    padding:11px 12px;
-  }
-  .promo-row input:focus{ outline:none; border-color:var(--copper); }
-  .promo-row button{
-    font-family:var(--mono);
-    font-size:12px;
-    background:none;
-    border:1px solid var(--bone-dim);
-    color:var(--bone);
-    padding:0 16px;
-    cursor:pointer;
-    transition:all .15s ease;
-  }
-  .promo-row button:hover{ border-color:var(--copper); color:var(--copper-bright); }
+    .progress .step .n {
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--bone-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      border-radius: 50%;
+    }
 
-  .place-order-btn{
-    width:100%;
-    font-family:var(--mono);
-    font-size:14px;
-    letter-spacing:0.03em;
-    background:var(--copper);
-    color:var(--black);
-    padding:17px 20px;
-    border:1px solid var(--copper);
-    cursor:pointer;
-    margin-top:22px;
-    transition:background .15s ease, transform .1s ease;
-  }
-  .place-order-btn:hover{ background:var(--copper-bright); }
-  .place-order-btn:active{ transform:translateY(1px); }
+    .progress .step.done .n {
+      background: var(--ok);
+      border-color: var(--ok);
+      color: var(--black);
+    }
 
-  .summary-note{
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--bone-dim);
-    text-align:center;
-    margin-top:14px;
-    line-height:1.6;
-  }
+    .progress .step.active .n {
+      border-color: var(--copper-bright);
+    }
 
-  .trust-strip{
-    display:flex;
-    justify-content:space-between;
-    margin-top:20px;
-    padding-top:20px;
-    border-top:1px solid var(--line);
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--bone-dim);
-  }
+    .progress .sep {
+      width: 40px;
+      height: 1px;
+      background: var(--line);
+      margin: 0 14px;
+    }
 
-  @media (max-width: 880px){
-    .wrap{ padding:0 20px; }
-    .checkout-grid{ grid-template-columns:1fr; }
-    .checkout-main{ border-right:none; padding-right:0; border-bottom:1px solid var(--line); padding-bottom:20px; }
-    .checkout-side{ padding-left:0; position:static; }
-    .field-row{ grid-template-columns:1fr; }
-    .progress .sep{ width:20px; margin:0 8px; }
-  }
-</style>
+    /* ---------- MAIN GRID ---------- */
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 0;
+      align-items: start;
+    }
+
+    .checkout-main {
+      padding: 44px 0;
+      border-right: 1px solid var(--line);
+      padding-right: 56px;
+    }
+
+    .checkout-side {
+      padding: 44px 0 44px 56px;
+      position: sticky;
+      top: 0;
+    }
+
+    .block {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 36px;
+      margin-bottom: 36px;
+    }
+
+    .block:last-child {
+      border-bottom: none;
+    }
+
+    .block-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .block-head .idx {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--copper-bright);
+      border: 1px solid var(--copper);
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .block-head h2 {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 19px;
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--bone-dim);
+      margin-bottom: 9px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      color: var(--bone);
+      font-family: var(--body);
+      font-size: 14.5px;
+      padding: 13px 14px;
+      transition: border-color .15s ease;
+    }
+
+    .field input::placeholder {
+      color: #5A5A57;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: none;
+      border-color: var(--copper);
+    }
+
+    .field input.error {
+      border-color: var(--error);
+    }
+
+    .field-error {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--error);
+      margin-top: 6px;
+      display: none;
+    }
+
+    .field-error.show {
+      display: block;
+    }
+
+    /* payment method cards */
+    .pay-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .pay-option {
+      border: 1px solid var(--line);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: border-color .15s ease, background .15s ease;
+    }
+
+    .pay-option:hover {
+      border-color: var(--bone-dim);
+    }
+
+    .pay-option.selected {
+      border-color: var(--copper);
+      background: var(--panel);
+    }
+
+    .pay-option input[type="radio"] {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--bone-dim);
+      border-radius: 50%;
+      position: relative;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .pay-option input[type="radio"]:checked {
+      border-color: var(--copper-bright);
+    }
+
+    .pay-option input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--copper-bright);
+    }
+
+    .pay-option .info {
+      flex: 1;
+    }
+
+    .pay-option .info h4 {
+      font-size: 14.5px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .pay-option .info p {
+      font-size: 12.5px;
+      color: var(--bone-dim);
+    }
+
+    .pay-option .tag {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--copper-bright);
+      border: 1px solid var(--copper);
+      padding: 3px 8px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .card-fields {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--line);
+      display: none;
+    }
+
+    .card-fields.show {
+      display: block;
+    }
+
+    .cash-note {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--bone-dim);
+      line-height: 1.6;
+      display: none;
+    }
+
+    .cash-note.show {
+      display: block;
+    }
+
+    .cash-note b {
+      color: var(--copper-bright);
+      font-weight: 500;
+    }
+
+    /* ---------- ORDER SUMMARY (sidebar) ---------- */
+    .summary-box {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 28px;
+    }
+
+    .summary-box h3 {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 16px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      letter-spacing: 0.01em;
+    }
+
+    .sum-item {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: start;
+      font-size: 13.5px;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .sum-item:first-of-type {
+      border-top: none;
+    }
+
+    .sum-item .name {
+      color: var(--bone);
+    }
+
+    .sum-item .sku {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--bone-dim);
+      margin-top: 3px;
+    }
+
+    .sum-item .qty {
+      font-family: var(--mono);
+      color: var(--bone-dim);
+      text-align: center;
+    }
+
+    .sum-item .price {
+      font-family: var(--mono);
+      color: var(--bone);
+      text-align: right;
+    }
+
+    .sum-totals {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .sum-row {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--bone-dim);
+      padding: 6px 0;
+    }
+
+    .sum-row.total {
+      font-size: 16px;
+      color: var(--bone);
+      padding-top: 14px;
+      margin-top: 6px;
+      border-top: 1px solid var(--line);
+    }
+
+    .sum-row.total .v {
+      color: var(--copper-bright);
+      font-size: 19px;
+    }
+
+    .promo-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .promo-row input {
+      flex: 1;
+      background: var(--black);
+      border: 1px solid var(--line);
+      color: var(--bone);
+      font-family: var(--mono);
+      font-size: 13px;
+      padding: 11px 12px;
+    }
+
+    .promo-row input:focus {
+      outline: none;
+      border-color: var(--copper);
+    }
+
+    .promo-row button {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: none;
+      border: 1px solid var(--bone-dim);
+      color: var(--bone);
+      padding: 0 16px;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+
+    .promo-row button:hover {
+      border-color: var(--copper);
+      color: var(--copper-bright);
+    }
+
+    .place-order-btn {
+      width: 100%;
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: 0.03em;
+      background: var(--copper);
+      color: var(--black);
+      padding: 17px 20px;
+      border: 1px solid var(--copper);
+      cursor: pointer;
+      margin-top: 22px;
+      transition: background .15s ease, transform .1s ease;
+    }
+
+    .place-order-btn:hover {
+      background: var(--copper-bright);
+    }
+
+    .place-order-btn:active {
+      transform: translateY(1px);
+    }
+
+    .summary-note {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--bone-dim);
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+
+    .trust-strip {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--bone-dim);
+    }
+
+    @media (max-width: 880px) {
+      .wrap {
+        padding: 0 20px;
+      }
+
+      .checkout-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .checkout-main {
+        border-right: none;
+        padding-right: 0;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 20px;
+      }
+
+      .checkout-side {
+        padding-left: 0;
+        position: static;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .progress .sep {
+        width: 20px;
+        margin: 0 8px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
   <div class="wrap">
@@ -359,7 +587,9 @@
         <div class="checkout-main">
 
           <div class="block">
-            <div class="block-head"><span class="idx">1</span><h2>Contact Information</h2></div>
+            <div class="block-head"><span class="idx">1</span>
+              <h2>Contact Information</h2>
+            </div>
             <div class="field-row">
               <div class="field">
                 <label for="firstName">First name</label>
@@ -385,7 +615,9 @@
           </div>
 
           <div class="block">
-            <div class="block-head"><span class="idx">2</span><h2>Shipping Address</h2></div>
+            <div class="block-head"><span class="idx">2</span>
+              <h2>Shipping Address</h2>
+            </div>
             <div class="field">
               <label for="address">Street address</label>
               <input type="text" id="address" placeholder="123 Circuit St." required>
@@ -422,7 +654,9 @@
           </div>
 
           <div class="block">
-            <div class="block-head"><span class="idx">3</span><h2>Payment Method</h2></div>
+            <div class="block-head"><span class="idx">3</span>
+              <h2>Payment Method</h2>
+            </div>
             <div class="pay-options">
 
               <label class="pay-option selected" id="opt-cash">
@@ -453,7 +687,8 @@
             </div>
 
             <div class="cash-note show" id="cashNote">
-              Please prepare <b>exact or close-to-exact cash</b> for the total amount due on delivery. Our rider will provide a printed receipt with your reference code upon handoff.
+              Please prepare <b>exact or close-to-exact cash</b> for the total amount due on delivery. Our rider will
+              provide a printed receipt with your reference code upon handoff.
             </div>
 
             <div class="card-fields" id="cardFields">
@@ -481,17 +716,26 @@
             <h3>Order Summary</h3>
 
             <div class="sum-item">
-              <div><div class="name">Ridgeline RX-7800</div><div class="sku">SKU 0114-GPU</div></div>
+              <div>
+                <div class="name">Ridgeline RX-7800</div>
+                <div class="sku">SKU 0114-GPU</div>
+              </div>
               <div class="qty">×1</div>
               <div class="price">$649.00</div>
             </div>
             <div class="sum-item">
-              <div><div class="name">Vanta Torrent 360</div><div class="sku">SKU 0331-COOL</div></div>
+              <div>
+                <div class="name">Vanta Torrent 360</div>
+                <div class="sku">SKU 0331-COOL</div>
+              </div>
               <div class="qty">×2</div>
               <div class="price">$278.00</div>
             </div>
             <div class="sum-item">
-              <div><div class="name">Fathom G5 2TB</div><div class="sku">SKU 0208-SSD</div></div>
+              <div>
+                <div class="name">Fathom G5 2TB</div>
+                <div class="sku">SKU 0208-SSD</div>
+              </div>
               <div class="qty">×1</div>
               <div class="price">$189.00</div>
             </div>
@@ -509,7 +753,8 @@
             </div>
 
             <button type="submit" class="place-order-btn">PLACE ORDER →</button>
-            <div class="summary-note">By placing this order, you agree to Vanta's Terms of Service and Return Policy.</div>
+            <div class="summary-note">By placing this order, you agree to Vanta's Terms of Service and Return Policy.
+            </div>
 
             <div class="trust-strip">
               <span>30-DAY RETURNS</span>
@@ -522,60 +767,61 @@
     </form>
   </div>
 
-<script>
-  const payOptions = document.querySelectorAll('.pay-option');
-  const cardFields = document.getElementById('cardFields');
-  const cashNote = document.getElementById('cashNote');
+  <script>
+    const payOptions = document.querySelectorAll('.pay-option');
+    const cardFields = document.getElementById('cardFields');
+    const cashNote = document.getElementById('cashNote');
 
-  payOptions.forEach(function(opt){
-    opt.addEventListener('click', function(){
-      payOptions.forEach(function(o){ o.classList.remove('selected'); });
-      opt.classList.add('selected');
-      const value = opt.querySelector('input').value;
-      cardFields.classList.toggle('show', value === 'card');
-      cashNote.classList.toggle('show', value === 'cash');
+    payOptions.forEach(function (opt) {
+      opt.addEventListener('click', function () {
+        payOptions.forEach(function (o) { o.classList.remove('selected'); });
+        opt.classList.add('selected');
+        const value = opt.querySelector('input').value;
+        cardFields.classList.toggle('show', value === 'card');
+        cashNote.classList.toggle('show', value === 'cash');
+      });
     });
-  });
 
-  const requiredFields = ['firstName','lastName','email','phone','address','city','province','zip'];
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'province', 'zip'];
 
-  function validEmail(v){
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-  }
+    function validEmail(v) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    }
 
-  document.getElementById('checkoutForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    let ok = true;
+    document.getElementById('checkoutForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      let ok = true;
 
-    requiredFields.forEach(function(id){
-      const input = document.getElementById(id);
-      const errEl = document.getElementById(id + 'Error');
-      const empty = input.value.trim().length === 0;
-      const badEmail = id === 'email' && !empty && !validEmail(input.value.trim());
+      requiredFields.forEach(function (id) {
+        const input = document.getElementById(id);
+        const errEl = document.getElementById(id + 'Error');
+        const empty = input.value.trim().length === 0;
+        const badEmail = id === 'email' && !empty && !validEmail(input.value.trim());
 
-      if(empty || badEmail){
-        input.classList.add('error');
-        errEl.classList.add('show');
-        ok = false;
-      } else {
-        input.classList.remove('error');
-        errEl.classList.remove('show');
+        if (empty || badEmail) {
+          input.classList.add('error');
+          errEl.classList.add('show');
+          ok = false;
+        } else {
+          input.classList.remove('error');
+          errEl.classList.remove('show');
+        }
+      });
+
+      if (ok) {
+        // Placeholder: wire this up to your actual order/payment endpoint.
+        alert('Order placed (demo only — connect this to your backend).');
       }
     });
 
-    if(ok){
-      // Placeholder: wire this up to your actual order/payment endpoint.
-      alert('Order placed (demo only — connect this to your backend).');
-    }
-  });
-
-  requiredFields.forEach(function(id){
-    document.getElementById(id).addEventListener('input', function(){
-      this.classList.remove('error');
-      document.getElementById(id + 'Error').classList.remove('show');
+    requiredFields.forEach(function (id) {
+      document.getElementById(id).addEventListener('input', function () {
+        this.classList.remove('error');
+        document.getElementById(id + 'Error').classList.remove('show');
+      });
     });
-  });
-</script>
+  </script>
 
 </body>
+
 </html>
