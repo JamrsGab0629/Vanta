@@ -1,34 +1,41 @@
-export default class user {
-private username: string;
-private passwordHashed: string;
-private email: string;
-private address: string;
-private id: number;
-constructor(username: string,password: string,email: string,address: string,id: number){
-    this.username = username;
-    this.passwordHashed = password;
-    this.email = email;
-    this.address = address;
-    this.id = id;
+import { DataTypes } from "sequelize";
+import sequelize from "../config/database";
 
-}
+const User = sequelize.define("User", {
+    user_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
 
-public get userName(){
-    return this.username;
-}
-public get Password(){
-    return this.passwordHashed;
-}
-public get Email(){
-    return this.email;
-}
-public get Address(){
-    return this.address;
-}
- public get Id() {
-        return this.id;
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+
+    password_hash: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+
+    address: {
+        type: DataTypes.STRING
+    },
+
+    contact_no: {
+        type: DataTypes.STRING
+    },
+
+    role: {
+        type: DataTypes.STRING,
+        defaultValue: "customer"
     }
-}
+});
 
-
-
+export default User;
