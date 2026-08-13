@@ -1,1 +1,46 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+  --bg: #0a0a0a;
+  --bg-raised: #111111;
+  --line: #262626;
+  --line-soft: #1a1a1a;
+  --text: #f2f0ec;
+  --text-dim: #8a8886;
+  --text-faint: #55534f;
+  --copper: #d9812f;
+  --copper-soft: #d9812f22;
+  --green: #6fae63;
+
+  --font-display: 'Archivo Expanded', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--copper);
+  color: var(--black);
+}
+
+:focus-visible {
+  outline: 2px solid var(--copper-bright);
+  outline-offset: 3px;
+}
