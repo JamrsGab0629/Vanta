@@ -1,0 +1,78 @@
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.logo {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+}
+
+.logo span {
+  color: var(--copper);
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  font-size: 14px;
+  color: var(--bone-dim);
+}
+
+.nav-links a:hover {
+  color: var(--bone);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.btn-ghost {
+  font-size: 14px;
+  color: var(--bone-dim);
+  padding: 8px 4px;
+  border-bottom: 1px solid transparent;
+}
+
+.btn-ghost:hover {
+  color: var(--bone);
+  border-color: var(--bone-dim);
+}
+
+.btn-outline {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  color: var(--bone);
+  border: 1px solid var(--bone);
+  padding: 10px 20px;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+
+.btn-outline:hover {
+  background: var(--copper);
+  border-color: var(--copper);
+  color: var(--black);
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--bone);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+@media (max-width: 880px) {
+  .nav-links {
+    display: none;
+  }
+}
