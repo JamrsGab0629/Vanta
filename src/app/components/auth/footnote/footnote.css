@@ -1,0 +1,9 @@
+.info-bottom {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--bone-dim);
+  display: flex;
+  justify-content: space-between;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}

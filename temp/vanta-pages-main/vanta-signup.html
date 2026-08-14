@@ -1,313 +1,495 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sign Up — VANTA</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;900&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up — VANTA</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;900&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
-  :root{
-    --black: #0B0B0C;
-    --panel: #141416;
-    --bone: #EDEDE8;
-    --bone-dim: #A6A6A0;
-    --copper: #B8703F;
-    --copper-bright: #D98B52;
-    --line: rgba(237,237,232,0.14);
-    --error: #C24B3F;
-    --ok: #7FA871;
-    --mono: 'IBM Plex Mono', monospace;
-    --display: 'Archivo Expanded', sans-serif;
-    --body: 'Archivo', sans-serif;
-  }
+    :root {
+      --black: #0B0B0C;
+      --panel: #141416;
+      --bone: #EDEDE8;
+      --bone-dim: #A6A6A0;
+      --copper: #B8703F;
+      --copper-bright: #D98B52;
+      --line: rgba(237, 237, 232, 0.14);
+      --error: #C24B3F;
+      --ok: #7FA871;
+      --mono: 'IBM Plex Mono', monospace;
+      --display: 'Archivo Expanded', sans-serif;
+      --body: 'Archivo', sans-serif;
+    }
 
-  *{ margin:0; padding:0; box-sizing:border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  body{
-    background:var(--black);
-    color:var(--bone);
-    font-family:var(--body);
-    -webkit-font-smoothing:antialiased;
-    min-height:100vh;
-  }
+    body {
+      background: var(--black);
+      color: var(--bone);
+      font-family: var(--body);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
 
-  a{ color:inherit; text-decoration:none; }
-  ::selection{ background:var(--copper); color:var(--black); }
-  :focus-visible{ outline:2px solid var(--copper-bright); outline-offset:3px; }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-  .wrap{ max-width:1280px; margin:0 auto; padding:0 32px; }
+    ::selection {
+      background: var(--copper);
+      color: var(--black);
+    }
 
-  /* ---------- NAV ---------- */
-  nav{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:22px 0;
-    border-bottom:1px solid var(--line);
-  }
-  .logo{ font-family:var(--display); font-weight:900; font-size:22px; letter-spacing:0.02em; }
-  .logo span{ color:var(--copper); }
-  .nav-note{ font-family:var(--mono); font-size:13px; color:var(--bone-dim); }
-  .nav-note a{ color:var(--bone); border-bottom:1px solid var(--bone-dim); }
-  .nav-note a:hover{ color:var(--copper-bright); border-color:var(--copper-bright); }
+    :focus-visible {
+      outline: 2px solid var(--copper-bright);
+      outline-offset: 3px;
+    }
 
-  /* ---------- MAIN SPLIT ---------- */
-  .auth-split{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    min-height:calc(100vh - 73px);
-  }
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
 
-  /* LEFT: form */
-  .auth-form-side{
-    display:flex;
-    align-items:center;
-    padding:56px 0;
-    border-right:1px solid var(--line);
-  }
-  .auth-box{ width:100%; max-width:420px; margin:0 auto; }
+    /* ---------- NAV ---------- */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+    }
 
-  .auth-eyebrow{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--copper-bright);
-    letter-spacing:0.08em;
-    margin-bottom:18px;
-    display:flex;
-    align-items:center;
-    gap:9px;
-  }
-  .auth-eyebrow::before{ content:''; width:6px; height:6px; background:var(--copper-bright); display:inline-block; }
+    .logo {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: 0.02em;
+    }
 
-  .auth-box h1{
-    font-family:var(--display);
-    font-weight:900;
-    font-size:clamp(28px, 3.2vw, 38px);
-    text-transform:uppercase;
-    line-height:1.02;
-    letter-spacing:-0.01em;
-    margin-bottom:12px;
-  }
-  .auth-sub{
-    color:var(--bone-dim);
-    font-size:14.5px;
-    line-height:1.6;
-    margin-bottom:30px;
-  }
+    .logo span {
+      color: var(--copper);
+    }
 
-  form{ display:flex; flex-direction:column; gap:18px; }
+    .nav-note {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--bone-dim);
+    }
 
-  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .nav-note a {
+      color: var(--bone);
+      border-bottom: 1px solid var(--bone-dim);
+    }
 
-  .field label{
-    display:flex;
-    justify-content:space-between;
-    font-family:var(--mono);
-    font-size:12px;
-    letter-spacing:0.04em;
-    text-transform:uppercase;
-    color:var(--bone-dim);
-    margin-bottom:9px;
-  }
+    .nav-note a:hover {
+      color: var(--copper-bright);
+      border-color: var(--copper-bright);
+    }
 
-  .field input{
-    width:100%;
-    background:var(--panel);
-    border:1px solid var(--line);
-    color:var(--bone);
-    font-family:var(--body);
-    font-size:15px;
-    padding:14px 16px;
-    transition:border-color .15s ease;
-  }
-  .field input::placeholder{ color:#5A5A57; }
-  .field input:focus{ outline:none; border-color:var(--copper); }
-  .field input.error{ border-color:var(--error); }
-  .field input.valid{ border-color:var(--ok); }
-  .field-error{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--error);
-    margin-top:7px;
-    display:none;
-  }
-  .field-error.show{ display:block; }
-  .field-hint{
-    font-family:var(--mono);
-    font-size:11.5px;
-    color:var(--bone-dim);
-    margin-top:7px;
-  }
+    /* ---------- MAIN SPLIT ---------- */
+    .auth-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 73px);
+    }
 
-  /* password strength meter */
-  .strength{
-    display:flex;
-    gap:5px;
-    margin-top:9px;
-  }
-  .strength div{
-    height:3px;
-    flex:1;
-    background:var(--line);
-    transition:background .15s ease;
-  }
-  .strength-label{
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--bone-dim);
-    margin-top:7px;
-    letter-spacing:0.04em;
-    text-transform:uppercase;
-  }
+    /* LEFT: form */
+    .auth-form-side {
+      display: flex;
+      align-items: center;
+      padding: 56px 0;
+      border-right: 1px solid var(--line);
+    }
 
-  .terms-row{
-    display:flex;
-    align-items:flex-start;
-    gap:10px;
-    font-size:13px;
-    color:var(--bone-dim);
-    line-height:1.5;
-    margin-top:2px;
-  }
-  .terms-row input[type="checkbox"]{
-    appearance:none;
-    width:16px; height:16px;
-    border:1px solid var(--bone-dim);
-    background:var(--panel);
-    cursor:pointer;
-    position:relative;
-    flex-shrink:0;
-    margin-top:1px;
-  }
-  .terms-row input[type="checkbox"]:checked{ background:var(--copper); border-color:var(--copper); }
-  .terms-row input[type="checkbox"]:checked::after{
-    content:'';
-    position:absolute;
-    left:5px; top:1px;
-    width:4px; height:9px;
-    border:solid var(--black);
-    border-width:0 2px 2px 0;
-    transform:rotate(40deg);
-  }
-  .terms-row label{ cursor:pointer; }
-  .terms-row a{ color:var(--copper-bright); border-bottom:1px solid var(--copper-bright); }
-  .terms-row a:hover{ color:var(--bone); border-color:var(--bone); }
-  .field-error.terms-error{ margin-top:9px; }
+    .auth-box {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+    }
 
-  .btn-solid{
-    font-family:var(--mono);
-    font-size:13.5px;
-    letter-spacing:0.03em;
-    background:var(--copper);
-    color:var(--black);
-    padding:15px 26px;
-    border:1px solid var(--copper);
-    cursor:pointer;
-    transition:background .15s ease, transform .1s ease;
-    margin-top:4px;
-  }
-  .btn-solid:hover{ background:var(--copper-bright); }
-  .btn-solid:active{ transform:translateY(1px); }
+    .auth-eyebrow {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--copper-bright);
+      letter-spacing: 0.08em;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
 
-  .divider{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    margin:26px 0;
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--bone-dim);
-    letter-spacing:0.06em;
-  }
-  .divider::before, .divider::after{ content:''; flex:1; height:1px; background:var(--line); }
+    .auth-eyebrow::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--copper-bright);
+      display: inline-block;
+    }
 
-  .btn-outline-full{
-    width:100%;
-    font-family:var(--mono);
-    font-size:13.5px;
-    color:var(--bone);
-    border:1px solid var(--bone-dim);
-    background:none;
-    padding:14px 20px;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    transition:border-color .15s ease, color .15s ease;
-  }
-  .btn-outline-full:hover{ border-color:var(--bone); color:var(--copper-bright); }
+    .auth-box h1 {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: clamp(28px, 3.2vw, 38px);
+      text-transform: uppercase;
+      line-height: 1.02;
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
+    }
 
-  .signup-note{
-    margin-top:28px;
-    font-size:14px;
-    color:var(--bone-dim);
-    text-align:center;
-  }
-  .signup-note a{ color:var(--copper-bright); border-bottom:1px solid var(--copper-bright); }
-  .signup-note a:hover{ color:var(--bone); border-color:var(--bone); }
+    .auth-sub {
+      color: var(--bone-dim);
+      font-size: 14.5px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
 
-  /* RIGHT: readout panel */
-  .auth-info-side{
-    background:var(--panel);
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    padding:56px 56px;
-  }
-  .info-top .tag{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--copper-bright);
-    letter-spacing:0.08em;
-    margin-bottom:20px;
-  }
-  .info-top h2{
-    font-family:var(--display);
-    font-weight:900;
-    font-size:clamp(24px, 2.4vw, 32px);
-    text-transform:uppercase;
-    line-height:1.15;
-    max-width:16ch;
-    margin-bottom:20px;
-  }
-  .info-top h2 em{ font-style:normal; color:var(--copper); }
-  .info-top p{ color:var(--bone-dim); font-size:14.5px; line-height:1.6; max-width:38ch; }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
 
-  .perk-list{ margin-top:44px; display:flex; flex-direction:column; }
-  .perk-row{
-    display:grid;
-    grid-template-columns:28px 1fr;
-    gap:14px;
-    padding:16px 0;
-    border-top:1px solid var(--line);
-  }
-  .perk-row:last-child{ border-bottom:1px solid var(--line); }
-  .perk-row .mark{ font-family:var(--mono); color:var(--copper-bright); font-size:14px; }
-  .perk-row h4{ font-size:14.5px; font-weight:600; margin-bottom:3px; }
-  .perk-row p{ font-size:13px; color:var(--bone-dim); line-height:1.5; }
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
 
-  .info-bottom{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--bone-dim);
-    display:flex;
-    justify-content:space-between;
-    padding-top:24px;
-    border-top:1px solid var(--line);
-  }
+    .field label {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--bone-dim);
+      margin-bottom: 9px;
+    }
 
-  @media (max-width: 880px){
-    .wrap{ padding:0 20px; }
-    .auth-split{ grid-template-columns:1fr; }
-    .auth-form-side{ border-right:none; border-bottom:1px solid var(--line); padding:44px 0; }
-    .auth-info-side{ padding:40px 20px; }
-    .nav-note{ display:none; }
-    .field-row{ grid-template-columns:1fr; }
-  }
-</style>
+    .field input {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      color: var(--bone);
+      font-family: var(--body);
+      font-size: 15px;
+      padding: 14px 16px;
+      transition: border-color .15s ease;
+    }
+
+    .field input::placeholder {
+      color: #5A5A57;
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--copper);
+    }
+
+    .field input.error {
+      border-color: var(--error);
+    }
+
+    .field input.valid {
+      border-color: var(--ok);
+    }
+
+    .field-error {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--error);
+      margin-top: 7px;
+      display: none;
+    }
+
+    .field-error.show {
+      display: block;
+    }
+
+    .field-hint {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--bone-dim);
+      margin-top: 7px;
+    }
+
+    /* password strength meter */
+    .strength {
+      display: flex;
+      gap: 5px;
+      margin-top: 9px;
+    }
+
+    .strength div {
+      height: 3px;
+      flex: 1;
+      background: var(--line);
+      transition: background .15s ease;
+    }
+
+    .strength-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--bone-dim);
+      margin-top: 7px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .terms-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--bone-dim);
+      line-height: 1.5;
+      margin-top: 2px;
+    }
+
+    .terms-row input[type="checkbox"] {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--bone-dim);
+      background: var(--panel);
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .terms-row input[type="checkbox"]:checked {
+      background: var(--copper);
+      border-color: var(--copper);
+    }
+
+    .terms-row input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 1px;
+      width: 4px;
+      height: 9px;
+      border: solid var(--black);
+      border-width: 0 2px 2px 0;
+      transform: rotate(40deg);
+    }
+
+    .terms-row label {
+      cursor: pointer;
+    }
+
+    .terms-row a {
+      color: var(--copper-bright);
+      border-bottom: 1px solid var(--copper-bright);
+    }
+
+    .terms-row a:hover {
+      color: var(--bone);
+      border-color: var(--bone);
+    }
+
+    .field-error.terms-error {
+      margin-top: 9px;
+    }
+
+    .btn-solid {
+      font-family: var(--mono);
+      font-size: 13.5px;
+      letter-spacing: 0.03em;
+      background: var(--copper);
+      color: var(--black);
+      padding: 15px 26px;
+      border: 1px solid var(--copper);
+      cursor: pointer;
+      transition: background .15s ease, transform .1s ease;
+      margin-top: 4px;
+    }
+
+    .btn-solid:hover {
+      background: var(--copper-bright);
+    }
+
+    .btn-solid:active {
+      transform: translateY(1px);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 26px 0;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--bone-dim);
+      letter-spacing: 0.06em;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .btn-outline-full {
+      width: 100%;
+      font-family: var(--mono);
+      font-size: 13.5px;
+      color: var(--bone);
+      border: 1px solid var(--bone-dim);
+      background: none;
+      padding: 14px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: border-color .15s ease, color .15s ease;
+    }
+
+    .btn-outline-full:hover {
+      border-color: var(--bone);
+      color: var(--copper-bright);
+    }
+
+    .signup-note {
+      margin-top: 28px;
+      font-size: 14px;
+      color: var(--bone-dim);
+      text-align: center;
+    }
+
+    .signup-note a {
+      color: var(--copper-bright);
+      border-bottom: 1px solid var(--copper-bright);
+    }
+
+    .signup-note a:hover {
+      color: var(--bone);
+      border-color: var(--bone);
+    }
+
+    /* RIGHT: readout panel */
+    .auth-info-side {
+      background: var(--panel);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 56px 56px;
+    }
+
+    .info-top .tag {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--copper-bright);
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+
+    .info-top h2 {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: clamp(24px, 2.4vw, 32px);
+      text-transform: uppercase;
+      line-height: 1.15;
+      max-width: 16ch;
+      margin-bottom: 20px;
+    }
+
+    .info-top h2 em {
+      font-style: normal;
+      color: var(--copper);
+    }
+
+    .info-top p {
+      color: var(--bone-dim);
+      font-size: 14.5px;
+      line-height: 1.6;
+      max-width: 38ch;
+    }
+
+    .perk-list {
+      margin-top: 44px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .perk-row {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 14px;
+      padding: 16px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .perk-row:last-child {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .perk-row .mark {
+      font-family: var(--mono);
+      color: var(--copper-bright);
+      font-size: 14px;
+    }
+
+    .perk-row h4 {
+      font-size: 14.5px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .perk-row p {
+      font-size: 13px;
+      color: var(--bone-dim);
+      line-height: 1.5;
+    }
+
+    .info-bottom {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--bone-dim);
+      display: flex;
+      justify-content: space-between;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 880px) {
+      .auth-split {
+        grid-template-columns: 1fr;
+      }
+
+      .auth-form-side {
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+        padding: 44px 0;
+      }
+
+      .auth-info-side {
+        padding: 40px 20px;
+      }
+
+      .nav-note {
+        display: none;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
   <div class="wrap">
@@ -323,18 +505,21 @@
         <div class="auth-box">
           <div class="auth-eyebrow">CREATE ACCOUNT</div>
           <h1>Set up your<br>Vanta account</h1>
-          <p class="auth-sub">Save builds, track orders, and get notified the moment a part you're watching is back in stock.</p>
+          <p class="auth-sub">Save builds, track orders, and get notified the moment a part you're watching is back in
+            stock.</p>
 
           <form id="signupForm" novalidate>
             <div class="field-row">
               <div class="field">
                 <label for="firstName">First name</label>
-                <input type="text" id="firstName" name="firstName" placeholder="Alex" autocomplete="given-name" required>
+                <input type="text" id="firstName" name="firstName" placeholder="Alex" autocomplete="given-name"
+                  required>
                 <div class="field-error" id="firstNameError">Required.</div>
               </div>
               <div class="field">
                 <label for="lastName">Last name</label>
-                <input type="text" id="lastName" name="lastName" placeholder="Rivera" autocomplete="family-name" required>
+                <input type="text" id="lastName" name="lastName" placeholder="Rivera" autocomplete="family-name"
+                  required>
                 <div class="field-error" id="lastNameError">Required.</div>
               </div>
             </div>
@@ -347,9 +532,13 @@
 
             <div class="field">
               <label for="password">Password</label>
-              <input type="password" id="password" name="password" placeholder="At least 8 characters" autocomplete="new-password" required>
+              <input type="password" id="password" name="password" placeholder="At least 8 characters"
+                autocomplete="new-password" required>
               <div class="strength" id="strengthMeter">
-                <div></div><div></div><div></div><div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
               </div>
               <div class="strength-label" id="strengthLabel">Minimum 8 characters</div>
               <div class="field-error" id="passwordError">Password must be at least 8 characters.</div>
@@ -357,13 +546,15 @@
 
             <div class="field">
               <label for="confirmPassword">Confirm password</label>
-              <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter password" autocomplete="new-password" required>
+              <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter password"
+                autocomplete="new-password" required>
               <div class="field-error" id="confirmPasswordError">Passwords don't match.</div>
             </div>
 
             <div class="terms-row">
               <input type="checkbox" id="terms" name="terms">
-              <label for="terms">I agree to Vanta's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</label>
+              <label for="terms">I agree to Vanta's <a href="#">Terms of Service</a> and <a href="#">Privacy
+                  Policy</a>.</label>
             </div>
             <div class="field-error terms-error" id="termsError">You must accept the terms to continue.</div>
 
@@ -390,15 +581,24 @@
         <div class="perk-list">
           <div class="perk-row">
             <div class="mark">01</div>
-            <div><h4>Restock alerts</h4><p>Get notified the moment a watched part is back — no refreshing a page all day.</p></div>
+            <div>
+              <h4>Restock alerts</h4>
+              <p>Get notified the moment a watched part is back — no refreshing a page all day.</p>
+            </div>
           </div>
           <div class="perk-row">
             <div class="mark">02</div>
-            <div><h4>Saved builds</h4><p>Keep compatibility-checked builds in your account and pick up where you left off.</p></div>
+            <div>
+              <h4>Saved builds</h4>
+              <p>Keep compatibility-checked builds in your account and pick up where you left off.</p>
+            </div>
           </div>
           <div class="perk-row">
             <div class="mark">03</div>
-            <div><h4>Order tracking</h4><p>Real ship and bench-test status for every order, not just a generic "processing."</p></div>
+            <div>
+              <h4>Order tracking</h4>
+              <p>Real ship and bench-test status for every order, not just a generic "processing."</p>
+            </div>
           </div>
         </div>
       </div>
@@ -410,98 +610,99 @@
     </div>
   </div>
 
-<script>
-  const form = document.getElementById('signupForm');
-  const firstName = document.getElementById('firstName');
-  const lastName = document.getElementById('lastName');
-  const email = document.getElementById('email');
-  const password = document.getElementById('password');
-  const confirmPassword = document.getElementById('confirmPassword');
-  const terms = document.getElementById('terms');
+  <script>
+    const form = document.getElementById('signupForm');
+    const firstName = document.getElementById('firstName');
+    const lastName = document.getElementById('lastName');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const terms = document.getElementById('terms');
 
-  const firstNameError = document.getElementById('firstNameError');
-  const lastNameError = document.getElementById('lastNameError');
-  const emailError = document.getElementById('emailError');
-  const passwordError = document.getElementById('passwordError');
-  const confirmPasswordError = document.getElementById('confirmPasswordError');
-  const termsError = document.getElementById('termsError');
+    const firstNameError = document.getElementById('firstNameError');
+    const lastNameError = document.getElementById('lastNameError');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+    const confirmPasswordError = document.getElementById('confirmPasswordError');
+    const termsError = document.getElementById('termsError');
 
-  const strengthBars = document.querySelectorAll('#strengthMeter div');
-  const strengthLabel = document.getElementById('strengthLabel');
+    const strengthBars = document.querySelectorAll('#strengthMeter div');
+    const strengthLabel = document.getElementById('strengthLabel');
 
-  function validEmail(v){
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-  }
-
-  function scorePassword(v){
-    let score = 0;
-    if(v.length >= 8) score++;
-    if(v.length >= 12) score++;
-    if(/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
-    if(/[0-9]/.test(v) && /[^A-Za-z0-9]/.test(v)) score++;
-    return score;
-  }
-
-  const strengthColors = ['#C24B3F', '#C24B3F', '#D98B52', '#D98B52', '#7FA871'];
-  const strengthLabels = ['Too short', 'Weak', 'Okay', 'Good', 'Strong'];
-
-  password.addEventListener('input', function(){
-    const score = scorePassword(password.value);
-    strengthBars.forEach(function(bar, i){
-      bar.style.background = i < score ? strengthColors[score] : 'var(--line)';
-    });
-    strengthLabel.textContent = password.value.length === 0
-      ? 'Minimum 8 characters'
-      : strengthLabels[score];
-    password.classList.remove('error');
-    passwordError.classList.remove('show');
-  });
-
-  [firstName, lastName, email, confirmPassword].forEach(function(input){
-    input.addEventListener('input', function(){
-      input.classList.remove('error');
-      const map = {
-        firstName: firstNameError,
-        lastName: lastNameError,
-        email: emailError,
-        confirmPassword: confirmPasswordError
-      };
-      map[input.id].classList.remove('show');
-    });
-  });
-
-  terms.addEventListener('change', function(){
-    termsError.classList.remove('show');
-  });
-
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    let ok = true;
-
-    function fail(input, errEl){
-      input.classList.add('error');
-      errEl.classList.add('show');
-      ok = false;
+    function validEmail(v) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
     }
 
-    if(firstName.value.trim().length === 0) fail(firstName, firstNameError);
-    if(lastName.value.trim().length === 0) fail(lastName, lastNameError);
-    if(!validEmail(email.value.trim())) fail(email, emailError);
-    if(password.value.length < 8) fail(password, passwordError);
-    if(confirmPassword.value !== password.value || confirmPassword.value.length === 0) fail(confirmPassword, confirmPasswordError);
-    if(!terms.checked){
-      termsError.classList.add('show');
-      ok = false;
-    } else {
+    function scorePassword(v) {
+      let score = 0;
+      if (v.length >= 8) score++;
+      if (v.length >= 12) score++;
+      if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+      if (/[0-9]/.test(v) && /[^A-Za-z0-9]/.test(v)) score++;
+      return score;
+    }
+
+    const strengthColors = ['#C24B3F', '#C24B3F', '#D98B52', '#D98B52', '#7FA871'];
+    const strengthLabels = ['Too short', 'Weak', 'Okay', 'Good', 'Strong'];
+
+    password.addEventListener('input', function () {
+      const score = scorePassword(password.value);
+      strengthBars.forEach(function (bar, i) {
+        bar.style.background = i < score ? strengthColors[score] : 'var(--line)';
+      });
+      strengthLabel.textContent = password.value.length === 0
+        ? 'Minimum 8 characters'
+        : strengthLabels[score];
+      password.classList.remove('error');
+      passwordError.classList.remove('show');
+    });
+
+    [firstName, lastName, email, confirmPassword].forEach(function (input) {
+      input.addEventListener('input', function () {
+        input.classList.remove('error');
+        const map = {
+          firstName: firstNameError,
+          lastName: lastNameError,
+          email: emailError,
+          confirmPassword: confirmPasswordError
+        };
+        map[input.id].classList.remove('show');
+      });
+    });
+
+    terms.addEventListener('change', function () {
       termsError.classList.remove('show');
-    }
+    });
 
-    if(ok){
-      // Placeholder: wire this up to your actual signup endpoint.
-      alert('Account creation submitted (demo only — connect this to your backend).');
-    }
-  });
-</script>
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      let ok = true;
+
+      function fail(input, errEl) {
+        input.classList.add('error');
+        errEl.classList.add('show');
+        ok = false;
+      }
+
+      if (firstName.value.trim().length === 0) fail(firstName, firstNameError);
+      if (lastName.value.trim().length === 0) fail(lastName, lastNameError);
+      if (!validEmail(email.value.trim())) fail(email, emailError);
+      if (password.value.length < 8) fail(password, passwordError);
+      if (confirmPassword.value !== password.value || confirmPassword.value.length === 0) fail(confirmPassword, confirmPasswordError);
+      if (!terms.checked) {
+        termsError.classList.add('show');
+        ok = false;
+      } else {
+        termsError.classList.remove('show');
+      }
+
+      if (ok) {
+        // Placeholder: wire this up to your actual signup endpoint.
+        alert('Account creation submitted (demo only — connect this to your backend).');
+      }
+    });
+  </script>
 
 </body>
+
 </html>
