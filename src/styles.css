@@ -3,6 +3,10 @@
 :root {
   --bg: #0a0a0a;
   --bg-raised: #111111;
+  --black: #0B0B0C;
+  --panel: #141416;
+  --bone: #EDEDE8;
+  --bone-dim: #A6A6A0;
   --line: #262626;
   --line-soft: #1a1a1a;
   --text: #f2f0ec;
@@ -10,7 +14,11 @@
   --text-faint: #55534f;
   --copper: #d9812f;
   --copper-soft: #d9812f22;
+  --copper-bright: #D98B52;
   --green: #6fae63;
+
+  --error: #C24B3F;
+  --ok: #7FA871;
 
   --font-display: 'Archivo Expanded', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
@@ -43,4 +51,16 @@ a {
 :focus-visible {
   outline: 2px solid var(--copper-bright);
   outline-offset: 3px;
+}
+
+.wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+@media (max-width: 880px) {
+  .wrap {
+    padding: 0 20px;
+  }
 }
