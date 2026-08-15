@@ -5,18 +5,24 @@ import { hashPassword } from "../service/authService";
 import { validatePassword } from "../service/validationService";
 import { generateOtp } from "../service/gmail/otpService";
 import { sendWelcomeEmail } from "../service/gmail/emailService";
-
+import { validateGmail } from "../service/gmail/emailValidation";
 export const register = async (req: Request, res: Response) => {
     try {
         const { username, email, password } = req.body;
 
+    
         if (!username || !email || !password) {
             return res.status(400).json({
                 message: "Username, email, and password are required"
             });
         }
 
-        // Validate password length and rules
+        if (!validateGmail(email)) {
+            return res.status(400).json({
+                message: "Invalid email domain. Only @gmail.com addresses are allowed."
+            });
+        }
+
         const passwordCheck = validatePassword(password);
         if (!passwordCheck.isValid) {
             return res.status(400).json({
