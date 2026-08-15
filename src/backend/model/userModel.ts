@@ -35,7 +35,22 @@ const User = sequelize.define("User", {
     role: {
         type: DataTypes.STRING,
         defaultValue: "customer"
-    }
+    },
+
+    is_verified: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    },
+
+    otp_code: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    },
+    
+    otp_expires_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+}
 });
 
 export default User;
