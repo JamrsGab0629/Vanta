@@ -1,4 +1,4 @@
-nav {
+.nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -7,10 +7,10 @@ nav {
 }
 
 .logo {
-  font-family: var(--display);
-  font-weight: 900;
-  font-size: 22px;
-  letter-spacing: 0.02em;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.04em;
 }
 
 .logo span {
