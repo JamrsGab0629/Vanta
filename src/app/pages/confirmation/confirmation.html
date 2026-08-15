@@ -1,0 +1,76 @@
+<app-stage></app-stage>
+
+<div class="wrap">
+  <div class="col-left">
+
+    <div class="panel panel-pad" style="margin-bottom:20px;">
+      <div class="confirm-banner">
+        <div class="confirm-check">✓</div>
+        <div>
+          <div class="confirm-eyebrow">Order Secured &amp; Verified</div>
+          <div class="confirm-title">Order Confirmed!</div>
+        </div>
+      </div>
+
+      <div class="meta-row">
+        <div>
+          <div class="meta-label">Reference Code</div>
+          <div class="meta-value accent" id="ref-code">#VN-4021B-7X</div>
+        </div>
+        <div>
+          <div class="meta-label">Payment Method</div>
+          <div class="meta-value" id="payment-method">Cash on Delivery</div>
+        </div>
+        <div>
+          <div class="meta-label">Estimated Delivery</div>
+          <div class="meta-value green" id="delivery-date">Jul 24, 2026 (3–4 PM)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-pad" style="margin-bottom:20px;">
+      <div class="section-title">Delivery Details</div>
+      <div class="detail-grid">
+        <div>
+          <div class="detail-label">Shipping Address</div>
+          <div class="detail-lines" id="shipping-address">
+            <div class="name">James Santos</div>
+            <div>123 Circuit St.</div>
+            <div>Pandi, Bulacan, 3014</div>
+            <div>Philippines</div>
+          </div>
+        </div>
+        <div>
+          <div class="detail-label">Contact Information</div>
+          <div class="detail-lines" id="contact-info">
+            <div>Email: you@domain.com</div>
+            <div>Phone: +63 900 000 0000</div>
+          </div>
+        </div>
+      </div>
+      <div class="delivery-note">Delivery rider will text upon arrival.</div>
+    </div>
+
+    <div class="panel panel-pad" style="margin-bottom:20px;">
+      <div class="assurance">
+        <div class="assurance-icon">◆</div>
+        <div>
+          <div class="assurance-title">Pre-Tested Component Assurance</div>
+          <div class="assurance-text">Your ordered components have been queued on our testing rig. Our engineers will
+            verify system integration, memory speeds, and thermals. The physical benchmark receipt and quality-signoff
+            seal will be placed inside your package before shipping.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <div class="btn btn-primary" id="track-btn">Track Order Status →</div>
+      <div class="btn btn-secondary" id="shop-btn">Continue Shopping</div>
+    </div>
+
+  </div>
+
+  <div class="col-right panel">
+    <app-order-summary></app-order-summary>
+  </div>
+</div>
