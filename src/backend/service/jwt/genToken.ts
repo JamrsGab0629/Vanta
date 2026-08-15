@@ -1,16 +1,15 @@
 import jwt from "jsonwebtoken";
-// the userid would be chnageble when we know lol
-const generateToken = (userId: number) => {
-     return jwt.sign(
-        { userId },
-       process.env["JWT_SECRET"]!,
-        {expiresIn: "7d"}
+import crypto from "crypto";
+import "dotenv/config";
 
+const generateToken = (userId: number) => {
+    const jti = crypto.randomUUID(); // Unique ID for this specific login session
+
+    return jwt.sign(
+        { userId, jti },
+        process.env["JWT_SECRET"]!,
+        { expiresIn: "7d" }
     );
 };
 
-
-    export {
-        generateToken
-        
-    }
+export { generateToken };

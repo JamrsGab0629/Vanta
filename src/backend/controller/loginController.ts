@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { comparePassword } from "../service/authService";
 import { generateToken } from "../service/jwt/genToken";
+import { setTokenCookie } from "../utils/cookieUtils";
 import User from "../model/userModel";
 
 const login = async (req: Request, res: Response) => {
@@ -38,9 +39,14 @@ const login = async (req: Request, res: Response) => {
             user.get("user_id") as number
         );
 
-        res.json({
+        
+        setTokenCookie(res, token);
+
+        return res.status(200).json({
             message: "Login successful",
-            token
+            user: {
+                email: user.get("email")
+            }
         });
 
     } catch (error) {
@@ -51,4 +57,4 @@ const login = async (req: Request, res: Response) => {
     }
 };
 
-export { login  };
+export { login };
