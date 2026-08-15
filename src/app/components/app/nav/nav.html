@@ -1,0 +1,15 @@
+<nav class="nav">
+  <a class="logo" [routerLink]="['home']">VAN<span>TA</span></a>
+
+  <div class="nav-user">
+    @if(in_home()) {
+      <a class="cart-icon" [routerLink]="['cart']"><div>🛒<span class="badge">3</span></div></a>
+    }
+
+    <div class="who">
+      <div class="name">James Santos</div>
+      <div class="id">ID: #7402-VN</div>
+    </div>
+    <div class="avatar">JS</div>
+  </div>
+</nav>
