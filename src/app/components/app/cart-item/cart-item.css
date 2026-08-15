@@ -1,0 +1,121 @@
+.item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.thumb {
+  width: 68px;
+  height: 68px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-soft);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.thumb svg {
+  width: 100%;
+  height: 100%;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sku {
+  font-size: 10.5px;
+  color: var(--copper);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.spec {
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+
+.qty {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.qty button {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.qty button:hover {
+  color: var(--copper);
+}
+
+.qty .n {
+  width: 28px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.price-block {
+  text-align: right;
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.price {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.price-each {
+  font-size: 10.5px;
+  color: var(--text-faint);
+  text-decoration: line-through;
+  margin-top: 3px;
+}
+
+.remove {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.remove:hover {
+  color: var(--copper);
+  border-color: var(--copper);
+}
