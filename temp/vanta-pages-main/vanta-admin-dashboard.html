@@ -1,438 +1,816 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard — VANTA</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;900&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — VANTA</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;900&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
-  :root{
-    --black: #0B0B0C;
-    --panel: #141416;
-    --panel2: #1B1B1E;
-    --bone: #EDEDE8;
-    --bone-dim: #A6A6A0;
-    --copper: #B8703F;
-    --copper-bright: #D98B52;
-    --line: rgba(237,237,232,0.14);
-    --error: #C24B3F;
-    --ok: #7FA871;
-    --mono: 'IBM Plex Mono', monospace;
-    --display: 'Archivo Expanded', sans-serif;
-    --body: 'Archivo', sans-serif;
-  }
+    :root {
+      --black: #0B0B0C;
+      --panel: #141416;
+      --panel2: #1B1B1E;
+      --bone: #EDEDE8;
+      --bone-dim: #A6A6A0;
+      --copper: #B8703F;
+      --copper-bright: #D98B52;
+      --line: rgba(237, 237, 232, 0.14);
+      --error: #C24B3F;
+      --ok: #7FA871;
+      --mono: 'IBM Plex Mono', monospace;
+      --display: 'Archivo Expanded', sans-serif;
+      --body: 'Archivo', sans-serif;
+    }
 
-  *{ margin:0; padding:0; box-sizing:border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  body{
-    background:var(--black);
-    color:var(--bone);
-    font-family:var(--body);
-    -webkit-font-smoothing:antialiased;
-  }
+    body {
+      background: var(--black);
+      color: var(--bone);
+      font-family: var(--body);
+      -webkit-font-smoothing: antialiased;
+    }
 
-  a{ color:inherit; text-decoration:none; }
-  button{ font-family:inherit; }
-  ::selection{ background:var(--copper); color:var(--black); }
-  :focus-visible{ outline:2px solid var(--copper-bright); outline-offset:2px; }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-  /* ---------- LAYOUT ---------- */
-  .app{ display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+    button {
+      font-family: inherit;
+    }
 
-  /* ---------- SIDEBAR ---------- */
-  .sidebar{
-    border-right:1px solid var(--line);
-    padding:26px 22px;
-    display:flex;
-    flex-direction:column;
-    position:sticky;
-    top:0;
-    height:100vh;
-  }
-  .logo{ font-family:var(--display); font-weight:900; font-size:20px; letter-spacing:0.02em; margin-bottom:6px; }
-  .logo span{ color:var(--copper); }
-  .logo-tag{
-    font-family:var(--mono);
-    font-size:10.5px;
-    color:var(--bone-dim);
-    letter-spacing:0.1em;
-    text-transform:uppercase;
-    margin-bottom:36px;
-  }
+    ::selection {
+      background: var(--copper);
+      color: var(--black);
+    }
 
-  .nav-group{ margin-bottom:10px; }
-  .nav-label{
-    font-family:var(--mono);
-    font-size:10.5px;
-    color:var(--bone-dim);
-    letter-spacing:0.1em;
-    text-transform:uppercase;
-    padding:0 10px;
-    margin-bottom:10px;
-  }
-  .nav-item{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:11px 10px;
-    font-size:14px;
-    color:var(--bone-dim);
-    cursor:pointer;
-    border-left:2px solid transparent;
-    transition:all .15s ease;
-  }
-  .nav-item:hover{ color:var(--bone); background:var(--panel); }
-  .nav-item.active{ color:var(--bone); background:var(--panel); border-left-color:var(--copper); }
-  .nav-item .ic{
-    width:16px; height:16px;
-    display:flex; align-items:center; justify-content:center;
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--copper-bright);
-  }
-  .nav-item .count{
-    margin-left:auto;
-    font-family:var(--mono);
-    font-size:10.5px;
-    color:var(--bone-dim);
-    background:var(--panel2);
-    padding:2px 7px;
-    border:1px solid var(--line);
-  }
+    :focus-visible {
+      outline: 2px solid var(--copper-bright);
+      outline-offset: 2px;
+    }
 
-  .sidebar-foot{
-    margin-top:auto;
-    padding-top:20px;
-    border-top:1px solid var(--line);
-    display:flex;
-    align-items:center;
-    gap:12px;
-  }
-  .avatar{
-    width:32px; height:32px;
-    background:var(--copper);
-    color:var(--black);
-    font-family:var(--display);
-    font-weight:900;
-    font-size:13px;
-    display:flex; align-items:center; justify-content:center;
-    flex-shrink:0;
-  }
-  .sidebar-foot .who{ font-size:13px; }
-  .sidebar-foot .role{ font-family:var(--mono); font-size:10.5px; color:var(--bone-dim); }
+    /* ---------- LAYOUT ---------- */
+    .app {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
 
-  /* ---------- MAIN ---------- */
-  .main{ padding:36px 44px; max-width:1400px; }
+    /* ---------- SIDEBAR ---------- */
+    .sidebar {
+      border-right: 1px solid var(--line);
+      padding: 26px 22px;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
 
-  .topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    margin-bottom:34px;
-  }
-  .topbar h1{
-    font-family:var(--display);
-    font-weight:900;
-    font-size:28px;
-    text-transform:uppercase;
-    letter-spacing:-0.01em;
-    margin-bottom:6px;
-  }
-  .topbar .desc{ font-size:13.5px; color:var(--bone-dim); }
-  .search-box{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    background:var(--panel);
-    border:1px solid var(--line);
-    padding:10px 14px;
-    min-width:260px;
-  }
-  .search-box input{
-    background:none;
-    border:none;
-    color:var(--bone);
-    font-family:var(--body);
-    font-size:13.5px;
-    width:100%;
-  }
-  .search-box input:focus{ outline:none; }
-  .search-box input::placeholder{ color:#5A5A57; }
-  .search-box .ic{ color:var(--bone-dim); font-family:var(--mono); font-size:13px; }
+    .logo {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+    }
 
-  .panel{ display:none; }
-  .panel.active{ display:block; }
+    .logo span {
+      color: var(--copper);
+    }
 
-  /* ---------- STAT ROW ---------- */
-  .stat-row{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    border:1px solid var(--line);
-    margin-bottom:32px;
-  }
-  .stat-cell{
-    padding:20px 22px;
-    border-right:1px solid var(--line);
-  }
-  .stat-cell:last-child{ border-right:none; }
-  .stat-cell .label{ font-family:var(--mono); font-size:11px; color:var(--bone-dim); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:8px; }
-  .stat-cell .value{ font-family:var(--mono); font-size:22px; color:var(--bone); }
-  .stat-cell .value b{ color:var(--copper-bright); font-weight:500; }
+    .logo-tag {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--bone-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 36px;
+    }
 
-  /* ---------- HISTORY TABLE ---------- */
-  .table-wrap{ border:1px solid var(--line); overflow-x:auto; }
-  table{ width:100%; border-collapse:collapse; min-width:820px; }
-  thead th{
-    text-align:left;
-    font-family:var(--mono);
-    font-size:11px;
-    letter-spacing:0.06em;
-    text-transform:uppercase;
-    color:var(--bone-dim);
-    padding:16px 20px;
-    background:var(--panel);
-    border-bottom:1px solid var(--line);
-    white-space:nowrap;
-  }
-  tbody td{
-    padding:16px 20px;
-    font-size:13.5px;
-    border-bottom:1px solid var(--line);
-    white-space:nowrap;
-  }
-  tbody tr:last-child td{ border-bottom:none; }
-  tbody tr:hover{ background:var(--panel); }
-  .ref-code{ font-family:var(--mono); color:var(--copper-bright); }
-  .cash-val{ font-family:var(--mono); color:var(--bone); }
-  .qty-val{ font-family:var(--mono); color:var(--bone-dim); }
-  .time-val{ font-family:var(--mono); font-size:12.5px; color:var(--bone-dim); }
-  .status-pill{
-    font-family:var(--mono);
-    font-size:10.5px;
-    letter-spacing:0.05em;
-    text-transform:uppercase;
-    padding:4px 10px;
-    display:inline-block;
-  }
-  .status-pill.delivered{ color:var(--ok); border:1px solid var(--ok); }
-  .status-pill.transit{ color:var(--copper-bright); border:1px solid var(--copper); }
-  .status-pill.pending{ color:var(--bone-dim); border:1px solid var(--bone-dim); }
+    .nav-group {
+      margin-bottom: 10px;
+    }
 
-  /* ---------- DATABASE / PRODUCT GRID ---------- */
-  .db-toolbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:24px;
-  }
-  .filter-chips{ display:flex; gap:8px; }
-  .chip{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--bone-dim);
-    border:1px solid var(--line);
-    padding:8px 14px;
-    cursor:pointer;
-    transition:all .15s ease;
-  }
-  .chip.active{ color:var(--black); background:var(--copper); border-color:var(--copper); }
-  .chip:hover:not(.active){ border-color:var(--bone-dim); color:var(--bone); }
+    .nav-label {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--bone-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0 10px;
+      margin-bottom: 10px;
+    }
 
-  .product-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    border-top:1px solid var(--line);
-    border-left:1px solid var(--line);
-  }
-  .product-card{
-    border-right:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-    padding:22px;
-    position:relative;
-  }
-  .edit-fab{
-    position:absolute;
-    top:14px; right:14px;
-    width:28px; height:28px;
-    display:flex; align-items:center; justify-content:center;
-    background:var(--panel2);
-    border:1px solid var(--line);
-    color:var(--bone-dim);
-    cursor:pointer;
-    font-family:var(--mono);
-    font-size:13px;
-    transition:all .15s ease;
-    z-index:2;
-  }
-  .edit-fab:hover{ border-color:var(--copper); color:var(--copper-bright); background:var(--panel); }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 10px;
+      font-size: 14px;
+      color: var(--bone-dim);
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all .15s ease;
+    }
 
-  .product-card .idx{ font-family:var(--mono); font-size:11px; color:var(--bone-dim); margin-bottom:14px; padding-right:34px; }
-  .product-swatch{
-    width:100%; height:90px;
-    background:linear-gradient(135deg, transparent 48%, var(--copper) 48%, var(--copper) 52%, transparent 52%), var(--panel);
-    border:1px solid var(--line);
-    margin-bottom:16px;
-    display:flex; align-items:center; justify-content:center;
-    font-family:var(--mono); font-size:10.5px; color:var(--bone-dim);
-  }
-  .product-card h3{ font-family:var(--display); font-weight:700; font-size:15.5px; text-transform:uppercase; margin-bottom:10px; line-height:1.25; }
-  .p-spec{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:11.5px; color:var(--bone-dim); padding:5px 0; border-top:1px solid var(--line); }
-  .p-spec b{ color:var(--bone); font-weight:500; }
-  .p-footer{ margin-top:14px; display:flex; justify-content:space-between; align-items:center; }
-  .p-price{ font-family:var(--mono); font-size:17px; color:var(--bone); }
-  .p-stock{ font-family:var(--mono); font-size:11px; padding:4px 8px; border:1px solid var(--line); color:var(--bone-dim); }
-  .p-stock.low{ color:var(--error); border-color:var(--error); }
-  .p-stock.ok{ color:var(--ok); border-color:var(--ok); }
+    .nav-item:hover {
+      color: var(--bone);
+      background: var(--panel);
+    }
 
-  /* ---------- ADD PRODUCT FORM ---------- */
-  .form-card{
-    border:1px solid var(--line);
-    padding:32px;
-    max-width:760px;
-  }
-  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  .field{ margin-bottom:18px; }
-  .field label{
-    display:block;
-    font-family:var(--mono);
-    font-size:11.5px;
-    letter-spacing:0.05em;
-    text-transform:uppercase;
-    color:var(--bone-dim);
-    margin-bottom:9px;
-  }
-  .field input, .field select, .field textarea{
-    width:100%;
-    background:var(--panel);
-    border:1px solid var(--line);
-    color:var(--bone);
-    font-family:var(--body);
-    font-size:14px;
-    padding:12px 14px;
-    transition:border-color .15s ease;
-  }
-  .field textarea{ resize:vertical; min-height:80px; font-family:var(--mono); font-size:13px; }
-  .field input::placeholder, .field textarea::placeholder{ color:#5A5A57; }
-  .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--copper); }
+    .nav-item.active {
+      color: var(--bone);
+      background: var(--panel);
+      border-left-color: var(--copper);
+    }
 
-  .btn-solid{
-    font-family:var(--mono);
-    font-size:13.5px;
-    letter-spacing:0.03em;
-    background:var(--copper);
-    color:var(--black);
-    padding:14px 26px;
-    border:1px solid var(--copper);
-    cursor:pointer;
-    transition:background .15s ease, transform .1s ease;
-  }
-  .btn-solid:hover{ background:var(--copper-bright); }
-  .btn-solid:active{ transform:translateY(1px); }
-  .btn-outline{
-    font-family:var(--mono);
-    font-size:13.5px;
-    color:var(--bone);
-    background:none;
-    border:1px solid var(--bone-dim);
-    padding:14px 22px;
-    cursor:pointer;
-    transition:all .15s ease;
-  }
-  .btn-outline:hover{ border-color:var(--bone); color:var(--copper-bright); }
-  .form-actions{ display:flex; gap:12px; margin-top:8px; }
+    .nav-item .ic {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--copper-bright);
+    }
 
-  /* ---------- MODAL ---------- */
-  .modal-overlay{
-    position:fixed; inset:0;
-    background:rgba(11,11,12,0.78);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:50;
-    padding:20px;
-  }
-  .modal-overlay.show{ display:flex; }
-  .modal{
-    background:var(--panel);
-    border:1px solid var(--line);
-    width:100%;
-    max-width:520px;
-    max-height:90vh;
-    overflow-y:auto;
-    padding:30px;
-  }
-  .modal-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:22px;
-    padding-bottom:18px;
-    border-bottom:1px solid var(--line);
-  }
-  .modal-head h3{
-    font-family:var(--display);
-    font-weight:900;
-    font-size:17px;
-    text-transform:uppercase;
-  }
-  .modal-close{
-    background:none; border:none; color:var(--bone-dim);
-    font-size:20px; cursor:pointer; line-height:1;
-    padding:4px;
-  }
-  .modal-close:hover{ color:var(--bone); }
-  .modal-actions{ display:flex; gap:10px; margin-top:6px; }
-  .modal-actions .btn-solid, .modal-actions .btn-outline{ flex:1; text-align:center; }
-  .modal-delete{
-    width:100%;
-    margin-top:12px;
-    font-family:var(--mono);
-    font-size:12.5px;
-    color:var(--error);
-    background:none;
-    border:1px solid var(--error);
-    padding:12px;
-    cursor:pointer;
-    transition:all .15s ease;
-  }
-  .modal-delete:hover{ background:var(--error); color:var(--bone); }
+    .nav-item .count {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--bone-dim);
+      background: var(--panel2);
+      padding: 2px 7px;
+      border: 1px solid var(--line);
+    }
 
-  .toast{
-    position:fixed;
-    bottom:28px; right:28px;
-    background:var(--panel2);
-    border:1px solid var(--ok);
-    color:var(--bone);
-    font-family:var(--mono);
-    font-size:13px;
-    padding:14px 20px;
-    display:none;
-    align-items:center;
-    gap:10px;
-    z-index:60;
-  }
-  .toast.show{ display:flex; }
-  .toast::before{ content:'●'; color:var(--ok); font-size:9px; }
+    .sidebar-foot {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-  @media (max-width: 1000px){
-    .app{ grid-template-columns:1fr; }
-    .sidebar{ position:static; height:auto; flex-direction:row; align-items:center; padding:16px 20px; overflow-x:auto; }
-    .sidebar > *{ flex-shrink:0; }
-    .logo-tag{ display:none; }
-    .nav-group{ display:flex; gap:6px; margin-bottom:0; margin-left:20px; }
-    .nav-label{ display:none; }
-    .sidebar-foot{ margin-top:0; margin-left:auto; border-top:none; padding-top:0; }
-    .main{ padding:26px 20px; }
-    .stat-row{ grid-template-columns:repeat(2,1fr); }
-    .stat-cell:nth-child(2){ border-right:none; }
-    .product-grid{ grid-template-columns:repeat(2,1fr); }
-    .field-row{ grid-template-columns:1fr; }
-    .topbar{ flex-direction:column; gap:16px; }
-    .search-box{ width:100%; }
-  }
-</style>
+    .avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--copper);
+      color: var(--black);
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sidebar-foot .who {
+      font-size: 13px;
+    }
+
+    .sidebar-foot .role {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--bone-dim);
+    }
+
+    /* ---------- MAIN ---------- */
+    .main {
+      padding: 36px 44px;
+      max-width: 1400px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 34px;
+    }
+
+    .topbar h1 {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 28px;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+
+    .topbar .desc {
+      font-size: 13.5px;
+      color: var(--bone-dim);
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 10px 14px;
+      min-width: 260px;
+    }
+
+    .search-box input {
+      background: none;
+      border: none;
+      color: var(--bone);
+      font-family: var(--body);
+      font-size: 13.5px;
+      width: 100%;
+    }
+
+    .search-box input:focus {
+      outline: none;
+    }
+
+    .search-box input::placeholder {
+      color: #5A5A57;
+    }
+
+    .search-box .ic {
+      color: var(--bone-dim);
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    /* ---------- STAT ROW ---------- */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--line);
+      margin-bottom: 32px;
+    }
+
+    .stat-cell {
+      padding: 20px 22px;
+      border-right: 1px solid var(--line);
+    }
+
+    .stat-cell:last-child {
+      border-right: none;
+    }
+
+    .stat-cell .label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--bone-dim);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-cell .value {
+      font-family: var(--mono);
+      font-size: 22px;
+      color: var(--bone);
+    }
+
+    .stat-cell .value b {
+      color: var(--copper-bright);
+      font-weight: 500;
+    }
+
+    /* ---------- HISTORY TABLE ---------- */
+    .table-wrap {
+      border: 1px solid var(--line);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 820px;
+    }
+
+    thead th {
+      text-align: left;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--bone-dim);
+      padding: 16px 20px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 16px 20px;
+      font-size: 13.5px;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: var(--panel);
+    }
+
+    .ref-code {
+      font-family: var(--mono);
+      color: var(--copper-bright);
+    }
+
+    .cash-val {
+      font-family: var(--mono);
+      color: var(--bone);
+    }
+
+    .qty-val {
+      font-family: var(--mono);
+      color: var(--bone-dim);
+    }
+
+    .time-val {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--bone-dim);
+    }
+
+    .status-pill {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      display: inline-block;
+    }
+
+    .status-pill.delivered {
+      color: var(--ok);
+      border: 1px solid var(--ok);
+    }
+
+    .status-pill.transit {
+      color: var(--copper-bright);
+      border: 1px solid var(--copper);
+    }
+
+    .status-pill.pending {
+      color: var(--bone-dim);
+      border: 1px solid var(--bone-dim);
+    }
+
+    /* ---------- DATABASE / PRODUCT GRID ---------- */
+    .db-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .filter-chips {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chip {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--bone-dim);
+      border: 1px solid var(--line);
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+
+    .chip.active {
+      color: var(--black);
+      background: var(--copper);
+      border-color: var(--copper);
+    }
+
+    .chip:hover:not(.active) {
+      border-color: var(--bone-dim);
+      color: var(--bone);
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .product-card {
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 22px;
+      position: relative;
+    }
+
+    .edit-fab {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--panel2);
+      border: 1px solid var(--line);
+      color: var(--bone-dim);
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 13px;
+      transition: all .15s ease;
+      z-index: 2;
+    }
+
+    .edit-fab:hover {
+      border-color: var(--copper);
+      color: var(--copper-bright);
+      background: var(--panel);
+    }
+
+    .product-card .idx {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--bone-dim);
+      margin-bottom: 14px;
+      padding-right: 34px;
+    }
+
+    .product-swatch {
+      width: 100%;
+      height: 90px;
+      background: linear-gradient(135deg, transparent 48%, var(--copper) 48%, var(--copper) 52%, transparent 52%), var(--panel);
+      border: 1px solid var(--line);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--bone-dim);
+    }
+
+    .product-card h3 {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: 15.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+
+    .p-spec {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--bone-dim);
+      padding: 5px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .p-spec b {
+      color: var(--bone);
+      font-weight: 500;
+    }
+
+    .p-footer {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .p-price {
+      font-family: var(--mono);
+      font-size: 17px;
+      color: var(--bone);
+    }
+
+    .p-stock {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      color: var(--bone-dim);
+    }
+
+    .p-stock.low {
+      color: var(--error);
+      border-color: var(--error);
+    }
+
+    .p-stock.ok {
+      color: var(--ok);
+      border-color: var(--ok);
+    }
+
+    /* ---------- ADD PRODUCT FORM ---------- */
+    .form-card {
+      border: 1px solid var(--line);
+      padding: 32px;
+      max-width: 760px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--bone-dim);
+      margin-bottom: 9px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      color: var(--bone);
+      font-family: var(--body);
+      font-size: 14px;
+      padding: 12px 14px;
+      transition: border-color .15s ease;
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 80px;
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: #5A5A57;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--copper);
+    }
+
+    .btn-solid {
+      font-family: var(--mono);
+      font-size: 13.5px;
+      letter-spacing: 0.03em;
+      background: var(--copper);
+      color: var(--black);
+      padding: 14px 26px;
+      border: 1px solid var(--copper);
+      cursor: pointer;
+      transition: background .15s ease, transform .1s ease;
+    }
+
+    .btn-solid:hover {
+      background: var(--copper-bright);
+    }
+
+    .btn-solid:active {
+      transform: translateY(1px);
+    }
+
+    .btn-outline {
+      font-family: var(--mono);
+      font-size: 13.5px;
+      color: var(--bone);
+      background: none;
+      border: 1px solid var(--bone-dim);
+      padding: 14px 22px;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--bone);
+      color: var(--copper-bright);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    /* ---------- MODAL ---------- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 11, 12, 0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 30px;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-head h3 {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 17px;
+      text-transform: uppercase;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--bone-dim);
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .modal-close:hover {
+      color: var(--bone);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .modal-actions .btn-solid,
+    .modal-actions .btn-outline {
+      flex: 1;
+      text-align: center;
+    }
+
+    .modal-delete {
+      width: 100%;
+      margin-top: 12px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--error);
+      background: none;
+      border: 1px solid var(--error);
+      padding: 12px;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+
+    .modal-delete:hover {
+      background: var(--error);
+      color: var(--bone);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--panel2);
+      border: 1px solid var(--ok);
+      color: var(--bone);
+      font-family: var(--mono);
+      font-size: 13px;
+      padding: 14px 20px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      z-index: 60;
+    }
+
+    .toast.show {
+      display: flex;
+    }
+
+    .toast::before {
+      content: '●';
+      color: var(--ok);
+      font-size: 9px;
+    }
+
+    @media (max-width: 1000px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        height: auto;
+        flex-direction: row;
+        align-items: center;
+        padding: 16px 20px;
+        overflow-x: auto;
+      }
+
+      .sidebar>* {
+        flex-shrink: 0;
+      }
+
+      .logo-tag {
+        display: none;
+      }
+
+      .nav-group {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 0;
+        margin-left: 20px;
+      }
+
+      .nav-label {
+        display: none;
+      }
+
+      .sidebar-foot {
+        margin-top: 0;
+        margin-left: auto;
+        border-top: none;
+        padding-top: 0;
+      }
+
+      .main {
+        padding: 26px 20px;
+      }
+
+      .stat-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stat-cell:nth-child(2) {
+        border-right: none;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
   <div class="app">
@@ -468,7 +846,7 @@
     <div class="main">
 
       <!-- HISTORY PANEL -->
-      <div class="panel active" id="panel-history">
+      <div class="panel" id="panel-history">
         <div class="topbar">
           <div>
             <h1>Order History</h1>
@@ -481,10 +859,22 @@
         </div>
 
         <div class="stat-row">
-          <div class="stat-cell"><div class="label">Orders Today</div><div class="value"><b>18</b></div></div>
-          <div class="stat-cell"><div class="label">Cash Collected</div><div class="value"><b>$4,920</b></div></div>
-          <div class="stat-cell"><div class="label">Avg. Delivery Time</div><div class="value">4.<b>3</b> hrs</div></div>
-          <div class="stat-cell"><div class="label">Pending Orders</div><div class="value"><b>3</b></div></div>
+          <div class="stat-cell">
+            <div class="label">Orders Today</div>
+            <div class="value"><b>18</b></div>
+          </div>
+          <div class="stat-cell">
+            <div class="label">Cash Collected</div>
+            <div class="value"><b>$4,920</b></div>
+          </div>
+          <div class="stat-cell">
+            <div class="label">Avg. Delivery Time</div>
+            <div class="value">4.<b>3</b> hrs</div>
+          </div>
+          <div class="stat-cell">
+            <div class="label">Pending Orders</div>
+            <div class="value"><b>3</b></div>
+          </div>
         </div>
 
         <div class="table-wrap">
@@ -643,48 +1033,48 @@
 
   <div class="toast" id="toast">Changes saved</div>
 
-<script>
-  /* ---------- NAV SWITCHING ---------- */
-  const navItems = document.querySelectorAll('.nav-item');
-  const panels = document.querySelectorAll('.panel');
-  navItems.forEach(function(item){
-    item.addEventListener('click', function(){
-      navItems.forEach(function(i){ i.classList.remove('active'); });
-      panels.forEach(function(p){ p.classList.remove('active'); });
-      item.classList.add('active');
-      document.getElementById('panel-' + item.dataset.panel).classList.add('active');
+  <script>
+    /* ---------- NAV SWITCHING ---------- */
+    const navItems = document.querySelectorAll('.nav-item');
+    const panels = document.querySelectorAll('.panel');
+    navItems.forEach(function (item) {
+      item.addEventListener('click', function () {
+        navItems.forEach(function (i) { i.classList.remove('active'); });
+        panels.forEach(function (p) { p.classList.remove('active'); });
+        item.classList.add('active');
+        document.getElementById('panel-' + item.dataset.panel).classList.add('active');
+      });
     });
-  });
 
-  /* ---------- DATA ---------- */
-  let products = [
-    { id:1, name:'Ridgeline RX-7800', sku:'0114-GPU', category:'GPU', price:649, stock:214, spec:'16GB GDDR6 · 2,650 MHz' },
-    { id:2, name:'Vanta Core X9', sku:'0092-CPU', category:'CPU', price:479, stock:8, spec:'16C/32T · 5.7 GHz Boost' },
-    { id:3, name:'Fathom G5 2TB', sku:'0208-SSD', category:'Storage', price:189, stock:132, spec:'12,400 MB/s Read' },
-    { id:4, name:'Vanta Torrent 360', sku:'0331-COOL', category:'Cooling', price:139, stock:67, spec:'360mm Copper AIO' },
-    { id:5, name:'Ridgeline RX-6600', sku:'0119-GPU', category:'GPU', price:329, stock:5, spec:'8GB GDDR6 · 2,490 MHz' },
-    { id:6, name:'Vanta Core X5', sku:'0088-CPU', category:'CPU', price:229, stock:98, spec:'6C/12T · 4.9 GHz Boost' },
-    { id:7, name:'Fathom G4 1TB', sku:'0201-SSD', category:'Storage', price:99, stock:210, spec:'7,000 MB/s Read' },
-    { id:8, name:'Vanta Torrent 240', sku:'0328-COOL', category:'Cooling', price:99, stock:45, spec:'240mm Copper AIO' }
-  ];
+    /* ---------- DATA ---------- */
+    let products = [
+      { id: 1, name: 'Ridgeline RX-7800', sku: '0114-GPU', category: 'GPU', price: 649, stock: 214, spec: '16GB GDDR6 · 2,650 MHz' },
+      { id: 2, name: 'Vanta Core X9', sku: '0092-CPU', category: 'CPU', price: 479, stock: 8, spec: '16C/32T · 5.7 GHz Boost' },
+      { id: 3, name: 'Fathom G5 2TB', sku: '0208-SSD', category: 'Storage', price: 189, stock: 132, spec: '12,400 MB/s Read' },
+      { id: 4, name: 'Vanta Torrent 360', sku: '0331-COOL', category: 'Cooling', price: 139, stock: 67, spec: '360mm Copper AIO' },
+      { id: 5, name: 'Ridgeline RX-6600', sku: '0119-GPU', category: 'GPU', price: 329, stock: 5, spec: '8GB GDDR6 · 2,490 MHz' },
+      { id: 6, name: 'Vanta Core X5', sku: '0088-CPU', category: 'CPU', price: 229, stock: 98, spec: '6C/12T · 4.9 GHz Boost' },
+      { id: 7, name: 'Fathom G4 1TB', sku: '0201-SSD', category: 'Storage', price: 99, stock: 210, spec: '7,000 MB/s Read' },
+      { id: 8, name: 'Vanta Torrent 240', sku: '0328-COOL', category: 'Cooling', price: 99, stock: 45, spec: '240mm Copper AIO' }
+    ];
 
-  const history = [
-    { ref:'VN-40218-7X', ordered:'Jul 21, 2026 · 10:42 AM', delivered:'Jul 21, 2026 · 3:15 PM', qty:4, cash:1205.28, status:'delivered' },
-    { ref:'VN-40217-2K', ordered:'Jul 21, 2026 · 9:05 AM', delivered:'Jul 21, 2026 · 1:40 PM', qty:2, cash:428.00, status:'delivered' },
-    { ref:'VN-40216-9Q', ordered:'Jul 20, 2026 · 6:20 PM', delivered:'—', qty:1, cash:649.00, status:'transit' },
-    { ref:'VN-40215-3M', ordered:'Jul 20, 2026 · 4:52 PM', delivered:'Jul 20, 2026 · 8:10 PM', qty:3, cash:337.00, status:'delivered' },
-    { ref:'VN-40214-8L', ordered:'Jul 20, 2026 · 2:11 PM', delivered:'—', qty:1, cash:189.00, status:'pending' },
-    { ref:'VN-40213-1D', ordered:'Jul 19, 2026 · 11:30 AM', delivered:'Jul 19, 2026 · 5:02 PM', qty:5, cash:876.50, status:'delivered' }
-  ];
+    const history = [
+      { ref: 'VN-40218-7X', ordered: 'Jul 21, 2026 · 10:42 AM', delivered: 'Jul 21, 2026 · 3:15 PM', qty: 4, cash: 1205.28, status: 'delivered' },
+      { ref: 'VN-40217-2K', ordered: 'Jul 21, 2026 · 9:05 AM', delivered: 'Jul 21, 2026 · 1:40 PM', qty: 2, cash: 428.00, status: 'delivered' },
+      { ref: 'VN-40216-9Q', ordered: 'Jul 20, 2026 · 6:20 PM', delivered: '—', qty: 1, cash: 649.00, status: 'transit' },
+      { ref: 'VN-40215-3M', ordered: 'Jul 20, 2026 · 4:52 PM', delivered: 'Jul 20, 2026 · 8:10 PM', qty: 3, cash: 337.00, status: 'delivered' },
+      { ref: 'VN-40214-8L', ordered: 'Jul 20, 2026 · 2:11 PM', delivered: '—', qty: 1, cash: 189.00, status: 'pending' },
+      { ref: 'VN-40213-1D', ordered: 'Jul 19, 2026 · 11:30 AM', delivered: 'Jul 19, 2026 · 5:02 PM', qty: 5, cash: 876.50, status: 'delivered' }
+    ];
 
-  /* ---------- RENDER HISTORY ---------- */
-  function renderHistory(filter){
-    const body = document.getElementById('historyTableBody');
-    const term = (filter || '').toLowerCase();
-    body.innerHTML = history
-      .filter(function(h){ return h.ref.toLowerCase().includes(term); })
-      .map(function(h){
-        return `<tr>
+    /* ---------- RENDER HISTORY ---------- */
+    function renderHistory(filter) {
+      const body = document.getElementById('historyTableBody');
+      const term = (filter || '').toLowerCase();
+      body.innerHTML = history
+        .filter(function (h) { return h.ref.toLowerCase().includes(term); })
+        .map(function (h) {
+          return `<tr>
           <td class="ref-code">${h.ref}</td>
           <td class="time-val">${h.ordered}</td>
           <td class="time-val">${h.delivered}</td>
@@ -692,25 +1082,25 @@
           <td class="cash-val">$${h.cash.toFixed(2)}</td>
           <td><span class="status-pill ${h.status}">${h.status}</span></td>
         </tr>`;
-      }).join('');
-  }
-  renderHistory();
-  document.getElementById('historySearch').addEventListener('input', function(){
-    renderHistory(this.value);
-  });
+        }).join('');
+    }
+    renderHistory();
+    document.getElementById('historySearch').addEventListener('input', function () {
+      renderHistory(this.value);
+    });
 
-  /* ---------- RENDER PRODUCT GRID ---------- */
-  let activeCat = 'all';
-  function renderProducts(filter){
-    const grid = document.getElementById('productGrid');
-    const term = (filter || '').toLowerCase();
-    grid.innerHTML = products
-      .filter(function(p){ return activeCat === 'all' || p.category === activeCat; })
-      .filter(function(p){ return p.name.toLowerCase().includes(term) || p.sku.toLowerCase().includes(term); })
-      .map(function(p){
-        const stockClass = p.stock < 10 ? 'low' : 'ok';
-        const stockLabel = p.stock < 10 ? 'LOW STOCK' : 'IN STOCK';
-        return `<div class="product-card">
+    /* ---------- RENDER PRODUCT GRID ---------- */
+    let activeCat = 'all';
+    function renderProducts(filter) {
+      const grid = document.getElementById('productGrid');
+      const term = (filter || '').toLowerCase();
+      grid.innerHTML = products
+        .filter(function (p) { return activeCat === 'all' || p.category === activeCat; })
+        .filter(function (p) { return p.name.toLowerCase().includes(term) || p.sku.toLowerCase().includes(term); })
+        .map(function (p) {
+          const stockClass = p.stock < 10 ? 'low' : 'ok';
+          const stockLabel = p.stock < 10 ? 'LOW STOCK' : 'IN STOCK';
+          return `<div class="product-card">
           <button class="edit-fab" data-id="${p.id}" title="Edit product">✎</button>
           <div class="idx">SKU · ${p.sku}</div>
           <div class="product-swatch">${p.category.toUpperCase()}</div>
@@ -722,105 +1112,106 @@
             <span class="p-stock ${stockClass}">${stockLabel}</span>
           </div>
         </div>`;
-      }).join('');
+        }).join('');
 
-    document.querySelectorAll('.edit-fab').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        openEditModal(parseInt(btn.dataset.id));
+      document.querySelectorAll('.edit-fab').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          openEditModal(parseInt(btn.dataset.id));
+        });
+      });
+    }
+    renderProducts();
+
+    document.getElementById('dbSearch').addEventListener('input', function () {
+      renderProducts(this.value);
+    });
+
+    document.querySelectorAll('#filterChips .chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        document.querySelectorAll('#filterChips .chip').forEach(function (c) { c.classList.remove('active'); });
+        chip.classList.add('active');
+        activeCat = chip.dataset.cat;
+        renderProducts(document.getElementById('dbSearch').value);
       });
     });
-  }
-  renderProducts();
 
-  document.getElementById('dbSearch').addEventListener('input', function(){
-    renderProducts(this.value);
-  });
+    /* ---------- EDIT MODAL ---------- */
+    const overlay = document.getElementById('modalOverlay');
+    let editingId = null;
 
-  document.querySelectorAll('#filterChips .chip').forEach(function(chip){
-    chip.addEventListener('click', function(){
-      document.querySelectorAll('#filterChips .chip').forEach(function(c){ c.classList.remove('active'); });
-      chip.classList.add('active');
-      activeCat = chip.dataset.cat;
-      renderProducts(document.getElementById('dbSearch').value);
+    function openEditModal(id) {
+      const p = products.find(function (x) { return x.id === id; });
+      if (!p) return;
+      editingId = id;
+      document.getElementById('edit-name').value = p.name;
+      document.getElementById('edit-sku').value = p.sku;
+      document.getElementById('edit-category').value = p.category;
+      document.getElementById('edit-price').value = p.price;
+      document.getElementById('edit-stock').value = p.stock;
+      document.getElementById('edit-spec').value = p.spec;
+      overlay.classList.add('show');
+    }
+
+    function closeModal() {
+      overlay.classList.remove('show');
+      editingId = null;
+    }
+
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('modalCancel').addEventListener('click', closeModal);
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closeModal();
     });
-  });
 
-  /* ---------- EDIT MODAL ---------- */
-  const overlay = document.getElementById('modalOverlay');
-  let editingId = null;
+    document.getElementById('editForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const p = products.find(function (x) { return x.id === editingId; });
+      if (!p) return;
+      p.name = document.getElementById('edit-name').value;
+      p.sku = document.getElementById('edit-sku').value;
+      p.category = document.getElementById('edit-category').value;
+      p.price = parseFloat(document.getElementById('edit-price').value) || 0;
+      p.stock = parseInt(document.getElementById('edit-stock').value) || 0;
+      p.spec = document.getElementById('edit-spec').value;
+      closeModal();
+      renderProducts(document.getElementById('dbSearch').value);
+      showToast('Product updated');
+    });
 
-  function openEditModal(id){
-    const p = products.find(function(x){ return x.id === id; });
-    if(!p) return;
-    editingId = id;
-    document.getElementById('edit-name').value = p.name;
-    document.getElementById('edit-sku').value = p.sku;
-    document.getElementById('edit-category').value = p.category;
-    document.getElementById('edit-price').value = p.price;
-    document.getElementById('edit-stock').value = p.stock;
-    document.getElementById('edit-spec').value = p.spec;
-    overlay.classList.add('show');
-  }
+    document.getElementById('modalDelete').addEventListener('click', function () {
+      products = products.filter(function (x) { return x.id !== editingId; });
+      closeModal();
+      renderProducts(document.getElementById('dbSearch').value);
+      showToast('Product deleted');
+    });
 
-  function closeModal(){
-    overlay.classList.remove('show');
-    editingId = null;
-  }
+    /* ---------- ADD PRODUCT ---------- */
+    document.getElementById('addProductForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const newProduct = {
+        id: Date.now(),
+        name: document.getElementById('np-name').value,
+        sku: document.getElementById('np-sku').value,
+        category: document.getElementById('np-category').value,
+        price: parseFloat(document.getElementById('np-price').value) || 0,
+        stock: parseInt(document.getElementById('np-stock').value) || 0,
+        spec: document.getElementById('np-spec').value
+      };
+      products.push(newProduct);
+      this.reset();
+      showToast('Product added to database');
+      renderProducts();
+    });
 
-  document.getElementById('modalClose').addEventListener('click', closeModal);
-  document.getElementById('modalCancel').addEventListener('click', closeModal);
-  overlay.addEventListener('click', function(e){
-    if(e.target === overlay) closeModal();
-  });
-
-  document.getElementById('editForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    const p = products.find(function(x){ return x.id === editingId; });
-    if(!p) return;
-    p.name = document.getElementById('edit-name').value;
-    p.sku = document.getElementById('edit-sku').value;
-    p.category = document.getElementById('edit-category').value;
-    p.price = parseFloat(document.getElementById('edit-price').value) || 0;
-    p.stock = parseInt(document.getElementById('edit-stock').value) || 0;
-    p.spec = document.getElementById('edit-spec').value;
-    closeModal();
-    renderProducts(document.getElementById('dbSearch').value);
-    showToast('Product updated');
-  });
-
-  document.getElementById('modalDelete').addEventListener('click', function(){
-    products = products.filter(function(x){ return x.id !== editingId; });
-    closeModal();
-    renderProducts(document.getElementById('dbSearch').value);
-    showToast('Product deleted');
-  });
-
-  /* ---------- ADD PRODUCT ---------- */
-  document.getElementById('addProductForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    const newProduct = {
-      id: Date.now(),
-      name: document.getElementById('np-name').value,
-      sku: document.getElementById('np-sku').value,
-      category: document.getElementById('np-category').value,
-      price: parseFloat(document.getElementById('np-price').value) || 0,
-      stock: parseInt(document.getElementById('np-stock').value) || 0,
-      spec: document.getElementById('np-spec').value
-    };
-    products.push(newProduct);
-    this.reset();
-    showToast('Product added to database');
-    renderProducts();
-  });
-
-  /* ---------- TOAST ---------- */
-  function showToast(msg){
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(function(){ toast.classList.remove('show'); }, 2400);
-  }
-</script>
+    /* ---------- TOAST ---------- */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(function () { toast.classList.remove('show'); }, 2400);
+    }
+  </script>
 
 </body>
+
 </html>
