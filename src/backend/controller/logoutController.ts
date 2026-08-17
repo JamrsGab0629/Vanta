@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 const logout = async (req: Request, res: Response) => {
     try {
-        const token = req.cookies?.token;
+        const token = req.cookies?.['token'];
 
         if (token) {
             try {
