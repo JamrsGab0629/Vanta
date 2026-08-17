@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { OrderList } from "../order-list/order-list";
 import { OrderItem } from "../order-item/order-item";
 
 @Component({
