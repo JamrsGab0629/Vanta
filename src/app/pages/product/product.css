@@ -1,0 +1,131 @@
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 34px;
+}
+
+.topbar h1 {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 28px;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.topbar .desc {
+  font-size: 13.5px;
+  color: var(--bone-dim);
+}
+
+.form-card {
+  border: 1px solid var(--line);
+  padding: 32px;
+  max-width: 760px;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.field {
+  margin-bottom: 18px;
+}
+
+.field label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+  margin-bottom: 9px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--bone);
+  font-family: var(--body);
+  font-size: 14px;
+  padding: 12px 14px;
+  transition: border-color .15s ease;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: #5A5A57;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--copper);
+}
+
+.btn-solid {
+  font-family: var(--mono);
+  font-size: 13.5px;
+  letter-spacing: 0.03em;
+  background: var(--copper);
+  color: var(--black);
+  padding: 14px 26px;
+  border: 1px solid var(--copper);
+  cursor: pointer;
+  transition: background .15s ease, transform .1s ease;
+}
+
+.btn-solid:hover {
+  background: var(--copper-bright);
+}
+
+.btn-solid:active {
+  transform: translateY(1px);
+}
+
+.btn-outline {
+  font-family: var(--mono);
+  font-size: 13.5px;
+  color: var(--bone);
+  background: none;
+  border: 1px solid var(--bone-dim);
+  padding: 14px 22px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.btn-outline:hover {
+  border-color: var(--bone);
+  color: var(--copper-bright);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+@media (max-width: 1000px) {
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    flex-direction: column;
+    gap: 16px;
+  }
+}

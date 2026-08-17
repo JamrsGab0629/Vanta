@@ -1,0 +1,54 @@
+<div class="topbar">
+  <div>
+    <h1>Add Product</h1>
+    <div class="desc">New products are bench-tested before being marked active in the database.</div>
+  </div>
+</div>
+
+<div class="form-card">
+  <form id="addProductForm">
+    <div class="field-row">
+      <div class="field">
+        <label for="np-name">Product name</label>
+        <input type="text" id="np-name" placeholder="Ridgeline RX-7800" required>
+      </div>
+      <div class="field">
+        <label for="np-sku">SKU</label>
+        <input type="text" id="np-sku" placeholder="0114-GPU" required>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="np-category">Category</label>
+        <select id="np-category">
+          <option>GPU</option>
+          <option>CPU</option>
+          <option>Storage</option>
+          <option>Cooling</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="np-price">Price (USD)</label>
+        <input type="number" id="np-price" placeholder="649" required>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="np-stock">Stock quantity</label>
+        <input type="number" id="np-stock" placeholder="120" required>
+      </div>
+      <div class="field">
+        <label for="np-spec">Key spec (short)</label>
+        <input type="text" id="np-spec" placeholder="16GB GDDR6 · 2,650 MHz">
+      </div>
+    </div>
+    <div class="field">
+      <label for="np-desc">Description / notes</label>
+      <textarea id="np-desc" placeholder="Bench notes, thermal data, compatibility flags..."></textarea>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn-solid">ADD TO DATABASE →</button>
+      <button type="reset" class="btn-outline">CLEAR</button>
+    </div>
+  </form>
+</div>
