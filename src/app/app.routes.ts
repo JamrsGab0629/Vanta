@@ -5,6 +5,8 @@ import { Login } from './pages/login/login';
 import { Signup } from './pages/signup/signup';
 import { App } from './templates/app/app';
 import { Home } from './pages/home/home';
+import { Admin } from './templates/admin/admin';
+import { Product } from './pages/product/product';
 
 export const routes: Routes = [
   {
@@ -30,6 +32,16 @@ export const routes: Routes = [
       { path: 'cart', loadComponent: () => import('./pages/cart/cart').then((m) => m.Cart) },
       { path: 'checkout', loadComponent: () => import('./pages/checkout/checkout').then((m) => m.Checkout) },
       { path: 'confirmation', loadComponent: () => import('./pages/confirmation/confirmation').then((m) => m.Confirmation) }
+    ]
+  },
+  {
+    path: "admin",
+    component: Admin,
+    children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'home', loadComponent: () => import('./pages/history/history').then((m) => m.History) },
+      { path: 'database', loadComponent: () => import('./pages/database/database').then((m) => m.Database) },
+      { path: 'product', component: Product },
     ]
   }
 ];
