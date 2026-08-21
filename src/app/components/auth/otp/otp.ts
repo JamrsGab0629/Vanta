@@ -46,7 +46,7 @@ export class Otp implements OnInit, OnDestroy {
 
   /**
    * Reactive cooldown state. This has to be a signal.
-   * Signals explicitly notify the renderer on every set/update, so the countdown ticks correctly.
+   * Signls explicitly notify the renderer on every set/update, so the countdown ticks correctly.
    */
   readonly secondsRemaining = signal(RESEND_COOLDOWN_SECONDS);
   readonly canResend = computed(() => this.secondsRemaining() <= 0);
