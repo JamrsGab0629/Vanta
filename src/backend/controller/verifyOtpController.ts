@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { findUserByEmail } from "../service/userService";
+import { formatValidationError, verifyOtpSchema } from "../validators/authValidators";
 
 export const verifyOtp = async (req: Request, res: Response) => {
     try {
-        const { email, otp } = req.body;
+        const parsed = verifyOtpSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json(formatValidationError(parsed.error));
 
-        if (!email || !otp) {
-            return res.status(400).json({ message: "Email and OTP code are required" });
-        }
+        const { email, otp } = parsed.data;
 
         const user = await findUserByEmail(email);
         if (!user) {

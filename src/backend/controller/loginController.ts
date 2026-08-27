@@ -3,16 +3,14 @@ import { comparePassword } from "../service/authService";
 import { generateToken } from "../service/jwt/genToken";
 import { setTokenCookie } from "../utils/cookieUtils";
 import User from "../model/userModel";
+import { formatValidationError, loginSchema } from "../validators/authValidators";
 
 const login = async (req: Request, res: Response) => {
     try {
-        const { email, password } = req.body;
+        const parsed = loginSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json(formatValidationError(parsed.error));
 
-        if (!email || !password) {
-            return res.status(400).json({
-                message: "Email and password are required"
-            });
-        }
+        const { email, password } = parsed.data;
 
         const user = await User.findOne({
             where: { email }
@@ -35,8 +33,13 @@ const login = async (req: Request, res: Response) => {
             });
         }
 
+        if (!user.get("is_verified")) {
+            return res.status(403).json({ message: "Verify your email before logging in" });
+        }
+
         const token = generateToken(
-            user.get("user_id") as number
+            user.get("user_id") as number,
+            user.get("role") as string,
         );
 
         

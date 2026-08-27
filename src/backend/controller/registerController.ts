@@ -2,33 +2,15 @@
 import { Request, Response } from "express";
 import User from "../model/userModel";
 import { hashPassword } from "../service/authService"; 
-import { validatePassword } from "../service/validationService";
+import { formatValidationError, registerSchema } from "../validators/authValidators";
 import { generateOtp } from "../service/gmail/otpService";
-import { sendWelcomeEmail } from "../service/gmail/emailService";
-import { validateGmail } from "../service/gmail/emailValidation";
+import { sendVerificationEmail } from "../service/gmail/emailService";
 export const register = async (req: Request, res: Response) => {
     try {
-        const { username, email, password } = req.body;
+        const parsed = registerSchema.safeParse(req.body);
+        if (!parsed.success) return res.status(400).json(formatValidationError(parsed.error));
 
-    
-        if (!username || !email || !password) {
-            return res.status(400).json({
-                message: "Username, email, and password are required"
-            });
-        }
-
-        if (!validateGmail(email)) {
-            return res.status(400).json({
-                message: "Invalid email domain. Only @gmail.com addresses are allowed."
-            });
-        }
-
-        const passwordCheck = validatePassword(password);
-        if (!passwordCheck.isValid) {
-            return res.status(400).json({
-                message: passwordCheck.error
-            });
-        }
+        const { username, email, password } = parsed.data;
 
         const existingUser = await User.findOne({
             where: { email }
@@ -55,7 +37,14 @@ export const register = async (req: Request, res: Response) => {
         });
 
        
-        await sendWelcomeEmail(email, username, otp);
+        try {
+            await sendVerificationEmail(email, username, otp);
+        } catch (emailError) {
+            console.error("REGISTRATION EMAIL ERROR:", emailError);
+            return res.status(502).json({
+                message: "Unable to send verification email. Use /api/auth/resend-verification to try again.",
+            });
+        }
 
         return res.status(201).json({
             message: "Registration successful! Please check your email for the OTP verification code.",

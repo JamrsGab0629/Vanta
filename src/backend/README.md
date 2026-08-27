@@ -41,6 +41,18 @@ A secure Node.js and Express backend featuring JWT authentication using HTTP-onl
 ### Running the Server
     npm run dev
 
+### SMTP configuration
+
+Copy `src/backend/.env.example` to `src/backend/.env`, then set `SMTP_HOST`,
+`SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, and `SMTP_FROM` for the
+account that should send verification emails. For Gmail, enable 2-Step
+Verification and use a Google App Password for `SMTP_PASS`; do not use the
+account's normal password.
+
+If delivery fails, an unverified account remains protected from login; send a
+`POST /api/auth/resend-verification` request with `{ "email": "..." }` to
+generate and send a new code.
+
 ---
 
 ## 🧪 API Testing Guide (Thunder Client / Postman)
