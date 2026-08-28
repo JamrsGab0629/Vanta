@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Footnote } from '../../components/auth/footnote/footnote';
+import { Otp } from '../../components/auth/otp/otp';
 import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, Footnote, RouterLink],
+  imports: [ReactiveFormsModule, Footnote, Otp, RouterLink],
   templateUrl: './signup.html',
   styleUrl: './signup.css',
 })
@@ -15,6 +16,9 @@ export class Signup {
 
   readonly strengthColors = ['#C24B3F', '#C24B3F', '#D98B52', '#D98B52', '#7FA871'];
   readonly strengthLabels = ['Too short', 'Weak', 'Okay', 'Good', 'Strong'];
+
+  /** Which panel is showing inside the auth box: account details, or the OTP check. */
+  step: 'form' | 'otp' = 'form';
 
   signupForm: FormGroup = this.fb.group(
     {
@@ -73,8 +77,23 @@ export class Signup {
       return;
     }
 
-    // Connect this to your backend service/API call
+    // Connect this to your backend service/API call.
+    // On success the backend sends an OTP to the new user's email.
+    this.step = 'otp';
+  }
+
+  onOtpVerified(code: string): void {
+    // Connect this to your backend to confirm the OTP and finish account creation.
     alert('Account creation submitted (demo only — connect this to your backend).');
-    console.log(this.signupForm.value);
+    console.log({ ...this.signupForm.value, code });
+  }
+
+  onOtpResend(): void {
+    // Connect this to your backend to send a new OTP.
+    console.log('Resending OTP to', this.signupForm.value.email);
+  }
+
+  onOtpBack(): void {
+    this.step = 'form';
   }
 }
