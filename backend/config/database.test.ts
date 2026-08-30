@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
-dotenv.config({ path: "./src/backend/.env" });
+import path from "path";
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 import { describe, it, expect } from "vitest"; // <-- Changed 'item' to 'it'
 import sequelize from "./database";

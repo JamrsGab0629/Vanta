@@ -1,11 +1,94 @@
 ### 1. Test Health / Server Check
 GET http://localhost:3000/api/health
 
-### 2. Test Login Route (Change fields to match your user model)
+### 2. Register New User (OTP will be returned in response & printed in terminal)
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "jamesdev",
+  "email": "james@example.com",
+  "password": "Password123456"
+}
+
+### 3. Verify OTP Code (Paste the 6-digit OTP from register response/console)
+POST http://localhost:3000/api/auth/verify-otp
+Content-Type: application/json
+
+{
+  "email": "james@example.com",
+  "otp": "123456"
+}
+
+### 4. Resend Verification OTP
+POST http://localhost:3000/api/auth/resend-verification
+Content-Type: application/json
+
+{
+  "email": "james@example.com"
+}
+
+### 5. Login
 POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
   "email": "james@example.com",
-  "password": "Helloworldtanginamoxep"
+  "password": "Password123456"
 }
+
+### 6. Access Protected Dashboard (Uses httpOnly cookie from login)
+GET http://localhost:3000/api/dashboard
+
+### 7. Logout (Revokes token JTI in database & clears cookie)
+POST http://localhost:3000/api/auth/logout
+
+### 8. Verify Blacklist Protection (Should return 401 Unauthorized)
+GET http://localhost:3000/api/dashboard
+
+### 9. Create Product (Admin Only - Requires admin login cookie)
+POST http://localhost:3000/api/products
+Content-Type: application/json
+
+{
+  "sku": "0114-GPU",
+  "name": "Ridgeline RX-7800",
+  "category": "Graphics Cards",
+  "swatch": "RTX-CLASS · 16GB",
+  "price": 649.00,
+  "stock_quantity": 45,
+  "description": "High-performance graphics card bench-tested for 1440p and 4K ultra gaming.",
+  "specs": {
+    "Boost Clock": "2,650 MHz",
+    "VRAM": "16GB GDDR6",
+    "TDP": "263W"
+  },
+  "bench_stats": {
+    "Cyberpunk 4K": "78 FPS",
+    "Max Temp": "64°C",
+    "Noise": "26 dBA"
+  },
+  "image_url": "/uploads/products/default-gpu.png",
+  "is_active": true
+}
+
+### 10. Get All Products (Public - With optional query filters)
+GET http://localhost:3000/api/products?category=Graphics%20Cards&page=1&limit=10
+
+### 11. Get Product by SKU (Public)
+GET http://localhost:3000/api/products/sku/0114-GPU
+
+### 12. Get Product by ID (Public)
+GET http://localhost:3000/api/products/1
+
+### 13. Update Product (Admin Only)
+PUT http://localhost:3000/api/products/1
+Content-Type: application/json
+
+{
+  "price": 599.00,
+  "stock_quantity": 50
+}
+
+### 14. Delete Product (Admin Only)
+DELETE http://localhost:3000/api/products/1

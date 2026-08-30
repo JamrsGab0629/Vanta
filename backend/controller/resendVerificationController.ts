@@ -16,11 +16,23 @@ export const resendVerification = async (req: Request, res: Response) => {
 
         const { otp, expiresAt } = generateOtp();
         await user.update({ otp_code: otp, otp_expires_at: expiresAt });
-        await sendVerificationEmail(parsed.data.email, user.get("username") as string, otp);
 
-        return res.status(200).json({ message: "If an unverified account exists, a code has been sent." });
+        // Log OTP to terminal for dev / testing without needing SMTP configured
+        console.log(`\n======================================================`);
+        console.log(`🔑 [DEV MODE] Resent OTP for ${parsed.data.email}: ${otp}`);
+        console.log(`======================================================\n`);
+
+        /*
+        // UNCOMMENT BELOW TO ENABLE REAL EMAIL SENDING VIA SMTP:
+        await sendVerificationEmail(parsed.data.email, user.get("username") as string, otp);
+        */
+
+        return res.status(200).json({ 
+            message: "If an unverified account exists, a code has been sent.",
+            otp // Returned for dev testing without email setup
+        });
     } catch (error) {
         console.error("RESEND VERIFICATION ERROR:", error);
-        return res.status(502).json({ message: "Unable to send verification email. Please try again." });
+        return res.status(500).json({ message: "Server error" });
     }
 };
