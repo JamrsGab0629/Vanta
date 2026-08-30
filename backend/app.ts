@@ -7,6 +7,8 @@ import authRoutes from "./routes/authRoutes";
 import protectedRoutes from "./routes/protectedRoutes";
 import productRoutes from "./routes/productRoutes";
 import { rateLimiter } from "./middleware/rateLimiter";
+import cartRoutes from "./routes/cartRoutes";
+
 
 const createApp = () => {
     const app = express();
@@ -32,7 +34,7 @@ const createApp = () => {
     app.use("/api/auth", authRoutes);
     app.use("/api/products", productRoutes);
     app.use("/api", protectedRoutes);
-
+    app.use("/api/cart", cartRoutes);
     // Global error handler
     app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
         if (error instanceof SyntaxError && "body" in error) {

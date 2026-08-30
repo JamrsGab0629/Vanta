@@ -241,16 +241,14 @@ export const getProductsService = async (query: ProductQuery) => {
 export const getProductByIdService = async (id: string) => {
   const product = await Product.findOne({
     where: {
-      id,
+      product_id: id, // <-- Changed from 'id' to 'product_id'
       is_active: true,
     },
 
     include: [
       {
         model: User,
-
         as: 'creator',
-
         attributes: ['user_id', 'username', 'email'],
       },
     ],

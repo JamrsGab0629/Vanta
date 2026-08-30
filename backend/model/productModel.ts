@@ -3,7 +3,7 @@ import sequelize from "../config/database";
 import User from "./userModel";
 
 export interface ProductAttributes {
-    id?: number;
+    product_id?: number;
     sku: string;
     name: string;
     category: string;
@@ -19,7 +19,7 @@ export interface ProductAttributes {
 }
 
 class Product extends Model<ProductAttributes> implements ProductAttributes {
-    declare id: number;
+    declare product_id: number;
     declare sku: string;
     declare name: string;
     declare category: string;
@@ -39,7 +39,7 @@ class Product extends Model<ProductAttributes> implements ProductAttributes {
 
 Product.init(
     {
-        id: {
+        product_id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
@@ -115,4 +115,3 @@ Product.init(
 Product.belongsTo(User, { foreignKey: "created_by", as: "creator" });
 
 export default Product;
-

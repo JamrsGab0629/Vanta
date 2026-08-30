@@ -1,3 +1,5 @@
+import { Request } from "express";
+
 export type AuthenticatedUser = {
     userId: number;
     role: string;
@@ -5,6 +7,6 @@ export type AuthenticatedUser = {
     exp: number;
 };
 
-export type AuthenticatedRequest = Express.Request & {
+export type AuthenticatedRequest = Request & {
     user?: AuthenticatedUser;
 };
