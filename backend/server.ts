@@ -13,7 +13,8 @@ async function startServer() {
         await sequelize.authenticate();
         console.log("Database connection established successfully!");
 
-       await sequelize.sync({ force: true });
+        await sequelize.sync({ alter: true });
+        // await sequelize.sync({ force: true });
         console.log("Database synchronized and tables created!");
 
         app.listen(PORT, () => {
@@ -24,5 +25,5 @@ async function startServer() {
         process.exit(1);
     }
 }
-
+console.log("Connected to database:", sequelize.getDatabaseName());
 startServer();
