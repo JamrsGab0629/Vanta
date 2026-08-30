@@ -19,22 +19,22 @@ export interface ProductAttributes {
 }
 
 class Product extends Model<ProductAttributes> implements ProductAttributes {
-    public id!: number;
-    public sku!: string;
-    public name!: string;
-    public category!: string;
-    public swatch!: string | null;
-    public price!: number;
-    public stock_quantity!: number;
-    public description!: string | null;
-    public specs!: Record<string, string | number> | null;
-    public bench_stats!: Record<string, string | number> | null;
-    public image_url!: string | null;
-    public is_active!: boolean;
-    public created_by!: number | null;
+    declare id: number;
+    declare sku: string;
+    declare name: string;
+    declare category: string;
+    declare swatch: string | null;
+    declare price: number;
+    declare stock_quantity: number;
+    declare description: string | null;
+    declare specs: Record<string, string | number> | null;
+    declare bench_stats: Record<string, string | number> | null;
+    declare image_url: string | null;
+    declare is_active: boolean;
+    declare created_by: number | null;
 
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
+    declare readonly createdAt: Date;
+    declare readonly updatedAt: Date;
 }
 
 Product.init(
