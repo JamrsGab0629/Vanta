@@ -13,6 +13,16 @@ const User = sequelize.define("User", {
         allowNull: false
     },
 
+    first_name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+
+    last_name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+
     email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -38,19 +48,19 @@ const User = sequelize.define("User", {
     },
 
     is_verified: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
     },
 
     otp_code: {
-    type: DataTypes.STRING,
-    allowNull: true,
+        type: DataTypes.STRING,
+        allowNull: true,
     },
     
     otp_expires_at: {
-    type: DataTypes.DATE,
-    allowNull: true,
-}
+        type: DataTypes.DATE,
+        allowNull: true,
+    }
 });
 
 export default User;

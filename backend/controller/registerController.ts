@@ -10,7 +10,8 @@ export const register = async (req: Request, res: Response) => {
         const parsed = registerSchema.safeParse(req.body);
         if (!parsed.success) return res.status(400).json(formatValidationError(parsed.error));
 
-        const { username, email, password } = parsed.data;
+        // Added first_name and last_name here
+        const { username, first_name, last_name, email, password } = parsed.data;
 
         const existingUser = await User.findOne({
             where: { email }
@@ -26,9 +27,11 @@ export const register = async (req: Request, res: Response) => {
         const { otp, expiresAt } = generateOtp();
         const password_hash = await hashPassword(password);
 
-        // Create user with unverified status and OTP fields
+        // Create user with first_name and last_name included
         const newUser = await User.create({
             username,
+            first_name,
+            last_name,
             email,
             password_hash,
             is_verified: false,
@@ -58,6 +61,8 @@ export const register = async (req: Request, res: Response) => {
             otp, // Returned for fast dev/testing without email setup
             user: {
                 username: newUser.get("username"),
+                first_name: newUser.get("first_name"),
+                last_name: newUser.get("last_name"),
                 email: newUser.get("email"),
             }
         });

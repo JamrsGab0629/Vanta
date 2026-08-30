@@ -7,8 +7,12 @@ const password = z
     .min(8, "Password must be at least 8 characters long")
     .max(128, "Password must be at most 128 characters long");
 
+const nameField = z.string().trim().min(1, "Field is required").max(80);
+
 export const registerSchema = z.object({
     username: z.string().trim().min(2, "Username must be at least 2 characters long").max(80),
+    first_name: nameField,
+    last_name: nameField,
     email,
     password,
 }).strict();
