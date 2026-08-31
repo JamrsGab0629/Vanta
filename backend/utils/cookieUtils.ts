@@ -4,9 +4,9 @@ const COOKIE_NAME = "token";
 
 const COOKIE_OPTIONS = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict" as const,
-    maxAge: 7 * 24 * 60 * 60 * 1000 
+    secure: process.env.NODE_ENV === "production", // false on local HTTP, true on production HTTPS
+    sameSite: "lax" as const, // Changed from "strict" to "lax" for cross-port/cross-origin compatibility
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
 };
 
 export const setTokenCookie = (res: Response, token: string) => {
