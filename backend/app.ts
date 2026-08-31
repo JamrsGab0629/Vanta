@@ -8,7 +8,20 @@ import protectedRoutes from "./routes/protectedRoutes";
 import productRoutes from "./routes/productRoutes";
 import { rateLimiter } from "./middleware/rateLimiter";
 import cartRoutes from "./routes/cartRoutes";
+import checkoutRoutes from "./routes/checkoutRoutes";
+import transactionRoutes from './routes/transactionRoutes';
 
+// 👇 Import your models here to safely register associations without circular loops
+import Product from "./model/productModel";
+import { OrderItem } from "./model/orderItemModel";
+import Order from "./model/orderModel";
+
+// 👇 Register associations here so Sequelize knows how to join them
+Product.hasMany(OrderItem, { foreignKey: 'product_id', as: 'orderItems' });
+OrderItem.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
+
+Order.hasMany(OrderItem, { foreignKey: 'order_id', as: 'items' });
+OrderItem.belongsTo(Order, { foreignKey: 'order_id' });
 
 const createApp = () => {
     const app = express();
@@ -35,6 +48,9 @@ const createApp = () => {
     app.use("/api/products", productRoutes);
     app.use("/api", protectedRoutes);
     app.use("/api/cart", cartRoutes);
+    app.use("/api/checkout", checkoutRoutes); 
+    app.use('/api/transactions', transactionRoutes);
+
     // Global error handler
     app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
         if (error instanceof SyntaxError && "body" in error) {
