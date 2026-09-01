@@ -4,8 +4,9 @@ import sequelize from "../config/database";
 const User = sequelize.define("User", {
     user_id: {
         type: DataTypes.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
-        autoIncrement: true
+        allowNull: false
     },
 
     username: {
@@ -47,19 +48,19 @@ const User = sequelize.define("User", {
         defaultValue: "customer"
     },
 
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+    },
+
     is_verified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
     },
 
-    otp_code: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    
-    otp_expires_at: {
-        type: DataTypes.DATE,
-        allowNull: true,
+    is_active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
     }
 });
 
