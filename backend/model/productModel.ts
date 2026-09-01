@@ -7,7 +7,6 @@ export interface ProductAttributes {
     sku: string;
     name: string;
     category: string;
-    swatch?: string | null;
     price: number;
     stock_quantity?: number;
     description?: string | null;
@@ -56,10 +55,6 @@ Product.init(
         category: {
             type: DataTypes.STRING(50),
             allowNull: false,
-        },
-        swatch: {
-            type: DataTypes.STRING(100),
-            allowNull: true,
         },
         price: {
             type: DataTypes.DECIMAL(10, 2),

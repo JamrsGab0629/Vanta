@@ -24,7 +24,6 @@ export const createProductSchema = z.object({
 
   category: z.string().trim().min(2, 'Category is required').max(50),
 
-  swatch: z.string().trim().max(100).optional().nullable(),
 
   price: z.coerce.number().min(0, 'Price must be a positive number'),
 
