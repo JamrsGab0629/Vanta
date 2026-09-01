@@ -1,22 +1,36 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Footnote } from '../../components/auth/footnote/footnote';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
+import { AuthService } from '../../helpers/auth/auth.services';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [ReactiveFormsModule, Footnote, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login {
   private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  /** Loading state during API calls */
+  isLoading = false;
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
   });
+
+  // Control Getters
+  get email(): string {
+    return this.loginForm.get('email')?.value || '';
+  }
+
+  get password(): string {
+    return this.loginForm.get('password')?.value || '';
+  }
 
   /**
    * Helper method to check if a form control is invalid and touched/dirty.
@@ -26,14 +40,30 @@ export class Login {
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
 
-    // Connect this to your backend authentication service
-    alert('Login submitted (demo only — connect this to your backend).');
-    console.log(this.loginForm.value);
+    this.isLoading = true;
+
+    try {
+      // Login updates the AuthService's currentUser signal internally
+      await this.authService.login({ email: this.email, password: this.password });
+      
+      // Navigate to home after successful authentication
+      await this.router.navigate(['/app']);
+    } catch (error: any) {
+      const status = error?.status || error?.statusCode;
+      if (status === 400 || status === 401) {
+        alert('Invalid email or password.');
+      } else {
+        alert(error?.error?.message || error?.message || 'Login failed. Please try again.');
+      }
+      console.error('Login error:', error);
+    } finally {
+      this.isLoading = false;
+    }
   }
 }
