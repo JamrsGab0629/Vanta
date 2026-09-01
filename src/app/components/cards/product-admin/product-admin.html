@@ -1,0 +1,53 @@
+<div class="product-card" [class.inactive]="!is_active()">
+  <!-- Edit FAB Action Button -->
+  <button 
+    class="edit-fab" 
+    [attr.data-id]="id()" 
+    title="Edit product"
+    (click)="onEdit()"
+  >
+    ✎
+  </button>
+
+  <div class="idx">SKU · {{ sku() }}</div>
+  
+  <div class="product-swatch">{{ category() }}</div>
+  
+  <h3>{{ name() }}</h3>
+
+  <!-- Dynamic JSON Specs Rendering -->
+  @if (specs()) {
+    @for (spec of specs() | keyvalue; track spec.key) {
+      <div class="p-spec">
+        <span>{{ spec.key }}</span>
+        <b>{{ spec.value }}</b>
+      </div>
+    }
+  }
+
+  <!-- Bench Status Badge if present in JSON -->
+  @if (bench_status()?.status) {
+    <div class="p-spec">
+      <span>Bench Status</span>
+      <b>{{ bench_status()?.status }}</b>
+    </div>
+  }
+
+  <!-- Stock Quantity -->
+  <div class="p-spec">
+    <span>Stock Qty</span>
+    <b>{{ stock_quantity() }}</b>
+  </div>
+
+  <div class="p-footer">
+    <span class="p-price">{{ price() | currency:'USD':'symbol':'1.0-0' }}</span>
+    
+    <span 
+      class="p-stock" 
+      [class.ok]="stock_quantity() > 0" 
+      [class.low]="stock_quantity() <= 0"
+    >
+      {{ stock_quantity() > 0 ? 'IN STOCK' : 'OUT OF STOCK' }}
+    </span>
+  </div>
+</div>
