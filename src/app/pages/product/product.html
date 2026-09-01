@@ -6,49 +6,138 @@
 </div>
 
 <div class="form-card">
-  <form id="addProductForm">
+  <form id="addProductForm" (ngSubmit)="onSubmit()">
+    <!-- Row 1: Name & SKU -->
     <div class="field-row">
       <div class="field">
         <label for="np-name">Product name</label>
-        <input type="text" id="np-name" placeholder="Ridgeline RX-7800" required>
+        <input 
+          type="text" 
+          id="np-name" 
+          name="name" 
+          [ngModel]="formData().name"
+          (ngModelChange)="formData.update(f => ({ ...f, name: $event }))"
+          placeholder="Ridgeline RX-7800"
+          required
+        >
       </div>
       <div class="field">
         <label for="np-sku">SKU</label>
-        <input type="text" id="np-sku" placeholder="0114-GPU" required>
+        <input 
+          type="text" 
+          id="np-sku" 
+          name="sku" 
+          [ngModel]="formData().sku"
+          (ngModelChange)="formData.update(f => ({ ...f, sku: $event }))"
+          placeholder="0114-GPU" 
+          required
+        >
       </div>
     </div>
+
+    <!-- Row 2: Category, Price & Bench Test Status -->
     <div class="field-row">
       <div class="field">
         <label for="np-category">Category</label>
-        <select id="np-category">
-          <option>GPU</option>
-          <option>CPU</option>
-          <option>Storage</option>
-          <option>Cooling</option>
+        <select 
+          id="np-category" 
+          name="category" 
+          [ngModel]="formData().category"
+          (ngModelChange)="formData.update(f => ({ ...f, category: $event }))"
+        >
+          @for (cat of categories; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
         </select>
       </div>
       <div class="field">
         <label for="np-price">Price (USD)</label>
-        <input type="number" id="np-price" placeholder="649" required>
+        <input 
+          type="number" 
+          id="np-price" 
+          name="price" 
+          [ngModel]="formData().price"
+          (ngModelChange)="formData.update(f => ({ ...f, price: $event }))"
+          placeholder="649" 
+          required
+        >
+      </div>
+      <div class="field">
+        <label for="np-bench">Bench Test Status</label>
+        <select 
+          id="np-bench" 
+          name="benchTestStatus" 
+          [ngModel]="formData().benchTestStatus"
+          (ngModelChange)="formData.update(f => ({ ...f, benchTestStatus: $event }))"
+        >
+          @for (status of benchStatuses; track status) {
+            <option [value]="status">{{ status }}</option>
+          }
+        </select>
       </div>
     </div>
+
+    <!-- Row 3: Stock Quantity & Key Spec -->
     <div class="field-row">
       <div class="field">
         <label for="np-stock">Stock quantity</label>
-        <input type="number" id="np-stock" placeholder="120" required>
+        <input 
+          type="number" 
+          id="np-stock" 
+          name="stock_quantity" 
+          [ngModel]="formData().stock_quantity"
+          (ngModelChange)="formData.update(f => ({ ...f, stock_quantity: $event }))"
+          placeholder="120" 
+          required
+        >
       </div>
       <div class="field">
         <label for="np-spec">Key spec (short)</label>
-        <input type="text" id="np-spec" placeholder="16GB GDDR6 · 2,650 MHz">
+        <input 
+          type="text" 
+          id="np-spec" 
+          name="spec" 
+          [ngModel]="formData().spec"
+          (ngModelChange)="formData.update(f => ({ ...f, spec: $event }))"
+          placeholder="16GB GDDR6 · 2,650 MHz"
+        >
       </div>
     </div>
+
+    <!-- Row 4: Image Upload Dropzone -->
+    <div class="field">
+      <label>Product Image</label>
+      <div class="image-upload-wrapper">
+        @if (!formData().imageUrl) {
+          <label for="np-image-input" class="upload-dropzone">
+            <app-photo icon="image" [size]="26"></app-photo>
+            <span class="upload-text">Click or drag image to upload</span>
+            <input type="file" id="np-image-input" accept="image/*" (change)="onFileSelected($event)" hidden>
+          </label>
+        } @else {
+          <div class="image-preview">
+            <img [src]="formData().imageUrl" alt="Product Preview">
+            <button type="button" class="remove-img-btn" (click)="removeImage()">✕ Remove</button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Row 5: Description / Notes -->
     <div class="field">
       <label for="np-desc">Description / notes</label>
-      <textarea id="np-desc" placeholder="Bench notes, thermal data, compatibility flags..."></textarea>
+      <textarea 
+        id="np-desc" 
+        name="desc" 
+        [ngModel]="formData().desc"
+        (ngModelChange)="formData.update(f => ({ ...f, desc: $event }))"
+        placeholder="Bench notes, thermal data, compatibility flags..."
+      ></textarea>
     </div>
+
     <div class="form-actions">
       <button type="submit" class="btn-solid">ADD TO DATABASE →</button>
-      <button type="reset" class="btn-outline">CLEAR</button>
+      <button type="button" (click)="resetForm()" class="btn-outline">CLEAR</button>
     </div>
   </form>
 </div>
