@@ -2,117 +2,142 @@
   <div class="auth-form-side">
     <div class="wrap" style="padding:0 32px;">
       <div class="auth-box">
-        <div class="auth-eyebrow">CREATE ACCOUNT</div>
-        <h1>Set up your<br>Vanta account</h1>
-        <p class="auth-sub">Save builds, track orders, and get notified the moment a part you're watching is back in stock.</p>
+        @if (step === 'form') {
+          <div class="auth-eyebrow">CREATE ACCOUNT</div>
+          <h1>Set up your<br>Vanta account</h1>
+        <p class="auth-sub">Add your favorite PC parts to your bench and easily keep track of the components you want.</p>
 
-        <!-- Reactive Form Binding -->
-        <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" id="signupForm" novalidate>
-          <div class="field-row">
-            <!-- First Name -->
+          <!-- Reactive Form Binding -->
+          <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" id="signupForm" novalidate>
+            <div class="field-row">
+              <!-- First Name -->
+              <div class="field">
+                <label for="firstName">First name</label>
+                <input
+                  type="text"
+                  id="firstName"
+                  formControlName="firstName"
+                  placeholder="Alex"
+                  autocomplete="given-name"
+                  [class.error]="isInvalidAndTouched('firstName')"
+                />
+                <div class="field-error" [class.show]="isInvalidAndTouched('firstName')">
+                  Required.
+                </div>
+              </div>
+
+              <!-- Last Name -->
+              <div class="field">
+                <label for="lastName">Last name</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  formControlName="lastName"
+                  placeholder="Rivera"
+                  autocomplete="family-name"
+                  [class.error]="isInvalidAndTouched('lastName')"
+                />
+                <div class="field-error" [class.show]="isInvalidAndTouched('lastName')">
+                  Required.
+                </div>
+              </div>
+            </div>
+
+            <!-- Username -->
             <div class="field">
-              <label for="firstName">First name</label>
+              <label for="username">Username</label>
               <input
                 type="text"
-                id="firstName"
-                formControlName="firstName"
-                placeholder="Alex"
-                autocomplete="given-name"
-                [class.error]="isInvalidAndTouched('firstName')"
+                id="username"
+                formControlName="username"
+                placeholder="alexrivera"
+                autocomplete="username"
+                [class.error]="isInvalidAndTouched('username')"
               />
-              <div class="field-error" [class.show]="isInvalidAndTouched('firstName')">
+              <div class="field-error" [class.show]="isInvalidAndTouched('username')">
                 Required.
               </div>
             </div>
 
-            <!-- Last Name -->
+            <!-- Email -->
             <div class="field">
-              <label for="lastName">Last name</label>
+              <label for="email">Email</label>
               <input
-                type="text"
-                id="lastName"
-                formControlName="lastName"
-                placeholder="Rivera"
-                autocomplete="family-name"
-                [class.error]="isInvalidAndTouched('lastName')"
+                type="email"
+                id="email"
+                formControlName="email"
+                placeholder="you@gmail.com"
+                autocomplete="email"
+                [class.error]="isInvalidAndTouched('email')"
               />
-              <div class="field-error" [class.show]="isInvalidAndTouched('lastName')">
-                Required.
+              <div class="field-error" [class.show]="isInvalidAndTouched('email')">
+                Enter a valid email address.
               </div>
             </div>
-          </div>
 
-          <!-- Email -->
-          <div class="field">
-            <label for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              formControlName="email"
-              placeholder="you@domain.com"
-              autocomplete="email"
-              [class.error]="isInvalidAndTouched('email')"
-            />
-            <div class="field-error" [class.show]="isInvalidAndTouched('email')">
-              Enter a valid email address.
+            <!-- Password -->
+            <div class="field">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                formControlName="password"
+                placeholder="At least 8 characters"
+                autocomplete="new-password"
+                [class.error]="isInvalidAndTouched('password')"
+              />
+
+              <!-- Password Strength Meter -->
+              <div class="strength" id="strengthMeter">
+                @for (bar of [0, 1, 2, 3]; track $index) {
+                  <div [style.background]="$index < passwordScore ? strengthColors[passwordScore] : 'var(--line)'"></div>
+                }
+              </div>
+              <div class="strength-label" id="strengthLabel">{{ strengthLabel }}</div>
+              <div class="field-error" [class.show]="isInvalidAndTouched('password')">
+                Password must be at least 8 characters.
+              </div>
             </div>
-          </div>
 
-          <!-- Password -->
-          <div class="field">
-            <label for="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              formControlName="password"
-              placeholder="At least 8 characters"
-              autocomplete="new-password"
-              [class.error]="isInvalidAndTouched('password')"
-            />
-
-            <!-- Password Strength Meter -->
-            <div class="strength" id="strengthMeter">
-              @for (bar of [0, 1, 2, 3]; track $index) {
-                <div [style.background]="$index < passwordScore ? strengthColors[passwordScore] : 'var(--line)'"></div>
-              }
+            <!-- Confirm Password -->
+            <div class="field">
+              <label for="confirmPassword">Confirm password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                formControlName="confirmPassword"
+                placeholder="Re-enter password"
+                autocomplete="new-password"
+                [class.error]="isConfirmPasswordInvalid"
+              />
+              <div class="field-error" [class.show]="isConfirmPasswordInvalid">
+                Passwords don't match.
+              </div>
             </div>
-            <div class="strength-label" id="strengthLabel">{{ strengthLabel }}</div>
-            <div class="field-error" [class.show]="isInvalidAndTouched('password')">
-              Password must be at least 8 characters.
+
+            <!-- Terms Checkbox -->
+            <div class="terms-row">
+              <input type="checkbox" id="terms" formControlName="terms" />
+              <label for="terms">
+                I agree to Vanta's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+              </label>
             </div>
-          </div>
-
-          <!-- Confirm Password -->
-          <div class="field">
-            <label for="confirmPassword">Confirm password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              formControlName="confirmPassword"
-              placeholder="Re-enter password"
-              autocomplete="new-password"
-              [class.error]="isConfirmPasswordInvalid"
-            />
-            <div class="field-error" [class.show]="isConfirmPasswordInvalid">
-              Passwords don't match.
+            <div class="field-error terms-error" [class.show]="isInvalidAndTouched('terms')">
+              You must accept the terms to continue.
             </div>
-          </div>
 
-          <!-- Terms Checkbox -->
-          <div class="terms-row">
-            <input type="checkbox" id="terms" formControlName="terms" />
-            <label for="terms">
-              I agree to Vanta's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-            </label>
-          </div>
-          <div class="field-error terms-error" [class.show]="isInvalidAndTouched('terms')">
-            You must accept the terms to continue.
-          </div>
+            <button type="submit" class="btn-solid">CREATE ACCOUNT →</button>
+          </form>
 
-          <button type="submit" class="btn-solid">CREATE ACCOUNT →</button>
-        </form>
-
-        <div class="signup-note">Already have an account? <a [routerLink]="['..']">Log in</a></div>
+          <div class="signup-note">Already have an account? <a [routerLink]="['..']">Log in</a></div>
+        } @else {
+          <app-otp
+            [email]="signupForm.value.email"
+            (verified)="onOtpVerified($event)"
+            (resend)="onOtpResend()"
+            (back)="onOtpBack()"
+          ></app-otp>
+        }
       </div>
     </div>
   </div>
@@ -127,21 +152,21 @@
         <div class="perk-row">
           <div class="mark">01</div>
           <div>
-            <h4>Restock alerts</h4>
-            <p>Get notified the moment a watched part is back — no refreshing a page all day.</p>
+            <h4>Stocks are benched</h4>
+            <p>Always sure the product is great and always be great..</p>
           </div>
         </div>
         <div class="perk-row">
           <div class="mark">02</div>
           <div>
-            <h4>Saved builds</h4>
-            <p>Keep compatibility-checked builds in your account and pick up where you left off.</p>
+            <h4>add items</h4>
+            <p>Add your desire items.</p>
           </div>
         </div>
         <div class="perk-row">
           <div class="mark">03</div>
           <div>
-            <h4>Order tracking</h4>
+            <h4>Order Now</h4>
             <p>Real ship and bench-test status for every order, not just a generic "processing."</p>
           </div>
         </div>

@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { Stage } from "../../components/app/stage/stage";
+import { CheckoutItem } from "../../components/app/checkout-item/checkout-item";
 
 @Component({
   selector: 'app-checkout',
-  imports: [],
+  imports: [Stage, CheckoutItem],
   templateUrl: './checkout.html',
   styleUrl: './checkout.css',
 })

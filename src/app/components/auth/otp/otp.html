@@ -1,0 +1,41 @@
+<div class="otp-box">
+  <div class="auth-eyebrow">VERIFY IT'S YOU</div>
+  <h1>Enter the code</h1>
+  <p class="auth-sub">
+    We sent a 6-digit code to <strong>{{ maskedEmail }}</strong>. It expires in 10 minutes.
+  </p>
+
+  <div class="otp-digits" (paste)="onPaste($event)">
+    @for (digit of digits; track $index) {
+      <input
+        #digitInput
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        maxlength="1"
+        autocomplete="one-time-code"
+        class="otp-digit"
+        [formControl]="digit"
+        [class.error]="errorMessage"
+        (input)="onDigitInput($index, $event)"
+        (keydown)="onKeydown($index, $event)"
+      />
+    }
+  </div>
+
+  <div class="field-error" [class.show]="errorMessage">{{ errorMessage }}</div>
+
+  <button type="button" class="btn-solid" (click)="onVerify()">VERIFY →</button>
+
+  <div class="otp-resend">
+    @if (canResend()) {
+      <a href="#" (click)="onResend(); $event.preventDefault()">Resend code</a>
+    } @else {
+      <span>Resend code in {{ resendCountdownLabel() }}</span>
+    }
+  </div>
+
+  <div class="signup-note">
+    <a href="#" (click)="onBack(); $event.preventDefault()">← Back to edit details</a>
+  </div>
+</div>

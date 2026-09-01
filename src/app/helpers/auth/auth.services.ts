@@ -1,6 +1,7 @@
-import { Injectable, inject } from '@angular/core';
-import { CoreService } from '../core.service'; // Path to your Core service
+import { Injectable, inject, signal } from '@angular/core';
+import { CoreService } from '../core.service'; 
 import {
+  AuthUser, // Import your AuthUser schema
   LoginInput,
   LoginOutput,
   LogoutOutput,
@@ -10,8 +11,6 @@ import {
   VerifyOtpOutput,
   ResendOtpInput,
   ResendOtpOutput,
-  UserStateInput,
-  UserStateOutput,
 } from './auth.interface';
 
 @Injectable({
@@ -21,26 +20,41 @@ export class AuthService {
   private core = inject(CoreService);
   private baseUrl = '/api/auth/';
 
+  // Reactive signal state holding the authenticated user
+  currentUser = signal<AuthUser | null>(null);
+
   /**
    * POST /api/users/login
    */
   async login(input: LoginInput): Promise<LoginOutput> {
-    return this.core.fetcher<LoginOutput>(
+    const response = await this.core.fetcher<LoginOutput>(
       `${this.baseUrl}login`,
       'POST',
       input
     );
+
+    // Update state with returned user details
+    if (response?.user) {
+      this.currentUser.set(response.user);
+    }
+
+    return response;
   }
 
   /**
    * POST /api/users/logout
    */
   async logout(payload?: Record<string, any>): Promise<LogoutOutput> {
-    return this.core.fetcher<LogoutOutput>(
-      `${this.baseUrl}logout`,
-      'POST',
-      payload
-    );
+    try {
+      return await this.core.fetcher<LogoutOutput>(
+        `${this.baseUrl}logout`,
+        'POST',
+        payload
+      );
+    } finally {
+      // Clear state on logout
+      this.currentUser.set(null);
+    }
   }
 
   /**
@@ -48,7 +62,7 @@ export class AuthService {
    */
   async signup(input: SignupInput): Promise<SignupOutput> {
     return this.core.fetcher<SignupOutput>(
-      `${this.baseUrl}signup`,
+      `${this.baseUrl}register`,
       'POST',
       input
     );
@@ -70,19 +84,8 @@ export class AuthService {
    */
   async resendOtp(input: ResendOtpInput): Promise<ResendOtpOutput> {
     return this.core.fetcher<ResendOtpOutput>(
-      `${this.baseUrl}resend-otp`,
+      `${this.baseUrl}resend-verification`,
       'POST',
-      input
-    );
-  }
-
-  /**
-   * GET /api/users/state
-   */
-  async getState(input?: UserStateInput): Promise<UserStateOutput> {
-    return this.core.fetcher<UserStateOutput>(
-      `${this.baseUrl}state`,
-      'GET',
       input
     );
   }

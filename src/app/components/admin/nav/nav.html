@@ -1,0 +1,27 @@
+<div class="sidebar">
+  <div class="logo">VAN<span>TA</span></div>
+  <div class="logo-tag">Admin Console</div>
+
+  <div class="nav-group">
+    <div class="nav-label">Manage</div>
+    @for (panel of panels; track panel.url_suffix) {
+      <a
+      class="nav-item"
+      [class.active]="current_url_suffix() === panel.url_suffix"
+      [attr.data-panel]="panel.attr_name"
+      [routerLink]="[panel.url_suffix]"
+      routerLinkActive="active"
+      >
+        <span class="ic">{{ panel.symbol }}</span> {{ panel.name }}
+      </a>
+    }
+  </div>
+
+  <div class="sidebar-foot">
+    <div class="avatar">JS</div>
+    <div>
+      <div class="who">James Santos</div>
+      <div class="role">ADMIN</div>
+    </div>
+  </div>
+</div>

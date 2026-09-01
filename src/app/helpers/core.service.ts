@@ -10,7 +10,7 @@ export class CoreService {
 
   constructor() {
     this.client = axios.create({
-      baseURL: 'https://api.yourdomain.com', // Adjust or remove your base URL here
+      baseURL: 'http://localhost:3000', // Adjust or remove your base URL here
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',

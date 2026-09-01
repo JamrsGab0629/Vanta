@@ -1,27 +1,46 @@
 /* You can add global styles to this file, and also import other style files */
 
 :root {
-  --bg: #0a0a0a;
+  /* Colors - Backgrounds & Panels */
+  --bg: #0b0b0c;
   --bg-raised: #111111;
-  --black: #0B0B0C;
   --panel: #141416;
-  --bone: #EDEDE8;
-  --bone-dim: #A6A6A0;
+  --panel2: #1B1B1E;
+  --black: #0B0B0C;
+
+  /* Colors - Borders & Lines */
+  --border: #232326;
+  --border-soft: #1c1c1f;
   --line: #262626;
   --line-soft: #1a1a1a;
-  --text: #f2f0ec;
-  --text-dim: #8a8886;
-  --text-faint: #55534f;
-  --copper: #d9812f;
-  --copper-soft: #d9812f22;
-  --copper-bright: #D98B52;
-  --green: #6fae63;
 
+  /* Colors - Text & Neutrals */
+  --text: #f2f1ee;
+  --text-dim: #8b8b8f;
+  --text-faint: #59595d;
+  --bone: #EDEDE8;
+  --bone-dim: #A6A6A0;
+
+  /* Colors - Accent & Status */
+  --copper: #d97a3d;
+  --copper-soft: #d9812f22;
+  --copper-bright: #e88a4c;
+  --green: #4caf6d;
+  --red: #d95d5d;
   --error: #C24B3F;
   --ok: #7FA871;
 
+  /* Colors - Admin */
+  --bone: #EDEDE8;
+  --bone-dim: #A6A6A0;
+
+  /* Grid Column */
+  --history-grid-cols: 1.5fr 2fr 2fr 1fr 1fr 1.2fr;
+
+  /* Typography */
   --font-display: 'Archivo Expanded', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
+  --body: 'Archivo', sans-serif;
 }
 
 * {

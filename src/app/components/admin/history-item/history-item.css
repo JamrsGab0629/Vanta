@@ -1,0 +1,65 @@
+.table-row {
+  display: grid;
+  grid-template-columns: var(--history-grid-cols, 1.5fr 2fr 2fr 1fr 1fr 1.2fr);
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-row:hover {
+  background: var(--panel);
+}
+
+.table-row > div {
+  padding: 16px 20px;
+  font-size: 13.5px;
+  white-space: nowrap;
+}
+
+.ref-code {
+  font-family: var(--mono);
+  color: var(--copper-bright);
+}
+
+.cash-val {
+  font-family: var(--mono);
+  color: var(--bone);
+}
+
+.qty-val {
+  font-family: var(--mono);
+  color: var(--bone-dim);
+}
+
+.time-val {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--bone-dim);
+}
+
+.status-pill {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  display: inline-block;
+}
+
+.status-pill.delivered {
+  color: var(--ok);
+  border: 1px solid var(--ok);
+}
+
+.status-pill.transit {
+  color: var(--copper-bright);
+  border: 1px solid var(--copper);
+}
+
+.status-pill.pending {
+  color: var(--bone-dim);
+  border: 1px solid var(--bone-dim);
+}

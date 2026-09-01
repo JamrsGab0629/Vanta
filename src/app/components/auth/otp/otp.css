@@ -1,0 +1,115 @@
+.otp-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.otp-box .auth-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--copper);
+}
+
+.otp-box h1 {
+  font-family: var(--font-display);
+  color: var(--text);
+  margin: 8px 0 12px;
+}
+
+.otp-box .auth-sub {
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.otp-digits {
+  display: flex;
+  gap: 10px;
+  margin: 24px 0 8px;
+}
+
+.otp-digit {
+  width: 48px;
+  height: 56px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  transition: border-color 0.15s ease;
+}
+
+.otp-digit:focus {
+  outline: none;
+  border-color: var(--copper-bright);
+}
+
+.otp-digit.error {
+  border-color: var(--error);
+}
+
+.otp-box .field-error {
+  display: none;
+  color: var(--error);
+  font-size: 0.8rem;
+  margin-top: 6px;
+}
+
+.otp-box .field-error.show {
+  display: block;
+}
+
+.otp-box .btn-solid {
+  margin-top: 12px;
+  width: 100%;
+  background: var(--copper);
+  color: var(--black);
+  border: none;
+  border-radius: 8px;
+  padding: 14px 0;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.otp-box .btn-solid:hover {
+  background: var(--copper-bright);
+}
+
+.otp-resend {
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.otp-resend a {
+  cursor: pointer;
+  color: var(--copper);
+}
+
+.otp-resend a:hover {
+  color: var(--copper-bright);
+}
+
+.otp-box .signup-note {
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.otp-box .signup-note a {
+  color: var(--copper);
+  cursor: pointer;
+}
+
+.otp-box .signup-note a:hover {
+  color: var(--copper-bright);
+}
