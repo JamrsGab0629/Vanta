@@ -43,6 +43,22 @@
               </div>
             </div>
 
+            <!-- Username -->
+            <div class="field">
+              <label for="username">Username</label>
+              <input
+                type="text"
+                id="username"
+                formControlName="username"
+                placeholder="alexrivera"
+                autocomplete="username"
+                [class.error]="isInvalidAndTouched('username')"
+              />
+              <div class="field-error" [class.show]="isInvalidAndTouched('username')">
+                Required.
+              </div>
+            </div>
+
             <!-- Email -->
             <div class="field">
               <label for="email">Email</label>

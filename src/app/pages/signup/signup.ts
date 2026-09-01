@@ -2,7 +2,9 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Footnote } from '../../components/auth/footnote/footnote';
 import { Otp } from '../../components/auth/otp/otp';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
+import { AuthService } from "../../helpers/auth/auth.services";
+import { SignupInput, SignupOutput } from '../../helpers/auth/auth.interface';
 
 @Component({
   selector: 'app-signup',
@@ -13,9 +15,14 @@ import { RouterLink } from "@angular/router";
 })
 export class Signup {
   private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   readonly strengthColors = ['#C24B3F', '#C24B3F', '#D98B52', '#D98B52', '#7FA871'];
   readonly strengthLabels = ['Too short', 'Weak', 'Okay', 'Good', 'Strong'];
+
+  /** Loading state during API calls */
+  isLoading = false;
 
   /** Which panel is showing inside the auth box: account details, or the OTP check. */
   step: 'form' | 'otp' = 'form';
@@ -24,6 +31,7 @@ export class Signup {
     {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
+      username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required],
@@ -31,6 +39,40 @@ export class Signup {
     },
     { validators: this.passwordMatchValidator }
   );
+
+  // Field Getters
+  get firstName(): string {
+    return this.signupForm.get('firstName')?.value || '';
+  }
+
+  get lastName(): string {
+    return this.signupForm.get('lastName')?.value || '';
+  }
+
+  get username(): string {
+    return this.signupForm.get('username')?.value || '';
+  }
+
+  get email(): string {
+    return this.signupForm.get('email')?.value || '';
+  }
+
+  get password(): string {
+    return this.signupForm.get('password')?.value || '';
+  }
+
+  /**
+   * Builds the formatted payload expected by the backend API.
+   */
+  get apiPayload(): SignupInput {
+    return {
+      username: this.username,
+      first_name: this.firstName,
+      last_name: this.lastName,
+      email: this.email,
+      password: this.password,
+    };
+  }
 
   /**
    * Custom validator to ensure password and confirmPassword match.
@@ -45,7 +87,7 @@ export class Signup {
    * Calculates password strength score (0 - 4).
    */
   get passwordScore(): number {
-    const val = this.signupForm.get('password')?.value || '';
+    const val = this.password;
     let score = 0;
     if (val.length >= 8) score++;
     if (val.length >= 12) score++;
@@ -55,8 +97,7 @@ export class Signup {
   }
 
   get strengthLabel(): string {
-    const val = this.signupForm.get('password')?.value || '';
-    return val.length === 0 ? 'Minimum 8 characters' : this.strengthLabels[this.passwordScore];
+    return this.password.length === 0 ? 'Minimum 8 characters' : this.strengthLabels[this.passwordScore];
   }
 
   // Helper getters for template validation checks
@@ -71,26 +112,60 @@ export class Signup {
     return !!(isTouched && (confirmControl?.invalid || this.signupForm.hasError('passwordMismatch')));
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.signupForm.invalid) {
       this.signupForm.markAllAsTouched();
       return;
     }
 
-    // Connect this to your backend service/API call.
-    // On success the backend sends an OTP to the new user's email.
-    this.step = 'otp';
+    this.isLoading = true;
+    try {
+      const response: SignupOutput = await this.authService.signup(this.apiPayload);
+
+      if (response.requiresOtp) {
+        this.step = 'otp';
+      } else {
+        await this.router.navigate(['/login']);
+      }
+    } catch (error: any) {
+      if (error?.status === 400 || error?.statusCode === 400) {
+        alert('Username or email is already taken.');
+      } else {
+        alert(error?.error?.message || error?.message || 'Signup failed. Please try again.');
+      }
+      console.error('Signup error:', error);
+    } finally {
+      this.isLoading = false;
+    }
   }
 
-  onOtpVerified(code: string): void {
-    // Connect this to your backend to confirm the OTP and finish account creation.
-    alert('Account creation submitted (demo only — connect this to your backend).');
-    console.log({ ...this.signupForm.value, code });
+  async onOtpVerified(code: string): Promise<void> {
+    this.isLoading = true;
+    try {
+      await this.authService.verifyOtp({ email: this.email, otp: code });
+      await this.router.navigate(['/login']);
+    } catch (error: any) {
+      if (error?.status === 400 || error?.statusCode === 400) {
+        alert('OTP code does not match.');
+      } else {
+        alert(error?.error?.message || error?.message || 'Verification failed. Please try again.');
+      }
+      console.error('OTP verification error:', error);
+    } finally {
+      this.isLoading = false;
+    }
   }
 
-  onOtpResend(): void {
-    // Connect this to your backend to send a new OTP.
-    console.log('Resending OTP to', this.signupForm.value.email);
+  async onOtpResend(): Promise<void> {
+    this.isLoading = true;
+    try {
+      await this.authService.resendOtp({ email: this.email });
+      alert('A new OTP has been sent to your email.');
+    } catch (error) {
+      console.error('OTP resend error:', error);
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   onOtpBack(): void {
