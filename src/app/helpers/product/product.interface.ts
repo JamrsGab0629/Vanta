@@ -3,42 +3,68 @@ export interface FetchProductsInput {
   category?: string;
   page?: number;
   limit?: number;
+  is_active?: boolean;
 }
 
 export interface FetchProductInput {
-  id: string;
+  id: number;
 }
 
 export interface PublishProductInput {
-  title: string;
+  sku: string;
+  name: string;
+  category: string;
   price: number;
-  description: string;
-  stock: number;
+  stock_quantity: number;
+  description?: string | null;
+  specs?: Record<string, string | number> | null;
+  bench_stats?: Record<string, string | number> | null;
+  image_url?: string | null;
+  is_active?: boolean;
+  created_by?: number | null;
 }
 
 export interface ModifyProductQuantityInput {
-  id: string;
-  quantity: number;
+  id: number;
+  stock_quantity: number;
 }
 
 export interface ModifyProductInformationInput {
-  id: string;
-  title?: string;
+  id: number;
+  sku?: string;
+  name?: string;
+  category?: string;
   price?: number;
-  description?: string;
+  description?: string | null;
+  specs?: Record<string, string | number> | null;
+  bench_stats?: Record<string, string | number> | null;
+  image_url?: string | null;
+  is_active?: boolean;
 }
 
 // Outputs
 export interface ProductItem {
-  id: string;
-  title: string;
+  product_id: number;
+  sku: string;
+  name: string;
+  category: string;
   price: number;
-  description: string;
-  stock: number;
+  stock_quantity: number;
+  description: string | null;
+  specs: Record<string, string | number> | null;
+  bench_stats: Record<string, string | number> | null;
+  image_url: string | null;
+  is_active: boolean;
+  created_by: number | null;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface FetchProductsOutput {
   products: ProductItem[];
   total: number;
+}
+
+export interface UploadImageOutput {
+  url: string;
 }

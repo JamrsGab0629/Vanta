@@ -1,14 +1,16 @@
 import { Injectable, inject } from '@angular/core';
-import { CoreService } from '../core.service'; // Path to your Core service
+import { CoreService } from '../core.service';
 import {
   FetchProductsInput,
   FetchProductsOutput,
-  FetchProductInput,
   PublishProductInput,
-  ModifyProductQuantityInput,
   ModifyProductInformationInput,
   ProductItem,
 } from './product.interface';
+
+export interface UploadImageOutput {
+  url: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -18,57 +20,89 @@ export class ProductService {
   private baseUrl = 'api/products/';
 
   /**
-   * GET api/products/fetch-products
+   * GET api/products/
+   * Fetch all products (supports query params if needed)
    */
-  async fetchProducts(input?: FetchProductsInput): Promise<FetchProductsOutput> {
+  async getProducts(queryParams?: FetchProductsInput): Promise<FetchProductsOutput> {
     return this.core.fetcher<FetchProductsOutput>(
-      `${this.baseUrl}fetch-products`,
+      this.baseUrl,
       'GET',
-      input
+      queryParams
     );
   }
 
   /**
-   * GET api/products/fetch-product
+   * GET api/products/:id
+   * Fetch a single product by ID
    */
-  async fetchProduct(input: FetchProductInput): Promise<ProductItem> {
+  async getProductById(id: string): Promise<ProductItem> {
     return this.core.fetcher<ProductItem>(
-      `${this.baseUrl}fetch-product`,
-      'GET',
-      input
+      `${this.baseUrl}${id}`,
+      'GET'
     );
   }
 
   /**
-   * POST api/products/publish-product
+   * GET api/products/sku/:sku
+   * Fetch a single product by SKU
    */
-  async publishProduct(input: PublishProductInput): Promise<ProductItem> {
+  async getProductBySku(sku: string): Promise<ProductItem> {
     return this.core.fetcher<ProductItem>(
-      `${this.baseUrl}publish-product`,
+      `${this.baseUrl}sku/${sku}`,
+      'GET'
+    );
+  }
+
+  /**
+   * POST api/products/upload-image
+   * Upload image endpoint
+   */
+  async uploadImage(file: File): Promise<UploadImageOutput> {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    return this.core.fetcher<UploadImageOutput>(
+      `${this.baseUrl}upload-image`,
+      'POST',
+      formData
+    );
+  }
+
+  /**
+   * POST api/products/
+   * Creates a product. Handles both plain JSON objects and FormData (if including image file directly)
+   */
+  async createProduct(input: PublishProductInput | FormData): Promise<ProductItem> {
+    return this.core.fetcher<ProductItem>(
+      this.baseUrl,
       'POST',
       input
     );
   }
 
   /**
-   * PUT api/products/modify-product-quantity
+   * PUT api/products/:id
+   * Updates product details by ID
    */
-  async modifyProductQuantity(input: ModifyProductQuantityInput): Promise<ProductItem> {
+  async updateProduct(
+    id: string,
+    input: Partial<ModifyProductInformationInput> | FormData
+  ): Promise<ProductItem> {
     return this.core.fetcher<ProductItem>(
-      `${this.baseUrl}modify-product-quantity`,
+      `${this.baseUrl}${id}`,
       'PUT',
       input
     );
   }
 
   /**
-   * PUT api/products/modify-product-information
+   * DELETE api/products/:id
+   * Deletes a product by ID
    */
-  async modifyProductInformation(input: ModifyProductInformationInput): Promise<ProductItem> {
-    return this.core.fetcher<ProductItem>(
-      `${this.baseUrl}modify-product-information`,
-      'PUT',
-      input
+  async deleteProduct(id: string): Promise<{ message: string }> {
+    return this.core.fetcher<{ message: string }>(
+      `${this.baseUrl}${id}`,
+      'DELETE'
     );
   }
 }
