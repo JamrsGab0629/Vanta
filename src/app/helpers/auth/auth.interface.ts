@@ -1,14 +1,15 @@
 // --- Inputs ---
 export interface LoginInput {
-  email?: string;
-  password?: string;
+  email: string;
+  password: string;
 }
 
 export interface SignupInput {
+  username: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  password?: string;
-  firstName?: string;
-  lastName?: string;
+  password: string;
 }
 
 export interface VerifyOtpInput {
@@ -20,18 +21,15 @@ export interface ResendOtpInput {
   email: string;
 }
 
-export interface UserStateInput {
-  userId?: string;
-}
-
 // --- Outputs ---
 export interface AuthUser {
-  id: string;
+  user_id: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
-  isVerified: boolean;
-  createdAt: string;
+  first_name?: string;
+  last_name?: string;
+  username?: string;
+  is_verified: boolean;
+  created_at: string;
 }
 
 export interface LoginOutput {
@@ -41,7 +39,7 @@ export interface LoginOutput {
 
 export interface SignupOutput {
   message: string;
-  userId: string;
+  user_id: string;
   requiresOtp: boolean;
 }
 
@@ -58,9 +56,4 @@ export interface ResendOtpOutput {
 export interface LogoutOutput {
   success: boolean;
   message?: string;
-}
-
-export interface UserStateOutput {
-  isAuthenticated: boolean;
-  user?: AuthUser;
 }
