@@ -16,7 +16,7 @@ export class Nav implements OnInit{
 
   panels = [
     { url_suffix: "home", attr_name: "history", name: "History", symbol: "▤" },
-    { url_suffix: "database", attr_name: "database", name: "Database", symbol: "◧"},
+    { url_suffix: "database", attr_name: "database", name: "Products", symbol: "◧"},
     { url_suffix: "product", attr_name: "add-product", name: "Add Product", symbol: "+" }
   ]
 

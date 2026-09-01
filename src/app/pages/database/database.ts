@@ -33,6 +33,12 @@ export class Database implements OnInit {
   selectedCategory = signal<string>('all');
   categories = signal<string[]>(["all", 'GPU', 'CPU', 'SSD', "RAM", "MOTHERBOARD"]);
 
+  // Edit Modal Signals
+  isEditModalOpen = signal<boolean>(false);
+  activeProduct = signal<ProductItem | null>(null);
+  tempPrice = signal<number>(0);
+  tempQuantityToAdd = signal<number>(0);
+
   filteredProducts = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
     const category = this.selectedCategory();
@@ -52,9 +58,7 @@ export class Database implements OnInit {
 
   async fetchProducts(): Promise<void> {
     try {
-      // Handles Promise<FetchProductsOutput>
       const response = await this.productService.getProducts();
-      // Adjust property access if response wraps products array (e.g., response.products)
       this.products.set(Array.isArray(response) ? response : (response as any).products || []);
     } catch (err) {
       console.error('Error fetching products:', err);
@@ -65,8 +69,46 @@ export class Database implements OnInit {
     this.selectedCategory.set(category);
   }
 
+  // Opens the modal when the pencil icon is clicked
   onEditProduct(productId: string | number): void {
-    alert("Edit in process");
-    console.log('Edit product requested:', productId);
+    const product = this.products().find((p) => p.id === productId);
+    if (product) {
+      this.activeProduct.set(product);
+      this.tempPrice.set(product.price);
+      this.tempQuantityToAdd.set(0);
+      this.isEditModalOpen.set(true);
+    }
+  }
+
+  closeEditModal(): void {
+    this.isEditModalOpen.set(false);
+    this.activeProduct.set(null);
+  }
+
+  saveProductEdit(): void {
+    const prod = this.activeProduct();
+    if (prod) {
+      this.products.update((list) =>
+        list.map((p) => {
+          if (p.id === prod.id) {
+            return {
+              ...p,
+              price: Number(this.tempPrice()),
+              stock_quantity: p.stock_quantity + Number(this.tempQuantityToAdd() || 0),
+            };
+          }
+          return p;
+        })
+      );
+    }
+    this.closeEditModal();
+  }
+
+  deleteProduct(): void {
+    const prod = this.activeProduct();
+    if (prod && confirm(`Are you sure you want to delete ${prod.name}?`)) {
+      this.products.update((list) => list.filter((p) => p.id !== prod.id));
+      this.closeEditModal();
+    }
   }
 }
