@@ -5,18 +5,47 @@
   </div>
   <div class="search-box">
     <span class="ic">⌕</span>
-    <input type="text" id="dbSearch" placeholder="Search products...">
+    <input 
+      type="text" 
+      id="dbSearch" 
+      placeholder="Search products..."
+      [ngModel]="searchQuery()"
+      (ngModelChange)="searchQuery.set($event)"
+    />
   </div>
 </div>
 
 <div class="db-toolbar">
   <div class="filter-chips" id="filterChips">
-    <div class="chip active" data-cat="all">All</div>
-    <div class="chip" data-cat="GPU">GPU</div>
-    <div class="chip" data-cat="CPU">CPU</div>
-    <div class="chip" data-cat="Storage">Storage</div>
-    <div class="chip" data-cat="Cooling">Cooling</div>
+    @for (cat of categories(); track cat) {
+      <div 
+        class="chip" 
+        [class.active]="selectedCategory() === cat"
+        (click)="selectCategory(cat)"
+      >
+        {{ cat }}
+      </div>
+    }
   </div>
 </div>
 
-<app-products></app-products>
+<div class="product-grid">
+  @for (item of filteredProducts(); track item.id) {
+    <app-product-admin
+      [id]="item.id"
+      [name]="item.name"
+      [image_url]="item.image_url ?? null"
+      [price]="item.price"
+      [sku]="item.sku"
+      [category]="item.category"
+      [stock_quantity]="item.stock_quantity"
+      [description]="item.description ?? null"
+      [is_active]="item.is_active ?? true"
+      [specs]="item.specs ?? null"
+      [bench_status]="item.bench_status ?? null"
+      (edit)="onEditProduct($event)"
+    ></app-product-admin>
+  } @empty {
+    <div class="empty-state">No products found.</div>
+  }
+</div>
