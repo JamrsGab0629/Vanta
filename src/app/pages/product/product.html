@@ -7,6 +7,33 @@
 
 <div class="form-card">
   <form id="addProductForm">
+
+    <div class="field">
+      <label>Product image</label>
+
+      @if (!imagePreviewUrl()) {
+        <label
+          class="image-drop"
+          (drop)="onImageDrop($event)"
+          (dragover)="onImageDragOver($event)"
+        >
+          <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden>
+          <span class="image-drop-icon">⇧</span>
+          <span class="image-drop-text">Click to upload, or drag an image here</span>
+          <span class="image-drop-hint">One image per product · JPG, PNG, or WEBP</span>
+        </label>
+      } @else {
+        <div class="image-preview">
+          <img [src]="imagePreviewUrl()" alt="Product image preview">
+          <button type="button" class="image-remove" (click)="removeImage()" title="Remove image">✕</button>
+        </div>
+      }
+
+      @if (imageError()) {
+        <div class="field-error show">{{ imageError() }}</div>
+      }
+    </div>
+
     <div class="field-row">
       <div class="field">
         <label for="np-name">Product name</label>
@@ -28,7 +55,7 @@
         </select>
       </div>
       <div class="field">
-        <label for="np-price">Price (USD)</label>
+        <label for="np-price">Price (PHP)</label>
         <input type="number" id="np-price" placeholder="649" required>
       </div>
     </div>

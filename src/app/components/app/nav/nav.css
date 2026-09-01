@@ -78,3 +78,27 @@
   align-items: center;
   justify-content: center;
 }
+
+.logout-btn {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.logout-btn:hover {
+  border-color: var(--copper);
+  color: var(--copper);
+}
+
+.logout-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

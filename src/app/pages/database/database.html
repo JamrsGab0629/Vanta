@@ -3,9 +3,15 @@
     <h1>Product Database</h1>
     <div class="desc">Click the edit icon on any product to update its details.</div>
   </div>
-  <div class="search-box">
-    <span class="ic">⌕</span>
-    <input type="text" id="dbSearch" placeholder="Search products...">
+  <div class="topbar-actions">
+    <div class="search-box">
+      <span class="ic">⌕</span>
+      <input type="text" id="dbSearch" placeholder="Search products...">
+    </div>
+    <a class="manage-fab" routerLink="/admin/product/manage" title="Manage stock, price & delete">
+      <span class="ic">✎</span>
+      <span>Manage Products</span>
+    </a>
   </div>
 </div>
 

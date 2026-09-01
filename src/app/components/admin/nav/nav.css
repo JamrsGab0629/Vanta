@@ -157,3 +157,32 @@
     padding-top: 0;
   }
 }
+
+.logout-btn {
+  margin-left: auto;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  color: var(--bone-dim);
+  font-family: var(--mono);
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all .15s ease;
+}
+
+.logout-btn:hover {
+  border-color: var(--copper);
+  color: var(--copper);
+  background: var(--panel);
+}
+
+.logout-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+

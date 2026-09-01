@@ -52,6 +52,39 @@
   font-size: 13px;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.manage-fab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--copper);
+  border: 1px solid var(--copper);
+  color: var(--black);
+  padding: 0 18px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.manage-fab .ic {
+  font-size: 15px;
+}
+
+.manage-fab:hover {
+  background: var(--copper-bright);
+  border-color: var(--copper-bright);
+}
+
 .db-toolbar {
   display: flex;
   justify-content: space-between;
@@ -97,5 +130,15 @@
 
   .search-box {
     width: 100%;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .manage-fab {
+    justify-content: center;
+    padding: 10px 18px;
   }
 }

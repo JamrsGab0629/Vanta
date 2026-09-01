@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { Transactions } from '../../components/admin/transactions/transactions';
 
 @Component({
@@ -7,4 +7,11 @@ import { Transactions } from '../../components/admin/transactions/transactions';
   templateUrl: './history.html',
   styleUrl: './history.css',
 })
-export class History {}
+export class History {
+  searchTerm = signal('');
+
+  onSearchInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchTerm.set(value);
+  }
+}

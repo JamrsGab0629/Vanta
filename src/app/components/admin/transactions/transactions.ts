@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { HistoryItem } from '../history-item/history-item';
 
 @Component({
@@ -7,4 +7,6 @@ import { HistoryItem } from '../history-item/history-item';
   templateUrl: './transactions.html',
   styleUrl: './transactions.css',
 })
-export class Transactions {}
+export class Transactions {
+  @Input() searchTerm = '';
+}

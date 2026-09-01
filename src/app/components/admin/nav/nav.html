@@ -23,5 +23,12 @@
       <div class="who">James Santos</div>
       <div class="role">ADMIN</div>
     </div>
+    <button
+      class="logout-btn"
+      type="button"
+      title="Log out"
+      [disabled]="loggingOut()"
+      (click)="logout()"
+    >⏻</button>
   </div>
 </div>

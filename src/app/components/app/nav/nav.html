@@ -11,5 +11,12 @@
       <div class="id">ID: #7402-VN</div>
     </div>
     <div class="avatar">JS</div>
+    <button
+      class="logout-btn"
+      type="button"
+      title="Log out"
+      [disabled]="loggingOut()"
+      (click)="logout()"
+    >⏻</button>
   </div>
 </nav>
