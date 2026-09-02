@@ -10,8 +10,9 @@ export class CoreService {
 
   constructor() {
     this.client = axios.create({
-      baseURL: 'http://localhost:3000', // Adjust or remove your base URL here
+      baseURL: 'http://localhost:3000',
       timeout: 10000,
+      withCredentials: true, // <-- Automatically sends & receives HttpOnly cookies cross-origin
       headers: {
         'Content-Type': 'application/json',
       },
@@ -22,24 +23,19 @@ export class CoreService {
       retries: 3,
       retryDelay: axiosRetry.exponentialDelay,
       retryCondition: (error) => {
-        // Retry on network errors or 5xx server status codes
-        return axiosRetry.isNetworkOrIdempotentRequestError(error) ||
-               (error.response?.status ? error.response.status >= 500 : false);
+        return (
+          axiosRetry.isNetworkOrIdempotentRequestError(error) ||
+          (error.response?.status ? error.response.status >= 500 : false)
+        );
       },
     });
   }
 
-  /**
-   * Generic fetcher function
-   * @param path API route path (e.g., "/api/path/of/data")
-   * @param method HTTP method ("GET", "POST", "PUT", "DELETE", etc.)
-   * @param payload Request body for POST/PUT/PATCH or URL parameters for GET/DELETE
-   */
   async fetcher<T = any>(
     path: string,
     method: Method,
     payload?: any,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ): Promise<T> {
     const normalizedMethod = method.toUpperCase() as Method;
     const isPayloadParam = ['GET', 'DELETE', 'HEAD', 'OPTIONS'].includes(normalizedMethod);
@@ -55,8 +51,18 @@ export class CoreService {
       const response = await this.client.request<T>(config);
       return response.data;
     } catch (error) {
-      // Custom error handling can be added here
-      throw error;
+      if (axios.isAxiosError(error)) {
+        const serverMessage = error.response?.data?.message;
+        if (serverMessage) {
+          throw new Error(serverMessage);
+        }
+      }
+
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+
+      throw new Error('An unexpected error occurred.');
     }
   }
 }
