@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import User from '../model/userModel';
+import Cart from '../model/cartModel';
 import { hashPassword } from '../service/authService';
 import { formatValidationError, registerSchema } from '../validators/authValidators';
 import { generateTimeBasedOtp } from '../utils/otpUtils';
@@ -43,6 +44,10 @@ export const register = async (req: Request, res: Response) => {
         email,
         password_hash,
       });
+
+      await Cart.create({
+        user_id: user.get('user_id') as number,
+      })
     }
 
     const userId = user.get('user_id') as string;

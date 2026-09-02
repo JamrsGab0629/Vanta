@@ -1,9 +1,16 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { Footnote } from '../../components/auth/footnote/footnote';
 import { Otp } from '../../components/auth/otp/otp';
-import { Router, RouterLink } from "@angular/router";
-import { AuthService } from "../../helpers/auth/auth.services";
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../helpers/auth/auth.services';
 import { SignupInput, SignupOutput } from '../../helpers/auth/auth.interface';
 
 @Component({
@@ -37,7 +44,7 @@ export class Signup {
       confirmPassword: ['', Validators.required],
       terms: [false, Validators.requiredTrue],
     },
-    { validators: this.passwordMatchValidator }
+    { validators: this.passwordMatchValidator },
   );
 
   // Field Getters
@@ -97,7 +104,9 @@ export class Signup {
   }
 
   get strengthLabel(): string {
-    return this.password.length === 0 ? 'Minimum 8 characters' : this.strengthLabels[this.passwordScore];
+    return this.password.length === 0
+      ? 'Minimum 8 characters'
+      : this.strengthLabels[this.passwordScore];
   }
 
   // Helper getters for template validation checks
@@ -109,10 +118,16 @@ export class Signup {
   get isConfirmPasswordInvalid(): boolean {
     const confirmControl = this.signupForm.get('confirmPassword');
     const isTouched = confirmControl?.touched || this.signupForm.touched;
-    return !!(isTouched && (confirmControl?.invalid || this.signupForm.hasError('passwordMismatch')));
+    return !!(
+      isTouched &&
+      (confirmControl?.invalid || this.signupForm.hasError('passwordMismatch'))
+    );
   }
 
   async onSubmit(): Promise<void> {
+    // Return early if already processing to avoid double-triggers
+    if (this.isLoading) return;
+
     if (this.signupForm.invalid) {
       this.signupForm.markAllAsTouched();
       return;
@@ -125,7 +140,7 @@ export class Signup {
       if (response.requiresOtp) {
         this.step = 'otp';
       } else {
-        await this.router.navigate(['/login']);
+        await this.router.navigate(['/auth/login']);
       }
     } catch (error: any) {
       if (error?.status === 400 || error?.statusCode === 400) {
@@ -140,10 +155,12 @@ export class Signup {
   }
 
   async onOtpVerified(code: string): Promise<void> {
+    if (this.isLoading) return;
+
     this.isLoading = true;
     try {
       await this.authService.verifyOtp({ email: this.email, otp: code });
-      await this.router.navigate(['/login']);
+      await this.router.navigate(['/auth/login']);
     } catch (error: any) {
       if (error?.status === 400 || error?.statusCode === 400) {
         alert('OTP code does not match.');

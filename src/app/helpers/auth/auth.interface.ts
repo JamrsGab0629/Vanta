@@ -33,6 +33,7 @@ export interface AuthUser {
 }
 
 export interface LoginOutput {
+  message: string;
   token: string;
   user: AuthUser;
 }

@@ -26,7 +26,7 @@ export interface ProductItem {
 export class Home implements OnInit {
   private productService = inject(ProductService);
 
-  categories: string[] = ['ALL', 'CPU', 'MOTHERBOARD', 'SSD', 'RAM'];
+  categories: string[] = ['ALL', 'GPU', 'CPU', 'SSD', 'RAM', 'MOTHERBOARD'];
   selectedCategory: string = 'ALL';
   products: ProductItem[] = [];
 
