@@ -30,9 +30,9 @@
 </div>
 
 <div class="product-grid">
-  @for (item of filteredProducts(); track item.id) {
+  @for (item of filteredProducts(); track item.product_id) {
     <app-product-admin
-      [id]="item.id"
+      [id]="item.product_id"
       [name]="item.name"
       [image_url]="item.image_url ?? null"
       [price]="item.price"
@@ -58,7 +58,7 @@
       <div class="sku-sub">{{ activeProduct()?.name }} (SKU: {{ activeProduct()?.sku }})</div>
 
       <div class="form-group">
-        <label>Re-price ($)</label>
+        <label>Re-price (₱)</label>
         <input 
           type="number" 
           [ngModel]="tempPrice()" 

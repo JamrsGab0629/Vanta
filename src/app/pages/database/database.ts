@@ -5,7 +5,7 @@ import { ProductAdmin } from '../../components/cards/product-admin/product-admin
 import { ProductService } from '../../helpers/product/product.service';
 
 export interface ProductItem {
-  id: string | number;
+  product_id: string | number;
   sku: string;
   name: string;
   category: string;
@@ -71,7 +71,11 @@ export class Database implements OnInit {
 
   // Opens the modal when the pencil icon is clicked
   onEditProduct(productId: string | number): void {
-    const product = this.products().find((p) => p.id === productId);
+    console.log(productId);
+    const product = this.products().find((p) => {
+      // console.log(p.product_id);
+      p.product_id  === productId;
+    });
     if (product) {
       this.activeProduct.set(product);
       this.tempPrice.set(product.price);
@@ -90,7 +94,7 @@ export class Database implements OnInit {
     if (prod) {
       this.products.update((list) =>
         list.map((p) => {
-          if (p.id === prod.id) {
+          if (p.product_id === prod.product_id) {
             return {
               ...p,
               price: Number(this.tempPrice()),
@@ -107,7 +111,7 @@ export class Database implements OnInit {
   deleteProduct(): void {
     const prod = this.activeProduct();
     if (prod && confirm(`Are you sure you want to delete ${prod.name}?`)) {
-      this.products.update((list) => list.filter((p) => p.id !== prod.id));
+      this.products.update((list) => list.filter((p) => p.product_id !== prod.product_id));
       this.closeEditModal();
     }
   }
