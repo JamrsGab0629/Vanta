@@ -87,8 +87,8 @@ export class ProductService {
   async updateProduct(
     id: string,
     input: Partial<ModifyProductInformationInput> | FormData
-  ): Promise<ProductItem> {
-    return this.core.fetcher<ProductItem>(
+  ): Promise<{ message: string, is_succesful?: boolean }> {
+    return this.core.fetcher<{ message: string, is_succesful?: boolean }>(
       `${this.baseUrl}${id}`,
       'PUT',
       input
@@ -99,8 +99,8 @@ export class ProductService {
    * DELETE api/products/:id
    * Deletes a product by ID
    */
-  async deleteProduct(id: string): Promise<{ message: string }> {
-    return this.core.fetcher<{ message: string }>(
+  async deleteProduct(id: string): Promise<{ message: string, is_succesful: boolean }> {
+    return this.core.fetcher<{ message: string, is_succesful: boolean }>(
       `${this.baseUrl}${id}`,
       'DELETE'
     );

@@ -30,12 +30,13 @@ export interface ModifyProductQuantityInput {
 }
 
 export interface ModifyProductInformationInput {
-  id: number;
+  product_id: string;
   sku?: string;
   name?: string;
   category?: string;
   price?: number;
   description?: string | null;
+  stock_quantity?: number;
   specs?: Record<string, string | number> | null;
   bench_stats?: Record<string, string | number> | null;
   image_url?: string | null;
