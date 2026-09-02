@@ -3,6 +3,9 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 34px;
+  max-width: 729px;
+  width: 100%;
+  justify-self: center;
 }
 
 .topbar h1 {
@@ -22,7 +25,9 @@
 .form-card {
   border: 1px solid var(--line);
   padding: 32px;
-  max-width: 760px;
+  max-width: 729px;
+  width: 100%;
+  justify-self: center;
 }
 
 .field-row {

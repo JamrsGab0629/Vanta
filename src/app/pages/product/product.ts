@@ -100,6 +100,7 @@ export class Product {
 
       // 3. Persist product to backend database
       const createdProduct = await this.productService.createProduct(payload);
+      console.log(createdProduct);
 
       // 4. Emit database item and reset local form state
       this.productAdded.emit(createdProduct);
