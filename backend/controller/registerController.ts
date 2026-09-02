@@ -75,6 +75,7 @@ export const register = async (req: Request, res: Response) => {
         last_name: user.get('last_name'),
         email: user.get('email'),
       },
+      requiresOtp: !user.get('is_verified'),
     });
   } catch (error) {
     console.error('REGISTER ERROR:', error);
