@@ -20,7 +20,7 @@ const router = Router();
 // Public Endpoints
 // ==========================================
 
-router.get('/', authMiddleware, getProducts);
+router.get('/', getProducts);
 router.get('/sku/:sku', getProductBySku);
 router.get('/:id', getProductById);
 
