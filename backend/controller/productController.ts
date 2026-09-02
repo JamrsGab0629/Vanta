@@ -122,8 +122,7 @@ export const updateProduct = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: 'Product updated successfully',
-
-      product,
+      is_succesful: true,
     });
   } catch (error: unknown) {
     // Delete newly uploaded image
@@ -165,11 +164,13 @@ export const deleteProduct = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: 'Product deleted successfully',
+      is_succesful: true
     });
   } catch (error: unknown) {
     if (error instanceof Error && 'code' in error && error.code === 'PRODUCT_NOT_FOUND') {
       return res.status(404).json({
         message: error.message,
+        is_succesful: false
       });
     }
 
