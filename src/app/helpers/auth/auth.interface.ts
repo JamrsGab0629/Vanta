@@ -39,7 +39,7 @@ export interface LoginOutput {
 
 export interface SignupOutput {
   message: string;
-  user_id: string;
+  user_id?: string;
   requiresOtp: boolean;
 }
 
