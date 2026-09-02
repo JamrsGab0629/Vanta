@@ -181,7 +181,7 @@
   color: var(--black);
 }
 
-@media (max-width: 990px) {
+@media (max-width: 1190px) and (min-width: 641px) {
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -194,11 +194,7 @@
 }
 
 
-@media (max-width: 1000px) {
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
+@media (max-width: 1000px) {s
   .topbar {
     flex-direction: column;
     gap: 16px;

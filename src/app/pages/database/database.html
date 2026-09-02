@@ -43,7 +43,7 @@
       [is_active]="item.is_active ?? true"
       [specs]="item.specs ?? null"
       [bench_status]="item.bench_status ?? null"
-      (edit)="onEditProduct($event)"
+      (edit)="onEditProduct(item.product_id, $event)"
     ></app-product-admin>
   } @empty {
     <div class="empty-state">No products found.</div>
@@ -67,11 +67,11 @@
       </div>
 
       <div class="form-group">
-        <label>Add Quantity (Current: {{ activeProduct()?.stock_quantity }})</label>
+        <label>Change Quantity (Current: {{ activeProduct()?.stock_quantity }})</label>
         <input 
           type="number" 
-          [ngModel]="tempQuantityToAdd()" 
-          (ngModelChange)="tempQuantityToAdd.set($event)" 
+          [ngModel]="tempQuantity()" 
+          (ngModelChange)="tempQuantity.set($event)" 
           placeholder="Qty to add"
         />
       </div>

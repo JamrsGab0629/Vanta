@@ -30,14 +30,14 @@ export class Database implements OnInit {
 
   products = signal<ProductItem[]>([]);
   searchQuery = signal<string>('');
-  selectedCategory = signal<string>('all');
-  categories = signal<string[]>(["all", 'GPU', 'CPU', 'SSD', "RAM", "MOTHERBOARD"]);
+  selectedCategory = signal<string>('ALL');
+  categories = signal<string[]>(['ALL', 'GPU', 'CPU', 'SSD', 'RAM', 'MOTHERBOARD']);
 
   // Edit Modal Signals
   isEditModalOpen = signal<boolean>(false);
   activeProduct = signal<ProductItem | null>(null);
   tempPrice = signal<number>(0);
-  tempQuantityToAdd = signal<number>(0);
+  tempQuantity = signal<number>(0);
 
   filteredProducts = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
@@ -47,7 +47,7 @@ export class Database implements OnInit {
       const matchesSearch =
         !query || p.name.toLowerCase().includes(query) || p.sku.toLowerCase().includes(query);
       const matchesCategory =
-        category === 'all' || p.category.toLowerCase() === category.toLowerCase();
+        category === 'ALL' || p.category.toLowerCase() === category.toLowerCase();
       return matchesSearch && matchesCategory;
     });
   });
@@ -70,16 +70,14 @@ export class Database implements OnInit {
   }
 
   // Opens the modal when the pencil icon is clicked
-  onEditProduct(productId: string | number): void {
-    console.log(productId);
-    const product = this.products().find((p) => {
-      // console.log(p.product_id);
-      p.product_id  === productId;
-    });
+  onEditProduct(productId: string | number, event: any): void {
+    const product = this.products().find((p) => p.product_id === productId);
+
+    console.log(product);
     if (product) {
       this.activeProduct.set(product);
       this.tempPrice.set(product.price);
-      this.tempQuantityToAdd.set(0);
+      this.tempQuantity.set(product.stock_quantity);
       this.isEditModalOpen.set(true);
     }
   }
@@ -89,30 +87,62 @@ export class Database implements OnInit {
     this.activeProduct.set(null);
   }
 
-  saveProductEdit(): void {
-    const prod = this.activeProduct();
-    if (prod) {
-      this.products.update((list) =>
-        list.map((p) => {
-          if (p.product_id === prod.product_id) {
-            return {
-              ...p,
-              price: Number(this.tempPrice()),
-              stock_quantity: p.stock_quantity + Number(this.tempQuantityToAdd() || 0),
-            };
-          }
-          return p;
-        })
-      );
+  async saveProductEdit(): Promise<void> {
+    try {
+      const prod = this.activeProduct();
+      if (prod) {
+        const id_to_string: string =
+          (typeof prod.product_id === 'string') ? prod.product_id : prod.product_id.toString();
+        const response = await this.productService.updateProduct( 
+          id_to_string, { 
+            product_id: id_to_string, 
+            price: Number(this.tempPrice() || 0), 
+            stock_quantity: Number(this.tempQuantity())
+          });
+
+          console.log(response)
+
+        if(!response?.is_succesful){
+          throw new Error(response.message);
+        }
+
+        this.products.update((list) =>
+          list.map((p) => {
+            if (p.product_id === prod.product_id) {
+              return {
+                ...p,
+                price: Number(this.tempPrice()),
+                stock_quantity: Number(this.tempQuantity()),
+              };
+            }
+            return p;
+          }),
+        );
+      }
+      this.closeEditModal();
+    } catch (err) {
+      alert(err)
     }
-    this.closeEditModal();
   }
 
-  deleteProduct(): void {
-    const prod = this.activeProduct();
-    if (prod && confirm(`Are you sure you want to delete ${prod.name}?`)) {
-      this.products.update((list) => list.filter((p) => p.product_id !== prod.product_id));
-      this.closeEditModal();
+  async deleteProduct(): Promise<void> {
+    try {
+      const prod = this.activeProduct();
+
+      if (prod && confirm(`Are you sure you want to delete ${prod.name}?`)) {
+        const id_to_string: string =
+          typeof prod.product_id === 'string' ? prod.product_id : prod.product_id.toString();
+        const response = await this.productService.deleteProduct(id_to_string);
+
+        if (!response.is_succesful) {
+          throw new Error('Deletion not succesful');
+        }
+
+        this.products.update((list) => list.filter((p) => p.product_id !== prod.product_id));
+        this.closeEditModal();
+      }
+    } catch (err) {
+      alert(err);
     }
   }
 }
