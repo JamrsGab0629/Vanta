@@ -64,7 +64,7 @@
         [specs]="item.specs ?? null"
         [bench_status]="item.bench_status ?? null"
         [is_active]="item.is_active ?? true"
-        (add_to_cart)="onAddCart(item.product_id, $event)">
+        (add_to_cart)="onAddCart($event.id)">
       </app-product>
     }
   </div>

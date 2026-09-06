@@ -1,6 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { Product } from '../../components/cards/product/product';
 import { ProductService } from '../../helpers/product/product.service';
+import { CartService } from '../../helpers/cart/cart.service';
 
 export interface ProductItem {
   product_id: string | number;
@@ -25,6 +26,8 @@ export interface ProductItem {
 })
 export class Home implements OnInit {
   private productService = inject(ProductService);
+  private cartService = inject(CartService);
+  private cdr = inject(ChangeDetectorRef);
 
   categories: string[] = ['ALL', 'GPU', 'CPU', 'SSD', 'RAM', 'MOTHERBOARD'];
   selectedCategory: string = 'ALL';
@@ -37,12 +40,14 @@ export class Home implements OnInit {
   async loadProducts(): Promise<void> {
     try {
       const data = await this.productService.getProducts();
-      // If data is wrapped in an object (e.g. data.products), assign accordingly
       this.products = data.products ?? data;
+
+      this.cdr.markForCheck(); // 2. Tell Angular data updated
     } catch (error) {
       console.error('Error fetching products:', error);
     }
   }
+
   get filteredProducts(): ProductItem[] {
     if (this.selectedCategory === 'ALL') {
       return this.products;
@@ -56,8 +61,12 @@ export class Home implements OnInit {
     this.selectedCategory = category;
   }
 
-  onAddCart(productId: string | number, event: any): void {
-    // Instantly adds 1 unit
-    console.log('Adding 1 unit of product to cart:', productId);
+  async onAddCart(productId: string | number): Promise<void> {
+    try {
+      await this.cartService.addToCart(String(productId), 1);
+      console.log('Adding 1 unit of product to cart:', productId);
+    } catch (error) {
+      console.error('Failed to add product to cart:', error);
+    }
   }
 }
