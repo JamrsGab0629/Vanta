@@ -1,23 +1,52 @@
-<app-stage></app-stage>
-
 <div class="wrap">
   <div>
     <h1>Your Cart</h1>
     <div class="subtext">Products are reserved for 30 minutes. Bench-tested &amp; guaranteed.</div>
 
     <div class="cart-box" id="cartBox">
-      <app-cart-item></app-cart-item>
+      @for (item of carted(); track item.product_id) {
+        <app-cart-card 
+          [item]="item" 
+          (quantityChange)="onQuantityChange($event)"
+          (remove)="onRemoveItem($event)">
+        </app-cart-card>
+      } @empty {
+        <div class="empty-cart" style="align-self: center; justify-self: center; padding: 10px 20px; color: var(--text-faint);">Your cart is currently empty.</div>
+      }
     </div>
 
     <div class="reassure">
       <div class="shield">🛡</div>
       <div>
         <div class="title">Vanta Bench-Tested Reassurance</div>
-        <div class="desc">Each component undergoes strict stress tests (thermal, speed, system integrity) before it
-          reaches our warehouse. Your packaging includes our physical quality sign-off seal.</div>
+        <div class="desc">Each component undergoes strict stress tests (thermal, speed, system integrity) before it reaches our warehouse. Your packaging includes our physical quality sign-off seal.</div>
       </div>
     </div>
   </div>
 
-  <app-cart-overview></app-cart-overview>
+  <div class="cart-overview">
+    <h2>Cart Overview</h2>
+    <div class="row">
+      <span>Subtotal</span>
+      <span id="subtotal">{{ subtotal() | currency:'PHP':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="row">
+      <span>Shipping</span>
+      <span class="free">FREE</span>
+    </div>
+    <div class="row">
+      <span>Estimated Tax (12%)</span>
+      <span id="tax">{{ tax() | currency:'PHP':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="row total">
+      <span>Total Due</span>
+      <span class="val" id="total">{{ total() | currency:'PHP':'symbol':'1.2-2' }}</span>
+    </div>
+    <button class="checkout-btn" [disabled]="carted().length === 0">Continue to Checkout →</button>
+    <div class="legal">By proceeding, you agree to Vanta's <a href="#">Terms of Service</a> and <a href="#">Return Policy</a>.</div>
+    <div class="badges">
+      <span>15-Day Returns</span>
+      <span>Bench-Tested</span>
+    </div>
+  </div>
 </div>
