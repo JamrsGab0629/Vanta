@@ -1,7 +1,8 @@
 // model/cartModel.ts
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, NonAttribute } from "sequelize";
 import sequelize from "../config/database";
 import User from "./userModel";
+import CartItem from "./cartItemModel";
 
 export interface CartAttributes {
     cart_id?: number;
@@ -11,6 +12,7 @@ export interface CartAttributes {
 class Cart extends Model<CartAttributes> implements CartAttributes {
     declare cart_id: number;
     declare user_id: number;
+    declare items?: NonAttribute<CartItem[]>
 
     declare readonly createdAt: Date;
     declare readonly updatedAt: Date;

@@ -1,6 +1,6 @@
 // routes/cartRoutes.ts
 import { Router } from "express";
-import { addToCart, getCart } from "../controller/cartController";
+import { addToCart, deleteToCart, getCart } from "../controller/cartController";
 import authMiddleware from "../middleware/authMiddleware"; 
 
 const router = Router();
@@ -11,7 +11,10 @@ router.use(authMiddleware);
 // GET /api/cart - View user's cart and items
 router.get("/", getCart);
 
-// POST /api/cart - Add item to cart (or increment quantity)
+// POST /api/cart - Add item to cart (or modify quantity)
 router.post("/", addToCart);
+
+// DELETE /api/cart - Delete an item to cart 
+router.delete("/", deleteToCart);
 
 export default router;
