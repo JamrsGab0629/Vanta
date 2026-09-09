@@ -3,6 +3,10 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 export const serverRoutes: ServerRoute[] = [
   // 1. Render all protected child routes purely on client side
   {
+    path: 'auth/**',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: 'app/**',
     renderMode: RenderMode.Client,
   },
