@@ -3,11 +3,12 @@ import { CurrencyPipe } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import { CartCard, CartItem } from '../../components/cards/cart.card/cart.card';
 import { CartService } from '../../helpers/cart/cart.service';
+import { Stage } from "../../components/app/stage/stage";
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CartCard, CurrencyPipe],
+  imports: [CartCard, CurrencyPipe, Stage],
   templateUrl: './cart.html',
   styleUrl: './cart.css',
 })

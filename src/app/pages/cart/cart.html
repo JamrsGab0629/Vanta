@@ -1,3 +1,5 @@
+<app-stage></app-stage>
+
 <div class="wrap">
   <div>
     <h1>Your Cart</h1>
@@ -5,13 +7,13 @@
 
     <div class="cart-box" id="cartBox">
       @for (item of carted(); track item.product_id) {
-        <app-cart-card 
-          [item]="item" 
+        <app-cart-card
+          [item]="item"
           (quantityChange)="onQuantityChange($event)"
           (remove)="onRemoveItem($event)">
         </app-cart-card>
       } @empty {
-        <div class="empty-cart" style="align-self: center; justify-self: center; padding: 10px 20px; color: var(--text-faint);">Your cart is currently empty.</div>
+        <div class="empty-cart" style="align-self: center; justify-self: center; padding: 10px 20px; color: var(--text-faint)">Your cart is currently empty.</div>
       }
     </div>
 
