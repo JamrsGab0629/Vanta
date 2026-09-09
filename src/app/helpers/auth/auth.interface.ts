@@ -58,3 +58,21 @@ export interface LogoutOutput {
   success: boolean;
   message?: string;
 }
+
+export interface AuthStatus {
+  message: string,
+  success: boolean,
+}
+
+export interface UserInformation {
+  first_name: string,
+  last_name: string,
+  user_id?: string,
+  userId?: string,
+}
+
+export interface FetchUserDataOutput {
+  message: string,
+  success: boolean,
+  data?: UserInformation,
+}
