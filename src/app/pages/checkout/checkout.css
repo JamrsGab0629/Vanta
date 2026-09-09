@@ -138,6 +138,20 @@
   background: var(--panel);
 }
 
+.pay-option[type=":disabled"] {
+  border-color: var(--red);
+}
+
+.pay-option:has(input:disabled) {
+  border-color: var(--red);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pay-option:has(input:disabled) * {
+  cursor: not-allowed;
+}
+
 .pay-option input[type="radio"] {
   appearance: none;
   width: 16px;
@@ -235,6 +249,43 @@
   text-transform: uppercase;
   margin-bottom: 20px;
   letter-spacing: 0.01em;
+}
+
+.sum-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: start;
+  font-size: 13.5px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.sum-item:first-of-type {
+  border-top: none;
+}
+
+.sum-item .name {
+  color: var(--bone);
+}
+
+.sum-item .sku {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--bone-dim);
+  margin-top: 3px;
+}
+
+.sum-item .qty {
+  font-family: var(--mono);
+  color: var(--bone-dim);
+  text-align: center;
+}
+
+.sum-item .final-price {
+  font-family: var(--mono);
+  color: var(--bone);
+  text-align: right;
 }
 
 .sum-totals {

@@ -1,6 +1,8 @@
+<!-- checkout.html -->
+
 <app-stage></app-stage>
 
-<form class="wrap" id="checkoutForm" novalidate>
+<form class="wrap" id="checkoutForm" [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" novalidate>
   <div class="checkout-grid">
 
     <div class="checkout-main">
@@ -12,24 +14,24 @@
         <div class="field-row">
           <div class="field">
             <label for="firstName">First name</label>
-            <input type="text" id="firstName" placeholder="Alex" required>
-            <div class="field-error" id="firstNameError">Required.</div>
+            <input type="text" id="firstName" formControlName="first_name" placeholder="Alex" required>
+            <div class="field-error" [class.show]="checkoutForm.get('first_name')?.invalid && checkoutForm.get('first_name')?.touched">Required.</div>
           </div>
           <div class="field">
             <label for="lastName">Last name</label>
-            <input type="text" id="lastName" placeholder="Rivera" required>
-            <div class="field-error" id="lastNameError">Required.</div>
+            <input type="text" id="lastName" formControlName="last_name" placeholder="Rivera" required>
+            <div class="field-error" [class.show]="checkoutForm.get('last_name')?.invalid && checkoutForm.get('last_name')?.touched">Required.</div>
           </div>
         </div>
         <div class="field">
           <label for="email">Email</label>
-          <input type="email" id="email" placeholder="you@domain.com" required>
-          <div class="field-error" id="emailError">Enter a valid email address.</div>
+          <input type="email" id="email" formControlName="email" placeholder="you@domain.com" required>
+          <div class="field-error" [class.show]="checkoutForm.get('email')?.invalid && checkoutForm.get('email')?.touched">Enter a valid email address.</div>
         </div>
         <div class="field">
           <label for="phone">Phone number</label>
-          <input type="tel" id="phone" placeholder="+63 900 000 0000" required>
-          <div class="field-error" id="phoneError">Required.</div>
+          <input type="tel" id="phone" formControlName="phone_number" placeholder="+63 900 000 0000" required>
+          <div class="field-error" [class.show]="checkoutForm.get('phone_number')?.invalid && checkoutForm.get('phone_number')?.touched">Required.</div>
         </div>
       </div>
 
@@ -39,30 +41,30 @@
         </div>
         <div class="field">
           <label for="address">Street address</label>
-          <input type="text" id="address" placeholder="123 Circuit St." required>
-          <div class="field-error" id="addressError">Required.</div>
+          <input type="text" id="address" formControlName="address" placeholder="123 Circuit St." required>
+          <div class="field-error" [class.show]="checkoutForm.get('address')?.invalid && checkoutForm.get('address')?.touched">Required.</div>
         </div>
         <div class="field-row">
           <div class="field">
             <label for="city">City</label>
-            <input type="text" id="city" placeholder="Pandi" required>
-            <div class="field-error" id="cityError">Required.</div>
+            <input type="text" id="city" formControlName="city" placeholder="Pandi" required>
+            <div class="field-error" [class.show]="checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched">Required.</div>
           </div>
           <div class="field">
             <label for="province">Province</label>
-            <input type="text" id="province" placeholder="Bulacan" required>
-            <div class="field-error" id="provinceError">Required.</div>
+            <input type="text" id="province" formControlName="province" placeholder="Bulacan" required>
+            <div class="field-error" [class.show]="checkoutForm.get('province')?.invalid && checkoutForm.get('province')?.touched">Required.</div>
           </div>
         </div>
         <div class="field-row">
           <div class="field">
             <label for="zip">ZIP code</label>
-            <input type="text" id="zip" placeholder="3014" required>
-            <div class="field-error" id="zipError">Required.</div>
+            <input type="text" id="zip" formControlName="zip_code" placeholder="3014" required>
+            <div class="field-error" [class.show]="checkoutForm.get('zip_code')?.invalid && checkoutForm.get('zip_code')?.touched">Required.</div>
           </div>
           <div class="field">
             <label for="country">Country</label>
-            <select id="country">
+            <select id="country" formControlName="country">
               <option>Philippines</option>
               <option>United States</option>
               <option>Singapore</option>
@@ -88,7 +90,7 @@
           </label>
 
           <label class="pay-option" id="opt-card">
-            <input type="radio" name="payment" value="card">
+            <input type="radio" name="payment" value="card" disabled>
             <div class="info">
               <h4>Credit / Debit Card</h4>
               <p>Visa, Mastercard, and American Express accepted.</p>
@@ -96,7 +98,7 @@
           </label>
 
           <label class="pay-option" id="opt-gcash">
-            <input type="radio" name="payment" value="gcash">
+            <input type="radio" name="payment" value="gcash" disabled>
             <div class="info">
               <h4>GCash</h4>
               <p>Pay instantly using your GCash wallet.</p>
@@ -109,23 +111,6 @@
           Please prepare <b>exact or close-to-exact cash</b> for the total amount due on delivery. Our rider will
           provide a printed receipt with your reference code upon handoff.
         </div>
-
-        <div class="card-fields" id="cardFields">
-          <div class="field">
-            <label for="cardNumber">Card number</label>
-            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label for="cardExpiry">Expiry date</label>
-              <input type="text" id="cardExpiry" placeholder="MM / YY">
-            </div>
-            <div class="field">
-              <label for="cardCvc">CVC</label>
-              <input type="text" id="cardCvc" placeholder="123">
-            </div>
-          </div>
-        </div>
       </div>
 
     </div>
@@ -135,19 +120,33 @@
         <h3>Order Summary</h3>
 
         <div>
-          <app-checkout-item></app-checkout-item>
+          @if (items.length > 0) {
+            @for (item of items; track item.sku || $index){
+            <div class="sum-item">
+              <div>
+                <div class="name">{{ item.name }}</div>
+                <div class="sku">SKU {{ item.sku }}</div>
+              </div>
+              <div class="qty">×{{ item.quantity }}</div>
+              <div class="final-price">${{ item.price }}</div>
+            </div>
+            }
+          } @else {
+            <div class="sum-item" style="display: block; text-align: center; color: var(--bone-dim); font-family: var(--mono); padding: 20px 0; border: none;">
+              There's no data
+            </div>
+          }
         </div>
 
         <div class="sum-totals">
-          <div class="sum-row"><span>Subtotal</span><span>$1,116.00</span></div>
-          <div class="sum-row"><span>Shipping</span><span>$0.00</span></div>
-          <div class="sum-row"><span>Tax</span><span>$89.28</span></div>
-          <div class="sum-row total"><span>Total</span><span class="v">$1,205.28</span></div>
+          <div class="sum-row"><span>Subtotal</span><span>${{ subtotal.toFixed(2) }}</span></div>
+          <div class="sum-row"><span>Shipping</span><span>${{ shipping.toFixed(2) }}</span></div>
+          <div class="sum-row"><span>Tax</span><span>${{ tax.toFixed(2) }}</span></div>
+          <div class="sum-row total"><span>Total</span><span class="v">${{ total.toFixed(2) }}</span></div>
         </div>
 
         <button type="submit" class="place-order-btn">PLACE ORDER →</button>
-        <div class="summary-note">By placing this order, you agree to Vanta's Terms of Service and Return Policy.
-        </div>
+        <div class="summary-note">By placing this order, you agree to Vanta's Terms of Service and Return Policy.</div>
 
         <div class="trust-strip">
           <span>30-DAY RETURNS</span>
