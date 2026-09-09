@@ -1,7 +1,6 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CoreService } from '../core.service'; 
 import {
-  AuthUser, // Import your AuthUser schema
   LoginInput,
   LoginOutput,
   LogoutOutput,
@@ -23,31 +22,29 @@ export class AuthService {
   private baseUrl = '/api/auth';
 
   /**
-   * POST /api/users/login
+   * POST /api/auth/login
    */
   async login(input: LoginInput): Promise<LoginOutput> {
-    const response = await this.core.fetcher<LoginOutput>(
+    return this.core.fetcher<LoginOutput>(
       `${this.baseUrl}/login`,
       'POST',
       input
     );
-
-    return response;
   }
 
   /**
-   * POST /api/users/logout
+   * POST /api/auth/logout
    */
   async logout(payload?: Record<string, any>): Promise<LogoutOutput> {
-      return await this.core.fetcher<LogoutOutput>(
-        `${this.baseUrl}/logout`,
-        'POST',
-        payload
-      );
+    return this.core.fetcher<LogoutOutput>(
+      `${this.baseUrl}/logout`,
+      'POST',
+      payload
+    );
   }
 
   /**
-   * POST /api/users/signup
+   * POST /api/auth/register
    */
   async signup(input: SignupInput): Promise<SignupOutput> {
     return this.core.fetcher<SignupOutput>(
@@ -58,7 +55,7 @@ export class AuthService {
   }
 
   /**
-   * POST /api/users/verify-otp
+   * POST /api/auth/verify-otp
    */
   async verifyOtp(input: VerifyOtpInput): Promise<VerifyOtpOutput> {
     return this.core.fetcher<VerifyOtpOutput>(
@@ -69,7 +66,7 @@ export class AuthService {
   }
 
   /**
-   * POST /api/users/resend-otp
+   * POST /api/auth/resend-verification
    */
   async resendOtp(input: ResendOtpInput): Promise<ResendOtpOutput> {
     return this.core.fetcher<ResendOtpOutput>(
@@ -80,9 +77,9 @@ export class AuthService {
   }
 
   /**
-   * POST /api/users/verify-auth
+   * POST /api/auth/verify-auth
    */
-  async verifyAuth(input = {}): Promise<AuthStatus> {
+  async verifyAuth(input: Record<string, any> = {}): Promise<AuthStatus> {
     return this.core.fetcher<AuthStatus>(
       `${this.baseUrl}/verify-auth`,
       'POST',
@@ -91,13 +88,13 @@ export class AuthService {
   }
 
   /**
-   * POST /api/users/fetch-user-data
+   * POST /api/auth/fetch-user-data
    */
-  async fetchUserData(input = {}): Promise<FetchUserDataOutput> {
+  async fetchUserData(input: Record<string, any> = {}): Promise<FetchUserDataOutput> {
     return this.core.fetcher<FetchUserDataOutput>(
       `${this.baseUrl}/fetch-user-data`,
       'POST',
       input
-    )
+    );
   }
 }
