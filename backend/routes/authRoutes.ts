@@ -17,7 +17,7 @@ router.post("/resend-verification", rateLimiter(3, 15 * 60 * 1000), resendVerifi
 router.post("/logout", authMiddleware, logout);
 
 // this is for verification
-router.post("/veriy-auth", authMiddleware, verifyAuth);
+router.post("/verify-auth", authMiddleware, verifyAuth);
 router.post("/fetch-user-data", authMiddleware, fetchUserData);
 
 export default router;
