@@ -3,18 +3,16 @@ import { isPlatformBrowser } from '@angular/common';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../helpers/auth/auth.services';
 
+// Protects private routes (/app, /admin) -> redirects unauthenticated users to login
 export const authGuard: CanActivateFn = async (route, state) => {
   const platformId = inject(PLATFORM_ID);
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // 1. If running on Node.js (SSR), allow navigation to pass through
-  // The browser will run this guard once hydrated
   if (!isPlatformBrowser(platformId)) {
     return true;
   }
 
-  // 2. Client-side browser execution
   try {
     const response = await authService.verifyAuth();
 
@@ -30,5 +28,28 @@ export const authGuard: CanActivateFn = async (route, state) => {
     return router.createUrlTree(['/auth/login'], {
       queryParams: { returnUrl: state.url },
     });
+  }
+};
+
+// Protects auth routes (/auth/login, /auth/signup) -> redirects logged-in users to /app
+export const guestGuard: CanActivateFn = async (route, state) => {
+  const platformId = inject(PLATFORM_ID);
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (!isPlatformBrowser(platformId)) {
+    return true;
+  }
+
+  try {
+    const response = await authService.verifyAuth();
+
+    if (response.success) {
+      return router.createUrlTree(['/app']);
+    }
+
+    return true;
+  } catch (error) {
+    return true;
   }
 };
