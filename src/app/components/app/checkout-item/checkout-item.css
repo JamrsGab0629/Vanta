@@ -29,7 +29,7 @@
   text-align: center;
 }
 
-.sum-item .price {
+.sum-item .final-price {
   font-family: var(--mono);
   color: var(--bone);
   text-align: right;
