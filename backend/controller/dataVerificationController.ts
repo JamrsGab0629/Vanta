@@ -14,7 +14,7 @@ const verifyAuth = async (req: AuthenticatedRequest, res: Response) => {
 
   try {
     const user = await User.findByPk(userId, {
-      attributes: ['userId'],
+      attributes: ['user_id'],
     });
 
     if (!user) {
@@ -29,6 +29,9 @@ const verifyAuth = async (req: AuthenticatedRequest, res: Response) => {
       success: true,
     });
   } catch (error) {
+    // Log the exact error to your Node terminal
+    console.error('Error in verifyAuth controller:', error);
+
     return res.status(500).json({
       message: 'Error verifying authentication',
       success: false,
@@ -48,7 +51,7 @@ const fetchUserData = async (req: AuthenticatedRequest, res: Response) => {
 
   try {
     const user = await User.findByPk(userId, {
-      attributes: ['first_name', 'last_name', 'userId'],
+      attributes: ['first_name', 'last_name', 'user_id'],
     });
 
     if (!user) {
