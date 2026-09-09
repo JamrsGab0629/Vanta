@@ -7,6 +7,7 @@ import { App } from './templates/app/app';
 import { Home } from './pages/home/home';
 import { Admin } from './templates/admin/admin';
 import { Product } from './pages/product/product';
+import { authGuard } from './core/verify-auth';
 
 export const routes: Routes = [
   {
@@ -26,6 +27,7 @@ export const routes: Routes = [
   {
     path: 'app',
     component: App,
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: Home },
