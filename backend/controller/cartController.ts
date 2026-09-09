@@ -7,6 +7,7 @@ import { addToCartSchema, deleteCartItemSchema, formatCartValidationError } from
 export const addToCart = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const parsed = addToCartSchema.safeParse(req.body);
+
         if (!parsed.success) {
             return res.status(400).json(formatCartValidationError(parsed.error));
         }
@@ -59,8 +60,7 @@ export const getCart = async (req: AuthenticatedRequest, res: Response) => {
 
 export const deleteToCart = async (req: AuthenticatedRequest, res: Response) => {
     try {
-
-        const parsed = deleteCartItemSchema.safeParse(req.body);
+        const parsed = deleteCartItemSchema.safeParse(req.params);
         if (!parsed.success) {
             return res.status(400).json(formatCartValidationError(parsed.error));
         }
