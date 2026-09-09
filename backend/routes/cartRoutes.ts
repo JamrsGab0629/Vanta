@@ -15,6 +15,6 @@ router.get("/", getCart);
 router.post("/", addToCart);
 
 // DELETE /api/cart - Delete an item to cart 
-router.delete("/", deleteToCart);
+router.delete("/:product_id", deleteToCart);
 
 export default router;
