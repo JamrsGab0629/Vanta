@@ -11,7 +11,7 @@ export const updateCartItemSchema = z.object({
 }).strict();
 
 export const deleteCartItemSchema = z.object({
-    product_id: z.number().int().positive("Invalid product ID"),
+  product_id: z.coerce.number().int().positive("Invalid product ID"),
 }).strict();
 
 export const formatCartValidationError = (error: z.ZodError) => ({
