@@ -80,9 +80,8 @@ export class AuthService {
   }
 
   /**
-   * POST /api/users/verifyAuth
+   * POST /api/users/verify-auth
    */
-
   async verifyAuth(input = {}): Promise<AuthStatus> {
     return this.core.fetcher<AuthStatus>(
       `${this.baseUrl}/verify-auth`,
@@ -91,6 +90,9 @@ export class AuthService {
     );
   }
 
+  /**
+   * POST /api/users/fetch-user-data
+   */
   async fetchUserData(input = {}): Promise<FetchUserDataOutput> {
     return this.core.fetcher<FetchUserDataOutput>(
       `${this.baseUrl}/fetch-user-data`,
