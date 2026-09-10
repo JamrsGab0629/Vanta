@@ -15,7 +15,7 @@
       <div class="meta-row">
         <div>
           <div class="meta-label">Reference Code</div>
-          <div class="meta-value accent" id="ref-code">#VN-4021B-7X</div>
+          <div class="meta-value accent" id="ref-code">#{{ info()?.code || 'N/A' }}</div>
         </div>
         <div>
           <div class="meta-label">Payment Method</div>
@@ -23,7 +23,7 @@
         </div>
         <div>
           <div class="meta-label">Estimated Delivery</div>
-          <div class="meta-value green" id="delivery-date">Jul 24, 2026 (3–4 PM)</div>
+          <div class="meta-value green" id="delivery-date">{{ info()?.estimate_time || 'Pending calculation' }}</div>
         </div>
       </div>
     </div>
@@ -34,17 +34,16 @@
         <div>
           <div class="detail-label">Shipping Address</div>
           <div class="detail-lines" id="shipping-address">
-            <div class="name">James Santos</div>
-            <div>123 Circuit St.</div>
-            <div>Pandi, Bulacan, 3014</div>
+            <div class="name">{{ info()?.first_name }} {{ info()?.last_name }}</div>
+            <div>{{ info()?.address }}</div>
+            <div>{{ info()?.city }}, {{ info()?.province }}</div>
             <div>Philippines</div>
           </div>
         </div>
         <div>
           <div class="detail-label">Contact Information</div>
           <div class="detail-lines" id="contact-info">
-            <div>Email: you@domain.com</div>
-            <div>Phone: +63 900 000 0000</div>
+            <div>Phone: {{ info()?.contact_no }}</div>
           </div>
         </div>
       </div>
@@ -64,13 +63,50 @@
     </div>
 
     <div class="btn-row">
-      <div class="btn btn-primary" id="track-btn">Track Order Status →</div>
-      <div class="btn btn-secondary" id="shop-btn">Continue Shopping</div>
+      <div class="btn btn-secondary" id="shop-btn" (click)="goToHome()">Continue Shopping</div>
     </div>
 
   </div>
 
   <div class="col-right panel">
-    <app-order-summary></app-order-summary>
+    <div class="summary-title">Order Summary</div>
+
+    <div class="order-items" id="order-items">
+      @for (item of items(); track item.id || $index) {
+      <div class="order-item">
+        <div class="item-thumb" [attr.data-sku]="item.sku || 'N/A'">
+          <span class="placeholder-icon">▣</span>
+          <img [src]="item.image || ''" [alt]="item.name">
+        </div>
+        <div class="item-info">
+          <div class="item-sku">SKU · {{ item.sku || 'N/A' }}</div>
+          <div class="item-name">{{ item.name }}</div>
+          <div class="item-qty">Qty: {{ item.quantity || 1 }}</div>
+        </div>
+        <div class="item-price">₱{{ getItemTotal(item) | number:'1.2-2' }}</div>
+      </div>
+      } @empty {
+      <div style="padding: 16px; color: #666; text-align: center;">No items found.</div>
+      }
+    </div>
+
+    <div class="totals">
+      <div class="totals-row"><span>Subtotal</span><span id="subtotal">₱{{ subtotal() | number:'1.2-2' }}</span></div>
+      <div class="totals-row">
+        <span>Shipping</span>
+        <span [ngClass]="{'free': shippingFee() === 0}">
+          {{ shippingFee() === 0 ? 'Free' : '₱' + (shippingFee() | number:'1.2-2') }}
+        </span>
+      </div>
+      <div class="totals-row"><span>Estimated Tax</span><span id="tax">₱{{ tax() | number:'1.2-2' }}</span></div>
+      <div class="totals-divider"></div>
+      <div class="totals-row total"><span>Total Paid</span><span class="val" id="total-paid">₱{{ totalPaid() |
+          number:'1.2-2' }}</span></div>
+    </div>
+
+    <div class="summary-footer">
+      <span>15-Day Returns</span>
+      <span>Bench-Tested</span>
+    </div>
   </div>
 </div>
