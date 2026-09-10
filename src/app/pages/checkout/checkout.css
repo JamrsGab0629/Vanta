@@ -327,15 +327,20 @@
   border: 1px solid var(--copper);
   cursor: pointer;
   margin-top: 22px;
-  transition: background .15s ease, transform .1s ease;
+  transition: background .15s ease, opacity .15s ease, transform .1s ease;
 }
 
-.place-order-btn:hover {
+.place-order-btn:hover:not(:disabled) {
   background: var(--copper-bright);
 }
 
-.place-order-btn:active {
+.place-order-btn:active:not(:disabled) {
   transform: translateY(1px);
+}
+
+.place-order-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .summary-note {

@@ -1,5 +1,3 @@
-<!-- checkout.html -->
-
 <app-stage></app-stage>
 
 <form class="wrap" id="checkoutForm" [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" novalidate>
@@ -24,11 +22,6 @@
           </div>
         </div>
         <div class="field">
-          <label for="email">Email</label>
-          <input type="email" id="email" formControlName="email" placeholder="you@domain.com" required>
-          <div class="field-error" [class.show]="checkoutForm.get('email')?.invalid && checkoutForm.get('email')?.touched">Enter a valid email address.</div>
-        </div>
-        <div class="field">
           <label for="phone">Phone number</label>
           <input type="tel" id="phone" formControlName="phone_number" placeholder="+63 900 000 0000" required>
           <div class="field-error" [class.show]="checkoutForm.get('phone_number')?.invalid && checkoutForm.get('phone_number')?.touched">Required.</div>
@@ -51,26 +44,24 @@
             <div class="field-error" [class.show]="checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched">Required.</div>
           </div>
           <div class="field">
-            <label for="province">Province</label>
-            <input type="text" id="province" formControlName="province" placeholder="Bulacan" required>
+            <label for="province">Province / Region</label>
+            <select id="province" formControlName="province" required>
+              <option value="" disabled selected>Select province/region</option>
+              <option value="bulacan">Bulacan</option>
+              <option value="ncr">Metro Manila (NCR)</option>
+              <option value="cebu">Cebu</option>
+              <option value="davao">Davao</option>
+              <option value="visayas">Visayas</option>
+              <option value="mindanao">Mindanao</option>
+              <option value="luzon">Rest of Luzon</option>
+            </select>
             <div class="field-error" [class.show]="checkoutForm.get('province')?.invalid && checkoutForm.get('province')?.touched">Required.</div>
           </div>
         </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="zip">ZIP code</label>
-            <input type="text" id="zip" formControlName="zip_code" placeholder="3014" required>
-            <div class="field-error" [class.show]="checkoutForm.get('zip_code')?.invalid && checkoutForm.get('zip_code')?.touched">Required.</div>
-          </div>
-          <div class="field">
-            <label for="country">Country</label>
-            <select id="country" formControlName="country">
-              <option>Philippines</option>
-              <option>United States</option>
-              <option>Singapore</option>
-              <option>Other</option>
-            </select>
-          </div>
+
+        <div class="field-checkbox" style="margin-top: 16px; display: flex; align-items: center; gap: 10px;">
+          <input type="checkbox" id="is_permanent" formControlName="is_permanent" style="width: 16px; height: 16px; cursor: pointer;">
+          <label for="is_permanent" style="margin-bottom: 0; cursor: pointer; text-transform: none; font-size: 13px;">Save as permanent address</label>
         </div>
       </div>
 
@@ -120,15 +111,15 @@
         <h3>Order Summary</h3>
 
         <div>
-          @if (items.length > 0) {
-            @for (item of items; track item.sku || $index){
+          @if (items().length > 0) {
+            @for (item of items(); track item.sku || $index) {
             <div class="sum-item">
               <div>
                 <div class="name">{{ item.name }}</div>
                 <div class="sku">SKU {{ item.sku }}</div>
               </div>
               <div class="qty">×{{ item.quantity }}</div>
-              <div class="final-price">${{ item.price }}</div>
+              <div class="final-price">{{ item.price * item.quantity | currency:'PHP':'symbol':'1.2-2' }}</div>
             </div>
             }
           } @else {
@@ -139,13 +130,17 @@
         </div>
 
         <div class="sum-totals">
-          <div class="sum-row"><span>Subtotal</span><span>${{ subtotal.toFixed(2) }}</span></div>
-          <div class="sum-row"><span>Shipping</span><span>${{ shipping.toFixed(2) }}</span></div>
-          <div class="sum-row"><span>Tax</span><span>${{ tax.toFixed(2) }}</span></div>
-          <div class="sum-row total"><span>Total</span><span class="v">${{ total.toFixed(2) }}</span></div>
+          <div class="sum-row"><span>Subtotal</span><span>{{ subtotal() | currency:'PHP':'symbol':'1.2-2' }}</span></div>
+          <div class="sum-row"><span>Shipping</span><span>{{ shipping() === 0 ? 'FREE' : (shipping() | currency:'PHP':'symbol':'1.2-2') }}</span></div>
+          <div class="sum-row" style="font-size: 11px; color: var(--bone-dim); padding-top: 0;">
+            <span>Est. Delivery</span>
+            <span style="text-align: right;">{{ estimatedDelivery() }}</span>
+          </div>
+          <div class="sum-row"><span>Tax (12%)</span><span>{{ tax() | currency:'PHP':'symbol':'1.2-2' }}</span></div>
+          <div class="sum-row total"><span>Total</span><span class="v">{{ total() | currency:'PHP':'symbol':'1.2-2' }}</span></div>
         </div>
 
-        <button type="submit" class="place-order-btn">PLACE ORDER →</button>
+        <button type="submit" class="place-order-btn" [disabled]="checkoutForm.invalid || items().length === 0">PLACE ORDER →</button>
         <div class="summary-note">By placing this order, you agree to Vanta's Terms of Service and Return Policy.</div>
 
         <div class="trust-strip">
