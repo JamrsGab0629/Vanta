@@ -4,6 +4,7 @@ import { processCheckoutService, CheckoutServiceError } from '../service/checkou
 
 export const processCheckout = async (req: AuthenticatedRequest, res: Response) => {
     try {
+        // console.log(req.body);
         const userId = req.user?.userId;
 
         if (!userId) {
