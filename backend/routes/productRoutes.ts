@@ -30,7 +30,7 @@ router.get('/:id', getProductById);
 
 router.post(
   '/upload-image',
-  // authMiddleware,
+  authMiddleware,
   // adminMiddleware,
   uploadProductImage.single('image'),
   uploadImage,
@@ -38,7 +38,7 @@ router.post(
 
 router.post(
   '/',
-  // authMiddleware,
+  authMiddleware,
   // adminMiddleware,
   uploadProductImage.single('image'),
   createProduct,
@@ -46,7 +46,7 @@ router.post(
 
 router.put(
   '/:id',
-  // authMiddleware,
+  authMiddleware,
   // adminMiddleware,
   uploadProductImage.single('image'),
   updateProduct,
@@ -54,7 +54,7 @@ router.put(
 
 router.delete(
   '/:id', 
-  // authMiddleware, 
+  authMiddleware, 
   // adminMiddleware, 
   deleteProduct
 );
