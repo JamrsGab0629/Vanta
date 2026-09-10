@@ -9,15 +9,15 @@ import {
 })
 export class TransactionService {
   private core = inject(CoreService);
-  private baseUrl = 'api/transaction/';
+  private baseUrl = '/api/checkout';
 
   /**
-   * POST api/transaction/
-   * Post a transaction
+   * POST api/checkout/
+   * Post a tcheckout
    */
-  async completeTransaction<TransactionInformation>(input: TransactionInformation): Promise<{ message: string }> {
-    return this.core.fetcher<{ message: string }>(
-      this.baseUrl,
+  async completeTransaction(input: TransactionInformation): Promise<{ message: string; tracking_code: string }> {
+    return this.core.fetcher<{ message: string; tracking_code: string }>(
+      `${this.baseUrl}/`,
       'POST',
       input
     );
