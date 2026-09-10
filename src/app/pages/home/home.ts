@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { Product } from '../../components/cards/product/product';
 import { ProductService } from '../../helpers/product/product.service';
 import { CartService } from '../../helpers/cart/cart.service';
@@ -28,6 +28,8 @@ export class Home implements OnInit {
   private productService = inject(ProductService);
   private cartService = inject(CartService);
   private cdr = inject(ChangeDetectorRef);
+
+  @ViewChild('productSection') productSection!: ElementRef;
 
   categories: string[] = ['ALL', 'GPU', 'CPU', 'SSD', 'RAM', 'MOTHERBOARD'];
   selectedCategory: string = 'ALL';
@@ -59,6 +61,10 @@ export class Home implements OnInit {
 
   selectCategory(category: string): void {
     this.selectedCategory = category;
+  }
+
+  scrollToProducts(): void {
+    this.productSection?.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }
 
   async onAddCart(productId: string | number): Promise<void> {

@@ -5,7 +5,7 @@
     <p>Every CPU, GPU, and drive that ships from Vanta gets stress-tested for thermals, speed, and system integrity
       before it reaches your door. Built for people who read the spec sheet before the price tag.</p>
     <div class="hero-ctas">
-      <button class="btn-primary">Shop All Parts</button>
+      <button class="btn-primary" (click)="scrollToProducts()">Shop All Parts</button>
       <button class="btn-ghost">View Build Guides</button>
     </div>
   </div>
@@ -30,14 +30,11 @@
 </section>
 
 <!-- Filter Rail -->
-<div class="rail">
+<div class="rail" #productSection>
   @for (cat of categories; track cat) {
-    <div 
-      class="chip" 
-      [class.active]="selectedCategory === cat"
-      (click)="selectCategory(cat)">
-      {{ cat }}
-    </div>
+  <div class="chip" [class.active]="selectedCategory === cat" (click)="selectCategory(cat)">
+    {{ cat }}
+  </div>
   }
 </div>
 
@@ -47,25 +44,16 @@
       <h2>In Stock Now</h2>
       <div class="sub">Every unit below has cleared thermal, speed, and system-integrity testing.</div>
     </div>
-    <a href="#" class="view-all">View All →</a>
+    <!-- <a href="#" class="view-all">View All →</a> -->
   </div>
 
   <div class="product-grid">
     @for (item of filteredProducts; track item.product_id) {
-      <app-product
-        [id]="item.product_id"
-        [name]="item.name"
-        [image_url]="item.image_url ?? null"
-        [price]="item.price"
-        [sku]="item.sku"
-        [category]="item.category"
-        [stock_quantity]="item.stock_quantity"
-        [description]="item.description ?? null"
-        [specs]="item.specs ?? null"
-        [bench_status]="item.bench_status ?? null"
-        [is_active]="item.is_active ?? true"
-        (add_to_cart)="onAddCart($event.id)">
-      </app-product>
+    <app-product [id]="item.product_id" [name]="item.name" [image_url]="item.image_url ?? null" [price]="item.price"
+      [sku]="item.sku" [category]="item.category" [stock_quantity]="item.stock_quantity"
+      [description]="item.description ?? null" [specs]="item.specs ?? null" [bench_status]="item.bench_status ?? null"
+      [is_active]="item.is_active ?? true" (add_to_cart)="onAddCart($event.id)">
+    </app-product>
     }
   </div>
 </section>
