@@ -74,4 +74,40 @@ const fetchUserData = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export { verifyAuth, fetchUserData };
+const fetchUserInfo = async (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user?.userId;
+
+  if (!userId) {
+    return res.status(401).json({
+      message: 'Unauthorized: No current user logged in',
+      success: false,
+    });
+  }
+
+  try {
+    const user = await User.findByPk(userId, {
+      attributes: ['first_name', 'last_name', 'contact_no', 'address'],
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found in database',
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: 'User data fetched successfully',
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'Error fetching user data',
+      success: false,
+    });
+  }
+};
+
+
+export { verifyAuth, fetchUserData, fetchUserInfo };
