@@ -16,6 +16,19 @@
   gap: 8px;
 }
 
+.step.clickable {
+  cursor: pointer;
+}
+
+.step.clickable:hover {
+  color: var(--text);
+}
+
+.step.clickable:hover .num {
+  border-color: var(--copper);
+  color: var(--copper);
+}
+
 .step .num {
   width: 18px;
   height: 18px;
@@ -46,6 +59,34 @@
   width: 40px;
   height: 1px;
   background: var(--line);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.step-line.active {
+  height: 2px;
+  background: var(--line);
+}
+
+.step-line.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--ok, #22c55e), transparent);
+  animation: sweepLeftToRight 2s linear infinite;
+}
+
+@keyframes sweepLeftToRight {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 .secure {

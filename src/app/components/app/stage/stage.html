@@ -1,13 +1,14 @@
 <div class="stepper">
   @for (stage of stage_detials; track stage.id; let last = $last) {
     <div class="step"
-    [class.active]="stage_num() === stage.id"
-    [class.done]="stage_num() > stage.id">
-    <span class="num">
-      {{stage.id}}
-    </span> {{stage.name}}</div>
+         [class.active]="stage_num() === stage.id"
+         [class.done]="stage_num() > stage.id"
+         [class.clickable]="stage_num() > stage.id"
+         (click)="navigateToStage(stage.id)">
+      <span class="num">{{stage.id}}</span> {{stage.name}}
+    </div>
     @if (!last) {
-      <div class="step-line"></div>
+      <div class="step-line" [class.active]="stage_num() > stage.id"></div>
     }
   }
   <div class="secure"><span class="lock">🔒</span> SECURE CHECKOUT · 256-BIT TLS</div>
