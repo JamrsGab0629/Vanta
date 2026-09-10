@@ -33,10 +33,6 @@
       <span id="subtotal">{{ subtotal() | currency:'PHP':'symbol':'1.2-2' }}</span>
     </div>
     <div class="row">
-      <span>Shipping</span>
-      <span class="free">FREE</span>
-    </div>
-    <div class="row">
       <span>Estimated Tax (12%)</span>
       <span id="tax">{{ tax() | currency:'PHP':'symbol':'1.2-2' }}</span>
     </div>
@@ -44,7 +40,12 @@
       <span>Total Due</span>
       <span class="val" id="total">{{ total() | currency:'PHP':'symbol':'1.2-2' }}</span>
     </div>
-    <button class="checkout-btn" [disabled]="carted().length === 0">Continue to Checkout →</button>
+    <button 
+      class="checkout-btn" 
+      [disabled]="carted().length === 0" 
+      (click)="onCheckout()">
+      Continue to Checkout →
+    </button>
     <div class="legal">By proceeding, you agree to Vanta's <a href="#">Terms of Service</a> and <a href="#">Return Policy</a>.</div>
     <div class="badges">
       <span>15-Day Returns</span>

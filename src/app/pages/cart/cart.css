@@ -114,6 +114,15 @@ h1 {
   background: #c47327;
 }
 
+.checkout-btn:hover:not(:disabled) {
+  background: #c47327;
+}
+
+.checkout-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .legal {
   font-size: 10.5px;
   color: var(--text-faint);

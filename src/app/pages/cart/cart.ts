@@ -1,5 +1,6 @@
 import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
+import { Router, ActivatedRoute } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { CartCard, CartItem } from '../../components/cards/cart.card/cart.card';
 import { CartService } from '../../helpers/cart/cart.service';
@@ -14,10 +15,11 @@ import { Stage } from "../../components/app/stage/stage";
 })
 export class Cart implements OnInit {
   private cartService = inject(CartService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   carted = signal<CartItem[]>([]);
 
-  // Dynamic cart overview calculations
   subtotal = computed(() =>
     this.carted().reduce((sum, item) => sum + item.price * item.quantity, 0)
   );
@@ -33,6 +35,10 @@ export class Cart implements OnInit {
     } catch (error) {
       console.error('Failed to load cart:', error);
     }
+  }
+
+  onCheckout() {
+    this.router.navigate(['../checkout'], { relativeTo: this.route });
   }
 
   async onQuantityChange(event: { productId: string; quantity: number }) {
