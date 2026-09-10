@@ -180,8 +180,9 @@ export const processCheckoutService = async (userId: number, data: CheckoutData)
         if (save_address) {
             await User.update(
                 { 
-                    first_name, 
-                    last_name, 
+                    // Change only the adress not then user information
+                    // first_name, 
+                    // last_name, 
                     address, 
                     contact_no: contact_number 
                 },
