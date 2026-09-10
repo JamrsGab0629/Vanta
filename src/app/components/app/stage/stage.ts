@@ -6,7 +6,13 @@ const Stage_Map: Record<string, number> = {
   'cart' : 1,
   'checkout' : 2,
   'confirmation' : 3,
-}
+};
+
+const Stage_Route_Map: Record<number, string> = {
+  1: '/app/cart',
+  2: '/app/checkout',
+  3: '/app/confirmation'
+};
 
 @Component({
   selector: 'app-stage',
@@ -14,7 +20,6 @@ const Stage_Map: Record<string, number> = {
   templateUrl: './stage.html',
   styleUrl: './stage.css',
 })
-
 export class Stage implements OnInit {
   private router = inject(Router);
 
@@ -24,7 +29,7 @@ export class Stage implements OnInit {
     { 'id': 1, 'name': 'Cart' },
     { 'id': 2, 'name': 'Checkout' },
     { 'id': 3, 'name': 'Confirmation' },
-  ]
+  ];
 
   ngOnInit(){
     this.update_steps(this.router.url);
@@ -32,6 +37,15 @@ export class Stage implements OnInit {
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => { this.update_steps(event.urlAfterRedirects); });
+  }
+
+  navigateToStage(stageId: number) {
+    if (this.stage_num() > stageId) {
+      const targetRoute = Stage_Route_Map[stageId];
+      if (targetRoute) {
+        this.router.navigate([targetRoute]);
+      }
+    }
   }
 
   private update_steps(url: string) {
