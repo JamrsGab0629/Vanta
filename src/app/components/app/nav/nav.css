@@ -23,19 +23,26 @@
   gap: 12px;
 }
 
-.cart-icon {
+.nav-icon {
   width: 34px;
   height: 34px;
   border: 1px solid var(--line);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
   color: var(--text-dim);
   position: relative;
+  text-decoration: none;
 }
 
-.cart-icon .badge {
+.nav-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  flex-shrink: 0;
+}
+
+.nav-icon .badge {
   position: absolute;
   top: -6px;
   right: -6px;
@@ -67,6 +74,7 @@
   cursor: pointer;
   outline: none;
 }
+
 .profile-trigger .name {
   font-size: 12.5px;
   color: var(--text);
@@ -86,6 +94,7 @@
   justify-content: flex-end;
   gap: 5px;
 }
+
 .profile-trigger .who {
   text-align: right;
 }
@@ -112,14 +121,16 @@
   height: 10px;
   stroke: var(--text-dim);
   transform-origin: center;
-  transform: rotate(0deg); /* Points right > */
+  transform: rotate(0deg);
+  /* Points right > */
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.2s ease;
 }
 
 /* Hover or Clicked State: "V" */
 .profile-container:hover .chevron-icon,
 .chevron-icon.rotated {
-  transform: rotate(90deg); /* Rotates 90 deg clockwise to point down V */
+  transform: rotate(90deg);
+  /* Rotates 90 deg clockwise to point down V */
   stroke: var(--copper);
 }
 
