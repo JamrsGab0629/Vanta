@@ -3,7 +3,7 @@ import { login } from "../controller/loginController";
 import { register } from "../controller/registerController";
 import { verifyOtp } from "../controller/verifyOtpController";
 import { logout } from "../controller/logoutController";
-import { verifyAuth, fetchUserData } from "../controller/dataVerificationController";
+import { verifyAuth, fetchUserData, fetchUserInfo } from "../controller/dataVerificationController";
 import authMiddleware from "../middleware/authMiddleware";
 import { resendVerification } from "../controller/resendVerificationController";
 import { rateLimiter } from "../middleware/rateLimiter";
@@ -19,5 +19,7 @@ router.post("/logout", authMiddleware, logout);
 // this is for verification
 router.post("/verify-auth", authMiddleware, verifyAuth);
 router.post("/fetch-user-data", authMiddleware, fetchUserData);
+
+router.post("/fetch-user-info", authMiddleware, fetchUserInfo);
 
 export default router;
