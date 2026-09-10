@@ -2,6 +2,8 @@ import { inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../helpers/auth/auth.services';
+import { Transaction } from './transaction';
+
 
 // Protects private routes (/app, /admin) -> redirects unauthenticated users to login
 export const authGuard: CanActivateFn = async (route, state) => {
@@ -52,4 +54,16 @@ export const guestGuard: CanActivateFn = async (route, state) => {
   } catch (error) {
     return true;
   }
+};
+
+export const transactionGuard: CanActivateFn = (route, state) => {
+  const transactionService = inject(Transaction);
+  const router = inject(Router);
+
+  if (transactionService.isTransacted()) {
+    return true;
+  }
+  
+  // Redirect if not transacted
+  return router.parseUrl('/app/cart');
 };
