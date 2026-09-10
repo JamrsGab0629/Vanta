@@ -46,12 +46,7 @@ export const createProduct = async (req: Request, res: Response) => {
       return res.status(400).json(formatValidationError(parsed.error));
     }
 
-    // ==========================================
-    // Admin-Only Endpoints (Middleware commented for testing)
-    // ==========================================
-
-    // Get the authenticated admin's ID
-    const userId = authReq.user?.userId ?? 1;
+    const userId = authReq.user?.userId;
 
     if (!userId) {
       if (req.file) {
