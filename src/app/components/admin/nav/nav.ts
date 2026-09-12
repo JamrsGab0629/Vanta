@@ -1,6 +1,9 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, computed, PLATFORM_ID } from '@angular/core';
 import { Router, NavigationEnd, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs';
+import { AuthService } from '../../../helpers/auth/auth.services';
+import { UserInformation, FetchUserDataOutput } from '../../../helpers/auth/auth.interface';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-nav',
@@ -8,31 +11,69 @@ import { filter } from 'rxjs';
   templateUrl: './nav.html',
   styleUrl: './nav.css',
 })
-
-export class Nav implements OnInit{
+export class Nav implements OnInit {
   private router = inject(Router);
+  private authService = inject(AuthService);
+  private platformId = inject(PLATFORM_ID);
 
-  current_url_suffix = signal<string>("home");
+  currentUser = signal<UserInformation | null>(null);
+  current_url_suffix = signal<string>('home');
 
   panels = [
-    { url_suffix: "home", attr_name: "history", name: "History", symbol: "▤" },
-    { url_suffix: "database", attr_name: "database", name: "Products", symbol: "◧"},
-    { url_suffix: "product", attr_name: "add-product", name: "Add Product", symbol: "+" }
-  ]
+    { url_suffix: 'home', attr_name: 'history', name: 'History', symbol: '▤' },
+    { url_suffix: 'database', attr_name: 'database', name: 'Products', symbol: '◧' },
+    { url_suffix: 'product', attr_name: 'add-product', name: 'Add Product', symbol: '+' },
+  ];
+
+  firstName = computed(() => this.currentUser()?.first_name ?? '');
+  lastName = computed(() => this.currentUser()?.last_name ?? '');
+
+  displayName = computed(() => {
+    const user = this.currentUser();
+    if (!user) return 'ADMIN';
+    if (user.first_name) {
+      return `${user.first_name} ${user.last_name ?? ''}`.trim();
+    }
+    return 'User';
+  });
+
+  initials = computed(() => {
+    const fn = this.firstName();
+    const ln = this.lastName();
+    if (fn && ln) return `${fn[0]}${ln[0]}`.toUpperCase();
+    if (fn) return fn.slice(0, 2).toUpperCase();
+    return 'G';
+  });
 
   ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadUserData();
+    }
+
     this.update_cart(this.router.url);
 
     this.router.events
-    .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-    .subscribe((event: NavigationEnd ) => this.update_cart(event.urlAfterRedirects))
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => this.update_cart(event.urlAfterRedirects));
   }
 
-  private update_cart(url: string){
+  private async loadUserData(): Promise<void> {
+    try {
+      const response: FetchUserDataOutput = await this.authService.fetchUserData();
+      if (response.success && response.data) {
+        this.currentUser.set(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch user data', error);
+      this.currentUser.set(null);
+    }
+  }
+
+  private update_cart(url: string) {
     const clean = url.split('?')[0];
     const last = clean.split('/').filter(Boolean).pop();
 
-    if(last){
+    if (last) {
       this.current_url_suffix.set(last);
     }
   }

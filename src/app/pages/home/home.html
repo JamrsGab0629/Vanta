@@ -49,11 +49,24 @@
 
   <div class="product-grid">
     @for (item of filteredProducts; track item.product_id) {
-    <app-product [id]="item.product_id" [name]="item.name" [image_url]="item.image_url ?? null" [price]="item.price"
-      [sku]="item.sku" [category]="item.category" [stock_quantity]="item.stock_quantity"
-      [description]="item.description ?? null" [specs]="item.specs ?? null" [bench_status]="item.bench_status ?? null"
-      [is_active]="item.is_active ?? true" (add_to_cart)="onAddCart($event.id)">
+    <app-product 
+      [id]="item.product_id" 
+      [name]="item.name" 
+      [image_url]="item.image_url ?? null" 
+      [price]="item.price"
+      [sku]="item.sku" 
+      [category]="item.category" 
+      [stock_quantity]="item.stock_quantity"
+      [description]="item.description ?? null" 
+      [specs]="item.specs ?? null" 
+      [bench_status]="item.bench_status ?? null"
+      [is_active]="item.is_active ?? true" 
+      (add_to_cart)="onAddCart($event.id)">
     </app-product>
+    } @empty {
+      <div class="empty-state" style="grid-column: 1 / -1; display: flex; justify-content: center; align-items: center; text-align: center; color: var(--text-faint); font-family: var(--mono); padding: 40px 0; border: none; overflow: visible;">
+        There are no current products available to display
+      </div>
     }
   </div>
 </section>
