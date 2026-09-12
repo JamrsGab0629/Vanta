@@ -46,7 +46,9 @@
       (edit)="onEditProduct(item.product_id, $event)"
     ></app-product-admin>
   } @empty {
-    <div class="empty-state">No products found.</div>
+    <div class="empty-state" style="grid-column: 1 / -1; display: flex; justify-content: center; align-items: center; text-align: center; color: var(--text-faint); font-family: var(--mono); padding: 40px 0; border: none; overflow: visible;">
+      There are no current products available to display
+    </div>
   }
 </div>
 
