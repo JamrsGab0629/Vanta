@@ -57,6 +57,10 @@ export class Nav implements OnInit {
       .subscribe((event: NavigationEnd) => this.update_cart(event.urlAfterRedirects));
   }
 
+  goToApp(): void {
+    this.router.navigate(['/app/home']);
+  }
+
   private async loadUserData(): Promise<void> {
     try {
       const response: FetchUserDataOutput = await this.authService.fetchUserData();
