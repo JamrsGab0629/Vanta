@@ -5,29 +5,39 @@
   </div>
   <div class="search-box">
     <span class="ic">⌕</span>
-    <input type="text" id="historySearch" placeholder="Search reference code...">
+    <input
+      type="text"
+      id="historySearch"
+      placeholder="Search reference code..."
+      [value]="searchTerm()"
+      (input)="onSearchChange($event)"
+    >
   </div>
 </div>
 
 <div class="stat-row">
   <div class="stat-cell">
     <div class="label">Orders Today</div>
-    <div class="value"><b>18</b></div>
+    <div class="value"><b>{{ ordersToday() }}</b></div>
   </div>
   <div class="stat-cell">
     <div class="label">Cash Collected</div>
-    <div class="value"><b>$4,920</b></div>
+    <div class="value"><b>{{ cashCollected() | currency:'PHP':'symbol':'1.0-0' }}</b></div>
   </div>
   <div class="stat-cell">
     <div class="label">Avg. Delivery Time</div>
-    <div class="value">4.<b>3</b> hrs</div>
+    <div class="value">{{ avgDeliveryHours() | number:'1.1-1' }} <b>hrs</b></div>
   </div>
   <div class="stat-cell">
     <div class="label">Pending Orders</div>
-    <div class="value"><b>3</b></div>
+    <div class="value"><b>{{ pendingOrders() }}</b></div>
   </div>
 </div>
 
 <div class="table-wrap">
-  <app-transactions></app-transactions>
+  <app-transactions
+    [rows]="filteredRows()"
+    [isLoading]="isLoading()"
+    (statusChange)="onStatusChange($event)"
+  ></app-transactions>
 </div>

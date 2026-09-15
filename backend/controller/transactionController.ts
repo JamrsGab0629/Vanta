@@ -112,11 +112,21 @@ export const updateOrderStatus = async (req: AuthenticatedRequest, res: Response
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    await order.update({ status });
+    const updates: { status: string; delivered_at?: Date | null } = { status };
+
+    if (status === 'delivered') {
+      updates.delivered_at = new Date();
+    } else {
+      // Reset if moved back out of "delivered"
+      updates.delivered_at = null;
+    }
+
+    await order.update(updates);
 
     return res.status(200).json({
       message: 'Order status updated successfully',
       is_successful: true,
+      delivered_at: updates.delivered_at,
     });
   } catch (error: any) {
     console.error('UPDATE ORDER STATUS ERROR:', error);

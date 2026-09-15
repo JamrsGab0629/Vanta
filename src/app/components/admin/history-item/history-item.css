@@ -63,3 +63,51 @@
   color: var(--bone-dim);
   border: 1px solid var(--bone-dim);
 }
+select.status-select {
+  background-color: var(--panel);
+  padding: 4px 26px 4px 10px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+
+  /* Remove default browser dropdown styling */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Clean universal dropdown chevron arrow */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a85' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 10px;
+  transition: all 0.2s ease;
+}
+
+/* Dynamic status-based styling mirroring your status pills */
+select.status-select.delivered {
+  color: var(--ok);
+  border: 1px solid var(--ok);
+}
+
+select.status-select.transit {
+  color: var(--copper-bright);
+  border: 1px solid var(--copper);
+}
+
+select.status-select.pending {
+  color: var(--bone-dim);
+  border: 1px solid var(--bone-dim);
+}
+
+/* Style the popup dropdown option list items */
+select.status-select option {
+  background-color: var(--panel);
+  color: var(--bone);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  padding: 8px;
+}

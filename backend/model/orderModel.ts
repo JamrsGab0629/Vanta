@@ -34,6 +34,10 @@ Order.init(
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
         },
+        delivered_at: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
         status: {
             type: DataTypes.STRING,
             defaultValue: 'paid',
