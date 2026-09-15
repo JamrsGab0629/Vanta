@@ -106,3 +106,11 @@
   color: var(--ok);
   border-color: var(--ok);
 }
+.product-thumb {
+  width: 100%;
+  aspect-ratio: 1.4 / 1;
+  object-fit: cover;
+  display: block;
+  border: 1px solid var(--line-soft, #333);
+  margin-bottom: 10px;
+}

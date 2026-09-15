@@ -1,4 +1,4 @@
-import { Component, input, output, OnInit, OnDestroy } from '@angular/core';
+import { Component, input, output, computed, OnInit, OnDestroy } from '@angular/core';
 import { CurrencyPipe, NgIf } from '@angular/common';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -31,6 +31,15 @@ export class CartCard implements OnInit, OnDestroy {
   private subSubscription!: Subscription;
 
   localQuantity = 1;
+
+  // TODO: replace with your actual backend origin (or pull from environment.ts)
+  private apiOrigin = 'http://localhost:3000';
+
+  fullImageUrl = computed(() => {
+    const url = this.item().image_url;
+    if (!url) return '';
+    return url.startsWith('http') ? url : `${this.apiOrigin}${url}`;
+  });
 
   ngOnInit() {
     this.localQuantity = this.item().quantity;

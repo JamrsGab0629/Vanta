@@ -1,7 +1,11 @@
 <div class="product-card" [class.inactive]="!is_active()">
     <div class="idx">SKU · {{ sku() }}</div>
 
-    <div class="product-swatch">{{ category() }}</div>
+    @if (image_url()) {
+        <img class="product-thumb" [src]="fullImageUrl()" [alt]="name()" />
+    } @else {
+        <div class="product-swatch">{{ category() }}</div>
+    }
 
     <h3>{{ name() }}</h3>
 

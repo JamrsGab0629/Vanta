@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, computed } from '@angular/core';
 import { CommonModule, KeyValuePipe, CurrencyPipe } from '@angular/common';
 
 export interface BenchStatus {
@@ -31,6 +31,15 @@ export class Product {
 
   // Outputs (Events)
   add_to_cart = output<{ id: string | number; quantity: number }>();
+
+  // TODO: replace with your actual backend origin (or pull from environment.ts)
+  private apiOrigin = 'http://localhost:3000';
+
+  fullImageUrl = computed(() => {
+    const url = this.image_url();
+    if (!url) return '';
+    return url.startsWith('http') ? url : `${this.apiOrigin}${url}`;
+  });
 
   // Handlers
   onAddToCart(): void {

@@ -119,3 +119,9 @@
   color: var(--copper);
   border-color: var(--copper);
 }
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

@@ -14,7 +14,6 @@ export const getUserTransactions = async (req: AuthenticatedRequest, res: Respon
             return res.status(401).json({ message: 'Unauthorized: User ID not found in token' });
         }
 
-        // Fetch transactions linked through receipts and orders belonging to this user
         const transactions = await TransactionModel.findAll({
             include: [
                 {
@@ -39,7 +38,6 @@ export const getUserTransactions = async (req: AuthenticatedRequest, res: Respon
                     ]
                 }
             ]
-            // Removed the 'order' property because the table lacks timestamp columns
         });
 
         return res.status(200).json({
@@ -50,9 +48,51 @@ export const getUserTransactions = async (req: AuthenticatedRequest, res: Respon
 
     } catch (error: any) {
         console.error('Error fetching transactions:', error);
-        return res.status(500).json({ 
-            message: 'Internal server error while fetching transactions', 
-            error: error.message 
+        return res.status(500).json({
+            message: 'Internal server error while fetching transactions',
+            error: error.message
+        });
+    }
+};
+
+export const getAllTransactions = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const transactions = await TransactionModel.findAll({
+            include: [
+                {
+                    model: Receipt,
+                    include: [
+                        {
+                            model: Order,
+                            include: [
+                                {
+                                    model: OrderItem,
+                                    as: 'items',
+                                    include: [
+                                        {
+                                            model: Product,
+                                            as: 'product'
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        });
+
+        return res.status(200).json({
+            success: true,
+            count: transactions.length,
+            transactions
+        });
+
+    } catch (error: any) {
+        console.error('Error fetching all transactions:', error);
+        return res.status(500).json({
+            message: 'Internal server error while fetching transactions',
+            error: error.message
         });
     }
 };

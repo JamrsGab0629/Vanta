@@ -1,7 +1,7 @@
 <div class="item" [attr.data-sku]="item().sku" [attr.data-price]="item().price">
   <div class="thumb">
     @if (item().image_url) {
-      <img [src]="item().image_url" [alt]="item().name" class="product-img" />
+      <img [src]="fullImageUrl()" [alt]="item().name" class="product-img" />
     } @else {
       <svg viewBox="0 0 68 68" fill="none">
         <rect width="68" height="68" fill="#151515" />
