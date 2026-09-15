@@ -26,17 +26,17 @@ export const resendVerification = async (req: Request, res: Response) => {
         // Generate the current active 5-minute window OTP statelessly
         const otp = generateTimeBasedOtp(userId);
 
-        // DEV LOGGING: Print to console for local testing only
+        /*
+        // DEV LOGGING: Print to console for local testing only (Commented out)
         if (process.env.NODE_ENV !== "production") {
             console.log(`\n======================================================`);
             console.log(`🔑 [DEV MODE] Resent OTP for ${parsed.data.email}: ${otp}`);
             console.log(`======================================================\n`);
         }
-
-        /*
-        // UNCOMMENT BELOW TO ENABLE REAL EMAIL SENDING VIA SMTP:
-        await sendVerificationEmail(parsed.data.email, username, otp);
         */
+
+        // ENABLED: Real email sending via SMTP
+        await sendVerificationEmail(parsed.data.email, username, otp);
 
         // Standard response: NEVER expose the raw OTP in JSON payload
         return res.status(200).json({ 

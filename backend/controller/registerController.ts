@@ -53,15 +53,16 @@ export const register = async (req: Request, res: Response) => {
     const userId = user.get('user_id') as string;
     const otp = generateTimeBasedOtp(userId);
 
-    // DEV LOGGING: Print to console for local testing only
+    /*
+    // DEV LOGGING: Print to console for local testing only (Commented out)
     if (process.env.NODE_ENV !== 'production') {
       console.log(`\n======================================================`);
       console.log(`🔑 [DEV MODE] Initial Registration OTP for ${email}: ${otp}`);
       console.log(`======================================================\n`);
     }
+    */
 
-    /*
-    // UNCOMMENT BELOW TO ENABLE REAL EMAIL SENDING VIA SMTP:
+    // ENABLED: Real email sending via SMTP
     try {
       await sendVerificationEmail(email, username, otp);
     } catch (emailError) {
@@ -70,7 +71,6 @@ export const register = async (req: Request, res: Response) => {
         message: "Account created, but unable to send verification email. Use /api/auth/resend-verification to try again.",
       });
     }
-    */
 
     return res.status(201).json({
       message: 'Registration successful! Please verify using the OTP code.',
