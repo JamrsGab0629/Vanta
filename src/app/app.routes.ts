@@ -7,7 +7,7 @@ import { App } from './templates/app/app';
 import { Home } from './pages/home/home';
 import { Admin } from './templates/admin/admin';
 import { Product } from './pages/product/product';
-import { authGuard, guestGuard, transactionGuard } from './core/verify-auth';
+import { authGuard, guestGuard, transactionGuard, adminGuard } from './core/verify-auth';
 
 export const routes: Routes = [
   {
@@ -43,6 +43,7 @@ export const routes: Routes = [
   {
     path: "admin",
     component: Admin,
+    canActivate: [adminGuard],
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', loadComponent: () => import('./pages/history/history').then((m) => m.History) },

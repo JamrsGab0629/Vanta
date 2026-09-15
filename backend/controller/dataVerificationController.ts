@@ -51,7 +51,7 @@ const fetchUserData = async (req: AuthenticatedRequest, res: Response) => {
 
   try {
     const user = await User.findByPk(userId, {
-      attributes: ['first_name', 'last_name', 'user_id'],
+      attributes: ['first_name', 'last_name', 'user_id', 'role'],
     });
 
     if (!user) {

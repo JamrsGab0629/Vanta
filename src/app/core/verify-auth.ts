@@ -56,6 +56,40 @@ export const guestGuard: CanActivateFn = async (route, state) => {
   }
 };
 
+// Protects admin routes (/admin) -> redirects non-admins to /app
+export const adminGuard: CanActivateFn = async (route, state) => {
+  const platformId = inject(PLATFORM_ID);
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (!isPlatformBrowser(platformId)) {
+    return true;
+  }
+
+  try {
+    const authResponse = await authService.verifyAuth();
+
+    if (!authResponse.success) {
+      return router.createUrlTree(['/auth/login'], {
+        queryParams: { returnUrl: state.url },
+      });
+    }
+
+    const userData = await authService.fetchUserData();
+
+if (userData.data?.role !== 'admin') {
+  return router.createUrlTree(['/app']);
+}
+
+    return true;
+  } catch (error) {
+    console.error('Admin verification failed:', error);
+    return router.createUrlTree(['/auth/login'], {
+      queryParams: { returnUrl: state.url },
+    });
+  }
+};
+
 export const transactionGuard: CanActivateFn = (route, state) => {
   const transactionService = inject(Transaction);
   const router = inject(Router);

@@ -69,6 +69,7 @@ export interface UserInformation {
   last_name: string,
   user_id?: string,
   userId?: string,
+  role?: string,
 }
 
 export interface FetchUserDataOutput {
