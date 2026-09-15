@@ -1,6 +1,6 @@
 <app-stage></app-stage>
 
-<form class="wrap" id="checkoutForm" [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" novalidate>
+<form class="wrap" id="checkoutForm" [formGroup]="checkoutForm" (ngSubmit)="onInitiateCheckout()" novalidate>
   <div class="checkout-grid">
 
     <div class="checkout-main">
@@ -140,7 +140,19 @@
           <div class="sum-row total"><span>Total</span><span class="v">{{ total() | currency:'PHP':'symbol':'1.2-2' }}</span></div>
         </div>
 
-        <button type="submit" class="place-order-btn" [disabled]="checkoutForm.invalid || items().length === 0">PLACE ORDER →</button>
+        @if (errorMessage()) {
+          <div class="checkout-error-banner">
+            <span>⚠</span> {{ errorMessage() }}
+          </div>
+        }
+
+        <button type="submit" class="place-order-btn" [disabled]="checkoutForm.invalid || items().length === 0 || isProcessing()">
+          @if (isProcessing()) {
+            <span class="inline-spinner"></span> PROCESSING ORDER...
+          } @else {
+            PLACE ORDER →
+          }
+        </button>
         <div class="summary-note">By placing this order, you agree to Vanta's Terms of Service and Return Policy.</div>
 
         <div class="trust-strip">
@@ -152,3 +164,60 @@
 
   </div>
 </form>
+
+<!-- CHECKOUT CONFIRMATION MODAL -->
+@if (showConfirmModal()) {
+  <div class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-badge">ORDER CONFIRMATION</div>
+      <h2 class="modal-title">Confirm Your Order?</h2>
+      <p class="modal-sub">
+        You are about to place an order with Cash on Delivery for a total of
+        <strong class="highlight-price">{{ total() | currency:'PHP':'symbol':'1.2-2' }}</strong>.
+      </p>
+
+      <div class="modal-summary">
+        <div class="summary-row">
+          <span>Recipient</span>
+          <b>{{ checkoutForm.get('first_name')?.value }} {{ checkoutForm.get('last_name')?.value }}</b>
+        </div>
+        <div class="summary-row">
+          <span>Delivery Address</span>
+          <b>{{ checkoutForm.get('address')?.value }}, {{ checkoutForm.get('city')?.value }}</b>
+        </div>
+        <div class="summary-row">
+          <span>Contact</span>
+          <b>{{ checkoutForm.get('phone_number')?.value }}</b>
+        </div>
+        <div class="summary-row">
+          <span>Items</span>
+          <b>{{ items().length }} item(s)</b>
+        </div>
+        <div class="summary-row">
+          <span>Estimated Delivery</span>
+          <b>{{ estimatedDelivery() }}</b>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button type="button" class="btn-outline" (click)="cancelCheckout()">
+          CANCEL
+        </button>
+        <button type="button" class="btn-solid" (click)="confirmOrder()">
+          YES, PLACE ORDER →
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- SMOOTH PROCESSING OVERLAY -->
+@if (isProcessing()) {
+  <div class="checkout-processing-overlay">
+    <div class="processing-content">
+      <div class="processing-spinner"></div>
+      <div class="processing-title">PROCESSING TRANSACTION</div>
+      <div class="processing-desc">Reserving inventory and generating your official tracking code...</div>
+    </div>
+  </div>
+}

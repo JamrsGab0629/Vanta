@@ -58,7 +58,7 @@ export class Database implements OnInit {
 
   async fetchProducts(): Promise<void> {
     try {
-      const response = await this.productService.getProducts();
+      const response = await this.productService.getProducts({ is_active: 'all', limit: 100 });
       this.products.set(Array.isArray(response) ? response : (response as any).products || []);
     } catch (err) {
       console.error('Error fetching products:', err);

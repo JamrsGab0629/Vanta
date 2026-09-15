@@ -40,11 +40,17 @@ export class CoreService {
     const normalizedMethod = method.toUpperCase() as Method;
     const isPayloadParam = ['GET', 'DELETE', 'HEAD', 'OPTIONS'].includes(normalizedMethod);
 
+    const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+
     const config: AxiosRequestConfig = {
       url: path,
       method: normalizedMethod,
       [isPayloadParam ? 'params' : 'data']: payload,
       ...options,
+      headers: {
+        ...(options?.headers || {}),
+        ...(isFormData ? { 'Content-Type': undefined } : {}),
+      },
     };
 
     try {

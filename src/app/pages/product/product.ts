@@ -1,4 +1,5 @@
 import { Component, inject, output, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Photo } from "../../components/icons/photo/photo";
 import { ProductService } from "../../helpers/product/product.service";
@@ -19,7 +20,7 @@ export interface LocalFormState {
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [FormsModule, Photo],
+  imports: [CommonModule, FormsModule, Photo],
   templateUrl: './product.html',
   styleUrl: './product.css',
 })
@@ -71,7 +72,31 @@ export class Product {
     this.formData.update((data) => ({ ...data, imageUrl: null }));
   }
 
-  async onSubmit(): Promise<void> {
+  showConfirmModal = signal<boolean>(false);
+  isPublishing = signal<boolean>(false);
+  successMessage = signal<string | null>(null);
+  errorMessage = signal<string | null>(null);
+
+  onInitiateSubmit(): void {
+    const form = this.formData();
+    if (!form.name.trim() || !form.sku.trim() || form.price <= 0) {
+      this.errorMessage.set('Please fill out all required fields (Name, SKU, and a valid Price).');
+      this.successMessage.set(null);
+      return;
+    }
+    this.errorMessage.set(null);
+    this.showConfirmModal.set(true);
+  }
+
+  cancelSubmit(): void {
+    this.showConfirmModal.set(false);
+  }
+
+  async confirmPublish(): Promise<void> {
+    this.isPublishing.set(true);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+
     try {
       let finalImageUrl: string | null = null;
 
@@ -79,34 +104,39 @@ export class Product {
       const file = this.selectedFile();
       if (file) {
         const uploadRes = await this.productService.uploadImage(file);
-        finalImageUrl = uploadRes.url;
+        finalImageUrl = uploadRes.imageUrl || uploadRes.url || null;
       }
 
       const form = this.formData();
 
       // 2. Map form controls to Sequelize PublishProductInput format
       const payload: PublishProductInput = {
-        name: form.name,
-        sku: form.sku,
+        name: form.name.trim(),
+        sku: form.sku.trim(),
         category: form.category,
         price: Number(form.price),
         stock_quantity: Number(form.stock_quantity),
-        description: form.desc,
+        description: form.desc || null,
         specs: form.spec ? { key_spec: form.spec } : null,
         bench_stats: { status: form.benchTestStatus },
         image_url: finalImageUrl,
-        is_active: form.benchTestStatus === 'Passed', // Automatically activate if passed
+        is_active: form.benchTestStatus === 'Passed',
       };
 
       // 3. Persist product to backend database
       const createdProduct = await this.productService.createProduct(payload);
-      console.log(createdProduct);
 
-      // 4. Emit database item and reset local form state
+      // 4. Emit database item and notify
       this.productAdded.emit(createdProduct);
+      this.successMessage.set(`Product "${form.name}" has been published successfully.`);
+      this.showConfirmModal.set(false);
       this.resetForm();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to publish product:', error);
+      this.errorMessage.set(error?.message || 'Failed to publish product. Please check your credentials or network.');
+      this.showConfirmModal.set(false);
+    } finally {
+      this.isPublishing.set(false);
     }
   }
 

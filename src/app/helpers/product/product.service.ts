@@ -9,7 +9,10 @@ import {
 } from './product.interface';
 
 export interface UploadImageOutput {
-  url: string;
+  message?: string;
+  imageUrl?: string;
+  url?: string;
+  filename?: string;
 }
 
 @Injectable({

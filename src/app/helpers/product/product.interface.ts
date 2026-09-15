@@ -3,7 +3,7 @@ export interface FetchProductsInput {
   category?: string;
   page?: number;
   limit?: number;
-  is_active?: boolean;
+  is_active?: boolean | string;
 }
 
 export interface FetchProductInput {
@@ -67,5 +67,8 @@ export interface FetchProductsOutput {
 }
 
 export interface UploadImageOutput {
-  url: string;
+  message?: string;
+  imageUrl?: string;
+  url?: string;
+  filename?: string;
 }

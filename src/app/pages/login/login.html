@@ -40,13 +40,29 @@
             </div>
           </div>
 
-          <button type="submit" class="btn-solid">LOG IN →</button>
+          <button type="submit" class="btn-solid" [disabled]="isLoading">
+            @if (isLoading) {
+              <span class="btn-spinner"></span> LOGGING IN...
+            } @else {
+              LOG IN →
+            }
+          </button>
         </form>
 
         <div class="signup-note">Don't have an account? <a [routerLink]="['../signup']">Sign up free</a></div>
       </div>
     </div>
   </div>
+
+  @if (isLoading) {
+    <div class="auth-loading-overlay">
+      <div class="loader-content">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">AUTHENTICATING SESSION</div>
+        <div class="loader-sub">Securing session tokens and loading workspace...</div>
+      </div>
+    </div>
+  }
 
   <div class="auth-info-side">
     <div class="info-top">

@@ -137,11 +137,33 @@ export class Checkout implements OnInit {
     }
   }
 
-  async onSubmit() {
+  showConfirmModal = signal<boolean>(false);
+  isProcessing = signal<boolean>(false);
+  errorMessage = signal<string | null>(null);
+
+  onInitiateCheckout(): void {
     if (this.checkoutForm.invalid) {
       this.checkoutForm.markAllAsTouched();
       return;
     }
+
+    if (this.items().length === 0) {
+      this.errorMessage.set('Your cart is empty. Please add items before placing an order.');
+      return;
+    }
+
+    this.errorMessage.set(null);
+    this.showConfirmModal.set(true);
+  }
+
+  cancelCheckout(): void {
+    this.showConfirmModal.set(false);
+  }
+
+  async confirmOrder(): Promise<void> {
+    this.showConfirmModal.set(false);
+    this.isProcessing.set(true);
+    this.errorMessage.set(null);
 
     try {
       const formValues = this.checkoutForm.value;
@@ -155,7 +177,7 @@ export class Checkout implements OnInit {
 
       const response = await this.transactionService.completeTransaction(transactionData);
 
-      // Construct the full information payload with response data (fixed missing fee value)
+      // Construct the full information payload with response data
       const completeInformation = {
         first_name: formValues.first_name,
         last_name: formValues.last_name,
@@ -171,9 +193,12 @@ export class Checkout implements OnInit {
       this.transaction.setInformation(completeInformation);
       this.transaction.setItems(this.items());
 
-      this.router.navigate(['../confirmation'], { relativeTo: this.route });
-    } catch (error) {
+      // Navigate to confirmation page
+      await this.router.navigate(['../confirmation'], { relativeTo: this.route });
+    } catch (error: any) {
       console.error('Transaction failed', error);
+      this.errorMessage.set(error?.message || 'Transaction failed. Please try again.');
+      this.isProcessing.set(false);
     }
   }
 }

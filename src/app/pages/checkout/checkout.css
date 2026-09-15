@@ -393,3 +393,212 @@
     margin: 0 8px;
   }
 }
+
+/* Error Banner */
+.checkout-error-banner {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: rgba(255, 71, 87, 0.12);
+  border: 1px solid #ff4757;
+  color: #ff4757;
+  font-family: var(--mono);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Inline Spinner */
+.inline-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0, 0, 0, 0.25);
+  border-top-color: var(--black);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Confirmation Modal Backdrop & Card */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+}
+
+.modal-card {
+  background: #111110;
+  border: 1px solid var(--copper);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.85), 0 0 24px rgba(235, 126, 60, 0.25);
+  max-width: 500px;
+  width: 100%;
+  padding: 28px;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-badge {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--copper);
+  margin-bottom: 6px;
+}
+
+.modal-title {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--bone);
+  margin: 0 0 10px 0;
+}
+
+.modal-sub {
+  font-size: 13.5px;
+  color: var(--bone-dim);
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+}
+
+.highlight-price {
+  color: var(--copper-bright);
+  font-family: var(--mono);
+  font-size: 15px;
+}
+
+.modal-summary {
+  background: #181816;
+  border: 1px solid var(--line);
+  padding: 14px 16px;
+  margin-bottom: 24px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row span {
+  color: var(--bone-dim);
+}
+
+.summary-row b {
+  color: var(--bone);
+  text-align: right;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-solid {
+  font-family: var(--mono);
+  font-size: 13.5px;
+  letter-spacing: 0.03em;
+  background: var(--copper);
+  color: var(--black);
+  padding: 12px 22px;
+  border: 1px solid var(--copper);
+  cursor: pointer;
+  transition: background .15s ease;
+}
+
+.btn-solid:hover {
+  background: var(--copper-bright);
+}
+
+.btn-outline {
+  font-family: var(--mono);
+  font-size: 13.5px;
+  color: var(--bone);
+  background: none;
+  border: 1px solid var(--bone-dim);
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.btn-outline:hover {
+  border-color: var(--bone);
+  color: var(--copper-bright);
+}
+
+/* Smooth Processing Overlay */
+.checkout-processing-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 9, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.processing-content {
+  text-align: center;
+  background: #141413;
+  border: 1px solid var(--copper);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.85), 0 0 24px rgba(235, 126, 60, 0.25);
+  padding: 40px 48px;
+  max-width: 440px;
+  width: 90%;
+}
+
+.processing-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(235, 126, 60, 0.2);
+  border-top-color: var(--copper);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: 0 auto 20px auto;
+}
+
+.processing-title {
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  color: var(--copper);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.processing-desc {
+  font-size: 13px;
+  color: var(--bone-dim);
+  line-height: 1.5;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

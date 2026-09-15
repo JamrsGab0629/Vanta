@@ -132,13 +132,26 @@ export const deleteProductService = async (id: string) => {
 // ===============================
 
 export const getProductsService = async (query: ProductQuery) => {
-  const { category, search, minPrice, maxPrice, page, limit } = query;
+  const { category, search, minPrice, maxPrice, page, limit, is_active } = query;
 
   const offset = (page - 1) * limit;
 
-  const whereClause: Record<string | symbol, any> = {
-    is_active: true,
-  };
+  const whereClause: Record<string | symbol, any> = {};
+
+  if (is_active !== undefined) {
+    if (is_active === 'all') {
+      // Show all products (active and inactive)
+    } else if (typeof is_active === 'boolean') {
+      whereClause.is_active = is_active;
+    } else if (is_active === 'true' || is_active === '1') {
+      whereClause.is_active = true;
+    } else if (is_active === 'false' || is_active === '0') {
+      whereClause.is_active = false;
+    }
+  } else {
+    // Default: return only active products for public storefront
+    whereClause.is_active = true;
+  }
 
   // ===========================
   // CATEGORY

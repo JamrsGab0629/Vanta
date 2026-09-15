@@ -6,7 +6,18 @@
 </div>
 
 <div class="form-card">
-  <form id="addProductForm" (ngSubmit)="onSubmit()">
+  @if (successMessage()) {
+    <div class="alert success">
+      <span>✓</span> {{ successMessage() }}
+    </div>
+  }
+  @if (errorMessage()) {
+    <div class="alert error">
+      <span>⚠</span> {{ errorMessage() }}
+    </div>
+  }
+
+  <form id="addProductForm" (ngSubmit)="onInitiateSubmit()">
     <!-- Row 4: Image Upload Dropzone -->
     <div class="field">
       <label>Product Image</label>
@@ -95,3 +106,36 @@
     </div>
   </form>
 </div>
+
+<!-- CONFIRMATION MODAL -->
+@if (showConfirmModal()) {
+  <div class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-badge">CONFIRMATION</div>
+      <h2 class="modal-title">Publish this product?</h2>
+      <p class="modal-sub">
+        Are you sure you want to add <strong>{{ formData().name }}</strong> (SKU: <code>{{ formData().sku }}</code>) to inventory?
+      </p>
+
+      <div class="modal-summary">
+        <div class="summary-row"><span>Category</span><b>{{ formData().category }}</b></div>
+        <div class="summary-row"><span>Price</span><b>₱{{ formData().price | number:'1.2-2' }}</b></div>
+        <div class="summary-row"><span>Initial Stock</span><b>{{ formData().stock_quantity }} units</b></div>
+        <div class="summary-row"><span>Bench Status</span><b>{{ formData().benchTestStatus }}</b></div>
+      </div>
+
+      <div class="modal-buttons">
+        <button type="button" class="btn-outline" (click)="cancelSubmit()" [disabled]="isPublishing()">
+          CANCEL
+        </button>
+        <button type="button" class="btn-solid confirm-btn" (click)="confirmPublish()" [disabled]="isPublishing()">
+          @if (isPublishing()) {
+            <span class="inline-spinner"></span> PUBLISHING...
+          } @else {
+            CONFIRM & PUBLISH →
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
