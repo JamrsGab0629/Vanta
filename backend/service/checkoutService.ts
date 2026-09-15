@@ -171,9 +171,8 @@ export const processCheckoutService = async (userId: number, data: CheckoutData)
         // 6. Create Transaction record indicating pending cash collection
         await TransactionModel.create({
             receipt_id: receiptId,
+            tracking_code: trackingCode,
             status: 'PENDING_COD',
-            debit: totalAmount,
-            credit: 0.00
         }, { transaction: t });
 
         // 7. Update user profile default info if requested
