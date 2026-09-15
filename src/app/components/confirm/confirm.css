@@ -1,0 +1,57 @@
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-box {
+  background: var(--bg);
+  border: 1px solid var(--copper);
+  padding: 28px;
+  min-width: 300px;
+  max-width: 380px;
+}
+
+.confirm-msg {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.confirm-actions button {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  cursor: pointer;
+  background: #000;
+  border: 1px solid var(--copper);
+  color: var(--copper);
+}
+
+.confirm-actions button:hover {
+  background: rgba(217, 129, 47, 0.12);
+}
+
+.confirm-actions .confirm-btn {
+  background: var(--copper);
+  color: #000;
+}
+
+.confirm-actions .confirm-btn:hover {
+  background: #c47327;
+}
