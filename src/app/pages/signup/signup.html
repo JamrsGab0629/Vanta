@@ -2,10 +2,10 @@
   <div class="auth-form-side">
     <div class="wrap" style="padding:0 32px;">
       <div class="auth-box">
-        @if (step === 'form') {
+        @if (step() === 'form') {
           <div class="auth-eyebrow">CREATE ACCOUNT</div>
           <h1>Set up your<br>Vanta account</h1>
-        <p class="auth-sub">Add your favorite PC parts to your bench and easily keep track of the components you want.</p>
+          <p class="auth-sub">Add your favorite PC parts to your bench and easily keep track of the components you want.</p>
 
           <!-- Reactive Form Binding -->
           <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" id="signupForm" novalidate>
@@ -126,7 +126,13 @@
               You must accept the terms to continue.
             </div>
 
-            <button type="submit" class="btn-solid">CREATE ACCOUNT →</button>
+            <button type="submit" class="btn-solid" [disabled]="isLoading()">
+              @if (isLoading()) {
+                PROCESSING...
+              } @else {
+                CREATE ACCOUNT →
+              }
+            </button>
           </form>
 
           <div class="signup-note">Already have an account? <a [routerLink]="['..']">Log in</a></div>

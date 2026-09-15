@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -28,11 +28,9 @@ export class Signup {
   readonly strengthColors = ['#C24B3F', '#C24B3F', '#D98B52', '#D98B52', '#7FA871'];
   readonly strengthLabels = ['Too short', 'Weak', 'Okay', 'Good', 'Strong'];
 
-  /** Loading state during API calls */
-  isLoading = false;
-
-  /** Which panel is showing inside the auth box: account details, or the OTP check. */
-  step: 'form' | 'otp' = 'form';
+  /** Signals for instant reactivity */
+  readonly isLoading = signal(false);
+  readonly step = signal<'form' | 'otp'>('form');
 
   signupForm: FormGroup = this.fb.group(
     {
@@ -47,7 +45,6 @@ export class Signup {
     { validators: this.passwordMatchValidator },
   );
 
-  // Field Getters
   get firstName(): string {
     return this.signupForm.get('firstName')?.value || '';
   }
@@ -68,9 +65,6 @@ export class Signup {
     return this.signupForm.get('password')?.value || '';
   }
 
-  /**
-   * Builds the formatted payload expected by the backend API.
-   */
   get apiPayload(): SignupInput {
     return {
       username: this.username,
@@ -81,18 +75,12 @@ export class Signup {
     };
   }
 
-  /**
-   * Custom validator to ensure password and confirmPassword match.
-   */
   private passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
-  /**
-   * Calculates password strength score (0 - 4).
-   */
   get passwordScore(): number {
     const val = this.password;
     let score = 0;
@@ -109,7 +97,6 @@ export class Signup {
       : this.strengthLabels[this.passwordScore];
   }
 
-  // Helper getters for template validation checks
   isInvalidAndTouched(controlName: string): boolean {
     const control = this.signupForm.get(controlName);
     return !!(control && control.invalid && (control.dirty || control.touched));
@@ -125,20 +112,19 @@ export class Signup {
   }
 
   async onSubmit(): Promise<void> {
-    // Return early if already processing to avoid double-triggers
-    if (this.isLoading) return;
+    if (this.isLoading()) return;
 
     if (this.signupForm.invalid) {
       this.signupForm.markAllAsTouched();
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     try {
       const response: SignupOutput = await this.authService.signup(this.apiPayload);
 
       if (response.requiresOtp) {
-        this.step = 'otp';
+        this.step.set('otp');
       } else {
         await this.router.navigate(['/auth/login']);
       }
@@ -150,14 +136,14 @@ export class Signup {
       }
       console.error('Signup error:', error);
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 
   async onOtpVerified(code: string): Promise<void> {
-    if (this.isLoading) return;
+    if (this.isLoading()) return;
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     try {
       await this.authService.verifyOtp({ email: this.email, otp: code });
       await this.router.navigate(['/auth/login']);
@@ -169,23 +155,23 @@ export class Signup {
       }
       console.error('OTP verification error:', error);
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 
   async onOtpResend(): Promise<void> {
-    this.isLoading = true;
+    this.isLoading.set(true);
     try {
       await this.authService.resendOtp({ email: this.email });
       alert('A new OTP has been sent to your email.');
     } catch (error) {
       console.error('OTP resend error:', error);
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 
   onOtpBack(): void {
-    this.step = 'form';
+    this.step.set('form');
   }
 }
