@@ -8,6 +8,15 @@
       <div>Cash</div>
       <div>Status</div>
     </div>
-    <app-history-item></app-history-item>
+
+    @if (isLoading()) {
+      <div class="empty-row">Loading orders...</div>
+    } @else if (rows().length === 0) {
+      <div class="empty-row">No orders found.</div>
+    } @else {
+      @for (row of rows(); track row.order_id) {
+        <app-history-item [row]="row" (statusChange)="onStatusChange($event)"></app-history-item>
+      }
+    }
   </div>
 </div>

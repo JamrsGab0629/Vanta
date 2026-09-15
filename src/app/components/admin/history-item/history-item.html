@@ -1,53 +1,21 @@
 <div class="table-row">
-  <div class="ref-code">VN-40218-7X</div>
-  <div class="time-val">Jul 21, 2026 · 10:42 AM</div>
-  <div class="time-val">Jul 21, 2026 · 3:15 PM</div>
-  <div class="qty-val">4</div>
-  <div class="cash-val">$1205.28</div>
-  <div><span class="status-pill delivered">delivered</span></div>
-</div>
-
-<div class="table-row">
-  <div class="ref-code">VN-40217-2K</div>
-  <div class="time-val">Jul 21, 2026 · 9:05 AM</div>
-  <div class="time-val">Jul 21, 2026 · 1:40 PM</div>
-  <div class="qty-val">2</div>
-  <div class="cash-val">$428.00</div>
-  <div><span class="status-pill delivered">delivered</span></div>
-</div>
-
-<div class="table-row">
-  <div class="ref-code">VN-40216-9Q</div>
-  <div class="time-val">Jul 20, 2026 · 6:20 PM</div>
-  <div class="time-val">—</div>
-  <div class="qty-val">1</div>
-  <div class="cash-val">$649.00</div>
-  <div><span class="status-pill transit">transit</span></div>
-</div>
-
-<div class="table-row">
-  <div class="ref-code">VN-40215-3M</div>
-  <div class="time-val">Jul 20, 2026 · 4:52 PM</div>
-  <div class="time-val">Jul 20, 2026 · 8:10 PM</div>
-  <div class="qty-val">3</div>
-  <div class="cash-val">$337.00</div>
-  <div><span class="status-pill delivered">delivered</span></div>
-</div>
-
-<div class="table-row">
-  <div class="ref-code">VN-40214-8L</div>
-  <div class="time-val">Jul 20, 2026 · 2:11 PM</div>
-  <div class="time-val">—</div>
-  <div class="qty-val">1</div>
-  <div class="cash-val">$189.00</div>
-  <div><span class="status-pill pending">pending</span></div>
-</div>
-
-<div class="table-row">
-  <div class="ref-code">VN-40213-1D</div>
-  <div class="time-val">Jul 19, 2026 · 11:30 AM</div>
-  <div class="time-val">Jul 19, 2026 · 5:02 PM</div>
-  <div class="qty-val">5</div>
-  <div class="cash-val">$876.50</div>
-  <div><span class="status-pill delivered">delivered</span></div>
+  <div class="ref-code">{{ row().reference_code }}</div>
+  <div class="time-val">{{ row().order_date ? (row().order_date | date:'MMM d, y · h:mm a') : '—' }}</div>
+  <div class="time-val">{{ row().delivery_date ? (row().delivery_date | date:'MMM d, y · h:mm a') : '—' }}</div>
+  <div class="qty-val">{{ row().quantity }}</div>
+  <div class="cash-val">{{ row().cash | currency:'PHP':'symbol':'1.2-2' }}</div>
+  <div>
+    <select
+      class="status-select"
+      [class.delivered]="row().status === 'delivered'"
+      [class.transit]="row().status === 'transit'"
+      [class.pending]="row().status === 'pending'"
+      [value]="row().status"
+      (change)="onStatusSelect($event)"
+    >
+      <option value="pending">pending</option>
+      <option value="transit">transit</option>
+      <option value="delivered">delivered</option>
+    </select>
+  </div>
 </div>
