@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, Signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../helpers/transaction/transaction.service';
@@ -16,6 +16,48 @@ export class History implements OnInit {
 
   // Writable signal for state management inside the component
   public transactions: WritableSignal<TransactionModel[]> = signal([]);
+
+  // Search filter query
+  public searchTerm: WritableSignal<string> = signal('');
+
+  // Computed signal for filtered transactions based on reference code (tracking_code)
+  public filteredTransactions: Signal<TransactionModel[]> = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    if (!term) return this.transactions();
+
+    return this.transactions().filter((t) =>
+      t.tracking_code?.toLowerCase().includes(term)
+    );
+  });
+
+  // Computed signal for dynamic stats calculations
+  public stats = computed(() => {
+  const list = this.transactions();
+
+  const totalTransactions = list.length;
+
+  const successfulOrders = list.filter((t) => {
+    const s = t.status?.toLowerCase();
+    return s === 'completed' || s === 'delivered';
+  });
+
+  const totalCash = successfulOrders.reduce(
+    (sum, t) => sum + (Number(t.total_price) || 0),
+    0
+  );
+
+  const pendingTransactions = list.filter((t) => {
+    const s = t.status?.toLowerCase();
+    return s !== 'completed' && s !== 'delivered' && s !== 'cancelled';
+  }).length;
+
+  // 4th Stat: Avg. Order Value
+  const avgOrderValue = successfulOrders.length
+    ? totalCash / successfulOrders.length
+    : 0;
+
+  return { totalTransactions, totalCash, pendingTransactions, avgOrderValue };
+});
 
   async ngOnInit(): Promise<void> {
     await this.initTransactions();
@@ -69,7 +111,7 @@ export class History implements OnInit {
       });
     } catch (error) {
       console.error('Failed to update status. Reverting changes:', error);
-      
+
       // Revert back to normal/original state on failure
       this.transactions.set(previousState);
     }
