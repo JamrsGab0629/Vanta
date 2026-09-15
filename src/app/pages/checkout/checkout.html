@@ -37,6 +37,13 @@
           <input type="text" id="address" formControlName="address" placeholder="123 Circuit St." required>
           <div class="field-error" [class.show]="checkoutForm.get('address')?.invalid && checkoutForm.get('address')?.touched">Required.</div>
         </div>
+
+        <div class="field">
+          <label for="barangay">Barangay</label>
+          <input type="text" id="barangay" formControlName="barangay" placeholder="Poblacion" required>
+          <div class="field-error" [class.show]="checkoutForm.get('barangay')?.invalid && checkoutForm.get('barangay')?.touched">Required.</div>
+        </div>
+
         <div class="field-row">
           <div class="field">
             <label for="city">City</label>
@@ -45,16 +52,7 @@
           </div>
           <div class="field">
             <label for="province">Province / Region</label>
-            <select id="province" formControlName="province" required>
-              <option value="" disabled selected>Select province/region</option>
-              <option value="bulacan">Bulacan</option>
-              <option value="ncr">Metro Manila (NCR)</option>
-              <option value="cebu">Cebu</option>
-              <option value="davao">Davao</option>
-              <option value="visayas">Visayas</option>
-              <option value="mindanao">Mindanao</option>
-              <option value="luzon">Rest of Luzon</option>
-            </select>
+            <input type="text" id="province" formControlName="province" placeholder="Bulacan" required>
             <div class="field-error" [class.show]="checkoutForm.get('province')?.invalid && checkoutForm.get('province')?.touched">Required.</div>
           </div>
         </div>
@@ -183,7 +181,7 @@
         </div>
         <div class="summary-row">
           <span>Delivery Address</span>
-          <b>{{ checkoutForm.get('address')?.value }}, {{ checkoutForm.get('city')?.value }}</b>
+          <b>{{ checkoutForm.get('address')?.value }}, {{ checkoutForm.get('barangay')?.value }}, {{ checkoutForm.get('city')?.value }}</b>
         </div>
         <div class="summary-row">
           <span>Contact</span>

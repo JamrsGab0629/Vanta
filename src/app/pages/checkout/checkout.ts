@@ -79,23 +79,24 @@ export class Checkout implements OnInit {
     this.items().reduce((acc, item) => acc + (Number(item.quantity) || 1), 0),
   );
 
-  checkoutForm: FormGroup = this.fb.group({
-    first_name: ['', Validators.required],
-    last_name: ['', Validators.required],
-    phone_number: ['', Validators.required],
-    address: ['', Validators.required],
-    city: ['', Validators.required],
-    province: ['', Validators.required],
-    is_permanent: [false],
-  });
-
+ checkoutForm: FormGroup = this.fb.group({
+  first_name: ['', Validators.required],
+  last_name: ['', Validators.required],
+  phone_number: ['', Validators.required],
+  address: ['', Validators.required],
+  barangay: ['', Validators.required],
+  city: ['', Validators.required],
+  province: ['', Validators.required],
+  is_permanent: [false],
+});
   ngOnInit() {
     this.loadCart();
     this.loadUserInfo();
 
-    this.checkoutForm.valueChanges.subscribe((values) => {
-      const fullAddress =
-        `${values.address || ''} ${values.city || ''} ${values.province || ''}`.toLowerCase();
+   this.checkoutForm.valueChanges.subscribe((values) => {
+  const fullAddress =
+    `${values.address || ''} ${values.barangay || ''} ${values.city || ''} ${values.province || ''}`.toLowerCase();
+  // ...unchanged below
 
       let matchedRate = this.defaultShipping;
 
@@ -122,20 +123,21 @@ export class Checkout implements OnInit {
   }
 
   async loadUserInfo() {
-    try {
-      const response: UserInfoData = await this.userService.fetchUserData();
-      this.checkoutForm.patchValue({
-        first_name: response.first_name,
-        last_name: response.last_name,
-        phone_number: response.contact_no,
-        address: response.address,
-        city: response.city,
-        province: response.province,
-      });
-    } catch (error) {
-      console.error('Failed to load user info', error);
-    }
+  try {
+    const response: UserInfoData = await this.userService.fetchUserData();
+    this.checkoutForm.patchValue({
+      first_name: response.first_name,
+      last_name: response.last_name,
+      phone_number: response.contact_no,
+      address: response.address,
+      barangay: (response as any).barangay ?? '',
+      city: response.city,
+      province: response.province,
+    });
+  } catch (error) {
+    console.error('Failed to load user info', error);
   }
+}
 
   showConfirmModal = signal<boolean>(false);
   isProcessing = signal<boolean>(false);
@@ -160,35 +162,33 @@ export class Checkout implements OnInit {
     this.showConfirmModal.set(false);
   }
 
-  async confirmOrder(): Promise<void> {
-    this.showConfirmModal.set(false);
-    this.isProcessing.set(true);
-    this.errorMessage.set(null);
+ async confirmOrder(): Promise<void> {
+  // ...
+  const formValues = this.checkoutForm.value;
+  const transactionData: TransactionInformation = {
+    first_name: formValues.first_name,
+    last_name: formValues.last_name,
+    address: `${formValues.address}, ${formValues.barangay}, ${formValues.city}, ${formValues.province}`,
+    contact_number: formValues.phone_number,
+    save_address: formValues.is_permanent,
+  };
 
-    try {
-      const formValues = this.checkoutForm.value;
-      const transactionData: TransactionInformation = {
-        first_name: formValues.first_name,
-        last_name: formValues.last_name,
-        address: `${formValues.address}, ${formValues.city}, ${formValues.province}`,
-        contact_number: formValues.phone_number,
-        save_address: formValues.is_permanent,
-      };
+  const response = await this.transactionService.completeTransaction(transactionData);
 
-      const response = await this.transactionService.completeTransaction(transactionData);
+  const completeInformation = {
+    first_name: formValues.first_name,
+    last_name: formValues.last_name,
+    contact_no: formValues.phone_number,
+    address: formValues.address,
+    barangay: formValues.barangay,
+    city: formValues.city,
+    province: formValues.province,
+    fee: this.shipping(),
+    estimate_time: this.estimatedDelivery(),
+    code: response?.tracking_code ?? 'N/A',
+  };
+  // ...unchanged below
 
-      // Construct the full information payload with response data
-      const completeInformation = {
-        first_name: formValues.first_name,
-        last_name: formValues.last_name,
-        contact_no: formValues.phone_number,
-        address: formValues.address,
-        city: formValues.city,
-        province: formValues.province,
-        fee: this.shipping(),
-        estimate_time: this.estimatedDelivery(),
-        code: response?.tracking_code ?? 'N/A',
-      };
 
       this.transaction.setInformation(completeInformation);
       this.transaction.setItems(this.items());
@@ -201,4 +201,3 @@ export class Checkout implements OnInit {
       this.isProcessing.set(false);
     }
   }
-}
