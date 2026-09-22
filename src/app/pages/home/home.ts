@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Product } from '../../components/cards/product/product';
 import { ProductService } from '../../helpers/product/product.service';
 import { CartService } from '../../helpers/cart/cart.service';
@@ -22,7 +23,7 @@ export interface ProductItem {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [Product],
+  imports: [Product, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
