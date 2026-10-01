@@ -77,18 +77,9 @@ Product.init(
             type: DataTypes.JSON,
             allowNull: true,
         },
-        bench_stats: {
-            type: DataTypes.JSON,
-            allowNull: true,
-        },
         image_url: {
             type: DataTypes.STRING(255),
             allowNull: true,
-        },
-        is_active: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: true,
         },
         created_by: {
             type: DataTypes.INTEGER,
