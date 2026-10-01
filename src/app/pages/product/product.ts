@@ -13,7 +13,6 @@ export interface LocalFormState {
   stock_quantity: number;
   spec: string;
   desc: string;
-  benchTestStatus: 'Pending' | 'Passed' | 'Failed';
   imageUrl: string | null;
 }
 
@@ -42,12 +41,10 @@ export class Product {
     stock_quantity: 0,
     spec: '',
     desc: '',
-    benchTestStatus: 'Pending',
     imageUrl: null,
   });
 
   categories = ['GPU', 'CPU', 'SSD', "RAM", "MOTHERBOARD"];
-  benchStatuses = ['Pending', 'Passed', 'Failed'];
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -118,9 +115,7 @@ export class Product {
         stock_quantity: Number(form.stock_quantity),
         description: form.desc || null,
         specs: form.spec ? { key_spec: form.spec } : null,
-        bench_stats: { status: form.benchTestStatus },
         image_url: finalImageUrl,
-        is_active: form.benchTestStatus === 'Passed',
       };
 
       // 3. Persist product to backend database
@@ -150,7 +145,6 @@ export class Product {
       stock_quantity: 0,
       spec: '',
       desc: '',
-      benchTestStatus: 'Pending',
       imageUrl: null,
     });
   }
