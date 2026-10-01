@@ -16,7 +16,7 @@ export class CartServiceError extends Error {
 export const addToCartService = async (userId: number, productId: number, quantity: number) => {
   // 1. Verify the product exists and is active
   const product = await Product.findOne({
-    where: { product_id: productId, is_active: true },
+    where: { product_id: productId },
   });
 
   if (!product) {
