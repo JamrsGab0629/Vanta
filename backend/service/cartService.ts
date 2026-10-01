@@ -99,20 +99,65 @@ export const getCartService = async (userId: string) => {
   const plainCart = cart.toJSON();
   const rawItems = (cart.items || []) as any[];
 
-  const items = rawItems.map((item) => {
-    const product = item.product || {};
+  // Track items that need DB cleanup
+  const itemsToDelete: string[] = [];
+  const itemsToUpdate: { cart_item_id: string; quantity: number }[] = [];
 
-    return {
-      product_id: String(product.product_id || item.product_id),
-      sku: product.sku || '',
-      name: product.name || '',
-      category: product.category || '',
-      price: Number(product.price || 0),
-      image_url: product.image_url || '',
-      stock_quantity: Number(product.stock_quantity || 0),
-      quantity: Number(item.quantity || 1),
-    };
-  });
+  const items = rawItems
+    .map((item) => {
+      const product = item.product || {};
+      const stockQuantity = Number(product.stock_quantity || 0);
+      const currentQuantity = Number(item.quantity || 1);
+
+      // If item is completely out of stock, queue for deletion
+      if (stockQuantity <= 0) {
+        if (item.cart_item_id) itemsToDelete.push(item.cart_item_id);
+        return null;
+      }
+
+      // Cap quantity to available stock: Math.min(requested, available)
+      const effectiveQuantity = Math.min(currentQuantity, stockQuantity);
+
+      // Queue database update if quantity was capped down
+      if (effectiveQuantity < currentQuantity && item.cart_item_id) {
+        itemsToUpdate.push({
+          cart_item_id: item.cart_item_id,
+          quantity: effectiveQuantity,
+        });
+      }
+
+      return {
+        product_id: String(product.product_id || item.product_id),
+        sku: product.sku || '',
+        name: product.name || '',
+        category: product.category || '',
+        price: Number(product.price || 0),
+        image_url: product.image_url || '',
+        stock_quantity: stockQuantity,
+        quantity: effectiveQuantity,
+      };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null); // Filter out 0-stock items
+
+  // Async cleanup in database (doesn't block response)
+  if (itemsToDelete.length > 0) {
+    CartItem.destroy({ where: { cart_item_id: itemsToDelete } }).catch((err) =>
+      console.error('Failed to purge out-of-stock cart items:', err)
+    );
+  }
+
+  if (itemsToUpdate.length > 0) {
+    Promise.all(
+      itemsToUpdate.map((update) =>
+        CartItem.update(
+          { quantity: update.quantity },
+          { where: { cart_item_id: update.cart_item_id } }
+        )
+      )
+    ).catch((err) =>
+      console.error('Failed to sync updated cart item quantities:', err)
+    );
+  }
 
   return {
     cart_id: plainCart.cart_id,
