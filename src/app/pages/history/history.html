@@ -5,12 +5,7 @@
   </div>
   <div class="search-box">
     <span class="ic">⌕</span>
-    <input 
-      type="text" 
-      id="historySearch" 
-      [(ngModel)]="searchTerm" 
-      placeholder="Search reference code..."
-    />
+    <input type="text" id="historySearch" [(ngModel)]="searchTerm" placeholder="Search reference code..." />
   </div>
 </div>
 
@@ -39,6 +34,7 @@
       <tr>
         <th>Reference Code</th>
         <th>Time of Order</th>
+        <th>Time of Update</th>
         <th>Time of Delivery</th>
         <th>Cash</th>
         <th>Status Action</th>
@@ -46,36 +42,38 @@
     </thead>
     <tbody>
       @for (t of filteredTransactions(); track t.transaction_id) {
-        <tr>
-          <td class="ref-code">{{ t.tracking_code }}</td>
-          <td class="time-val">{{ (t.receipt_date || t.receipt_date) | date:'medium' }}</td>
-          <td class="time-val">{{ (t.updated_at | date:'medium') || '—' }}</td>
-          <td class="cash-val">{{ (t.total_price) | currency }}</td>
-          <td>
-            <div class="status-cell">
-              <span class="status-pill" [ngClass]="t.status?.toLowerCase()">
-                {{ t.status }}
-              </span>
-              
-              <select 
-                [ngModel]="t.status?.toLowerCase()" 
-                (ngModelChange)="onStatusChange(t.transaction_id, $event)"
-                [disabled]="isStatusLocked(t.status)"
-                class="status-select"
-              >
-                <option value="pending">Pending</option>
-                <option value="processing">Processing</option>
-                <option value="delivered">Delivered</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
-          </td>
-        </tr>
+      <tr>
+        <td class="ref-code">{{ t.tracking_code }}</td>
+        <td class="time-val">{{ (t.receipt_date || t.receipt_date) | date:'medium' }}</td>
+        <td class="time-val">{{ (t.updated_at | date:'medium') || '—' }}</td>
+        <td class="time-val">
+          @if (t.status?.toLowerCase() === "delivered") {
+            {{ (t.updated_at | date:'medium') || '—' }}
+          } @else {
+            {{ '—' }}
+          }</td>
+        <td class="cash-val">{{ (t.total_price) | currency }}</td>
+        <td>
+          <div class="status-cell">
+            <span class="status-pill" [ngClass]="t.status?.toLowerCase()">
+              {{ t.status }}
+            </span>
+
+            <select [ngModel]="t.status?.toLowerCase()" (ngModelChange)="onStatusChange(t.transaction_id, $event)"
+              [disabled]="isStatusLocked(t.status)" class="status-select">
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="delivered">Delivered</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </td>
+      </tr>
       } @empty {
-        <tr>
-          <td colspan="5" class="no-data">No transactions found.</td>
-        </tr>
+      <tr>
+        <td colspan="5" class="no-data">No transactions found.</td>
+      </tr>
       }
     </tbody>
   </table>
