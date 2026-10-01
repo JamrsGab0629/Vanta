@@ -18,9 +18,7 @@ export interface PublishProductInput {
   stock_quantity: number;
   description?: string | null;
   specs?: Record<string, string | number> | null;
-  bench_stats?: Record<string, string | number> | null;
   image_url?: string | null;
-  is_active?: boolean;
   created_by?: number | null;
 }
 
@@ -38,9 +36,7 @@ export interface ModifyProductInformationInput {
   description?: string | null;
   stock_quantity?: number;
   specs?: Record<string, string | number> | null;
-  bench_stats?: Record<string, string | number> | null;
   image_url?: string | null;
-  is_active?: boolean;
 }
 
 // Outputs
@@ -53,9 +49,7 @@ export interface ProductItem {
   stock_quantity: number;
   description: string | null;
   specs: Record<string, string | number> | null;
-  bench_stats: Record<string, string | number> | null;
   image_url: string | null;
-  is_active: boolean;
   created_by: number | null;
   createdAt: string;
   updatedAt: string;
