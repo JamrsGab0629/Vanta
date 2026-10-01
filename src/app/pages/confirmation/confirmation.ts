@@ -30,7 +30,7 @@ export class Confirmation {
   readonly totalPaid = computed(() => this.subtotal() + this.shippingFee() + this.tax());
   
   getItemTotal(item: any): number {
-    console.log(this.info());
+    // console.log(this.info());
     return (Number(item.price) || 0) * (Number(item.quantity) || 1);
   }
 
