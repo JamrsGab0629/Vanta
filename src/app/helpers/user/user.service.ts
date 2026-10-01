@@ -24,7 +24,7 @@ export class UserService {
       input
     );
 
-    console.log(response.data)
+    // console.log(response.data)
 
     if (!response?.data) {
       return response as any;
