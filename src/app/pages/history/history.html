@@ -12,19 +12,30 @@
 <div class="stat-row">
   <div class="stat-cell">
     <div class="label">Total Transactions</div>
-    <div class="value"><b>{{ stats().totalTransactions }}</b></div>
+    <div class="value">
+      <b>{{ stats().totalTransactions }}</b>
+    </div>
   </div>
+
   <div class="stat-cell">
     <div class="label">Total Cash Collected</div>
-    <div class="value"><b>{{ stats().totalCash | currency }}</b></div>
+    <div class="value">
+      <b>{{ stats().totalCash | currency:'PHP':'symbol':'1.2-2' }}</b>
+    </div>
   </div>
+
   <div class="stat-cell">
     <div class="label">Avg. Order Value</div>
-    <div class="value"><b>{{ stats().avgOrderValue | currency }}</b></div>
+    <div class="value">
+      <b>{{ stats().avgOrderValue | currency:'PHP':'symbol':'1.2-2' }}</b>
+    </div>
   </div>
+
   <div class="stat-cell">
     <div class="label">Pending Transactions</div>
-    <div class="value"><b>{{ stats().pendingTransactions }}</b></div>
+    <div class="value">
+      <b>{{ stats().pendingTransactions }}</b>
+    </div>
   </div>
 </div>
 
