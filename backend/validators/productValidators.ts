@@ -24,7 +24,6 @@ export const createProductSchema = z.object({
 
   category: z.string().trim().min(2, 'Category is required').max(50),
 
-
   price: z.coerce.number().min(0, 'Price must be a positive number'),
 
   stock_quantity: z.coerce.number().int().min(0, 'Stock quantity must be non-negative').default(0),
@@ -33,13 +32,7 @@ export const createProductSchema = z.object({
 
   specs: jsonRecordSchema.optional().nullable(),
 
-  bench_stats: jsonRecordSchema.optional().nullable(),
-
   image_url: z.string().trim().max(255).optional().nullable(),
-
-  is_active: z
-    .union([z.boolean(), z.string().transform((v) => v === 'true' || v === '1')])
-    .default(true),
 });
 
 export const updateProductSchema = z.object({
@@ -59,13 +52,7 @@ export const updateProductSchema = z.object({
 
   specs: jsonRecordSchema.optional().nullable(),
 
-  bench_stats: jsonRecordSchema.optional().nullable(),
-
   image_url: z.string().trim().max(255).optional().nullable(),
-
-  is_active: z
-    .union([z.boolean(), z.string().transform((v) => v === 'true' || v === '1')])
-    .optional(),
 });
 
 export const productQuerySchema = z.object({
@@ -80,8 +67,6 @@ export const productQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
 
   limit: z.coerce.number().int().min(1).max(100).default(20),
-
-  is_active: z.union([z.boolean(), z.string()]).optional(),
 });
 
 export const formatValidationError = (error: z.ZodError) => ({

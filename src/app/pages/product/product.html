@@ -67,15 +67,6 @@
         <input type="number" id="np-price" name="price" [ngModel]="formData().price"
           (ngModelChange)="formData.update(f => ({ ...f, price: $event }))" placeholder="36,499" required>
       </div>
-      <div class="field">
-        <label for="np-bench">Bench Test Status</label>
-        <select id="np-bench" name="benchTestStatus" [ngModel]="formData().benchTestStatus"
-          (ngModelChange)="formData.update(f => ({ ...f, benchTestStatus: $event }))">
-          @for (status of benchStatuses; track status) {
-          <option [value]="status">{{ status }}</option>
-          }
-        </select>
-      </div>
     </div>
 
     <!-- Row 3: Stock Quantity & Key Spec -->
@@ -121,7 +112,6 @@
         <div class="summary-row"><span>Category</span><b>{{ formData().category }}</b></div>
         <div class="summary-row"><span>Price</span><b>₱{{ formData().price | number:'1.2-2' }}</b></div>
         <div class="summary-row"><span>Initial Stock</span><b>{{ formData().stock_quantity }} units</b></div>
-        <div class="summary-row"><span>Bench Status</span><b>{{ formData().benchTestStatus }}</b></div>
       </div>
 
       <div class="modal-buttons">

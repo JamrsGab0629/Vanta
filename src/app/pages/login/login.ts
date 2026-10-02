@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Footnote } from '../../components/auth/footnote/footnote';
-import { Router, RouterLink } from "@angular/router";
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../helpers/auth/auth.services';
 
 @Component({
@@ -49,11 +49,18 @@ export class Login {
     this.isLoading = true;
 
     try {
-      // Login updates the AuthService's currentUser signal internally
       await this.authService.login({ email: this.email, password: this.password });
-      
-      // Navigate to home after successful authentication
-      await this.router.navigate(['/app']);
+
+      // Fetch user role for conditional routing
+      const response = await this.authService.fetchUserData();
+      console.log(response);
+
+      if (response.data?.role === 'admin') {
+        await this.router.navigate(['/admin']);
+      } else {
+        console.log(response.data?.role)
+        await this.router.navigate(['/app']);
+      }
     } catch (error: any) {
       const status = error?.status || error?.statusCode;
       if (status === 400 || status === 401) {

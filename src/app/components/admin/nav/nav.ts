@@ -1,6 +1,5 @@
 import { Component, inject, signal, OnInit, computed, PLATFORM_ID } from '@angular/core';
-import { Router, NavigationEnd, RouterLink, RouterLinkActive } from '@angular/router';
-import { filter } from 'rxjs';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../helpers/auth/auth.services';
 import { UserInformation, FetchUserDataOutput } from '../../../helpers/auth/auth.interface';
 import { isPlatformBrowser } from '@angular/common';
@@ -17,7 +16,6 @@ export class Nav implements OnInit {
   private platformId = inject(PLATFORM_ID);
 
   currentUser = signal<UserInformation | null>(null);
-  current_url_suffix = signal<string>('home');
 
   panels = [
     { url_suffix: 'home', attr_name: 'history', name: 'History', symbol: '▤' },
@@ -49,12 +47,6 @@ export class Nav implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.loadUserData();
     }
-
-    this.update_cart(this.router.url);
-
-    this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => this.update_cart(event.urlAfterRedirects));
   }
 
   private async loadUserData(): Promise<void> {
@@ -69,12 +61,12 @@ export class Nav implements OnInit {
     }
   }
 
-  private update_cart(url: string) {
-    const clean = url.split('?')[0];
-    const last = clean.split('/').filter(Boolean).pop();
-
-    if (last) {
-      this.current_url_suffix.set(last);
+  async logout(): Promise<void> {
+    try {
+      await this.authService.logout();
+      this.router.navigate(['/']);
+    } catch (error) {
+      console.error('Logout failed', error);
     }
   }
 }

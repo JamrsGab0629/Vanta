@@ -1,12 +1,27 @@
 import { Router } from 'express';
-import { getUserTransactions, getAllTransactions, updateOrderStatus } from '../controller/transactionController';
-import authMiddleware from '../middleware/authMiddleware';
+import { editTransactionsStatus, getTransactions, getUserTransactions } from '../controller/transactionController';
+import authMiddleware from '../middleware/authMiddleware'; // Adjust path based on your folder structure
 import adminMiddleware from '../middleware/adminMiddleware';
 
 const router = Router();
 
+// GET /api/transactions - user's own transactions
 router.get('/', authMiddleware, getUserTransactions);
-router.get('/admin/all', authMiddleware, adminMiddleware, getAllTransactions);
-router.patch('/admin/:orderId/status', authMiddleware, adminMiddleware, updateOrderStatus);
+
+// ADMIN routes
+
+// GET /api/transactions/transactions - Protected by your custom authMiddleware
+router.get('/transactions',
+    authMiddleware,
+    // adminMiddleware,
+    getTransactions
+);
+
+// GET /api/transactions/transactions - Protected by your custom authMiddleware
+router.put('/update-transaction',
+    authMiddleware,
+    // adminMiddleware,
+    editTransactionsStatus
+)
 
 export default router;

@@ -37,11 +37,11 @@ export class Checkout implements OnInit {
   private userService = inject(UserService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private transaction = inject(Transaction)
+  private transaction = inject(Transaction);
 
   items = signal<any[]>([]);
-  shipping = signal<number>(150.0);
-  estimatedDelivery = signal<string>('3 to 5 business days (Rest of Luzon)');
+  shipping = signal<number>(0);
+  estimatedDelivery = signal<string>("—");
 
   readonly taxRate = 0.12;
 
@@ -79,24 +79,24 @@ export class Checkout implements OnInit {
     this.items().reduce((acc, item) => acc + (Number(item.quantity) || 1), 0),
   );
 
- checkoutForm: FormGroup = this.fb.group({
-  first_name: ['', Validators.required],
-  last_name: ['', Validators.required],
-  phone_number: ['', Validators.required],
-  address: ['', Validators.required],
-  barangay: ['', Validators.required],
-  city: ['', Validators.required],
-  province: ['', Validators.required],
-  is_permanent: [false],
-});
-  ngOnInit() {
-    this.loadCart();
+  checkoutForm: FormGroup = this.fb.group({
+    first_name: ['', Validators.required],
+    last_name: ['', Validators.required],
+    phone_number: ['', Validators.required],
+    address: ['', Validators.required],
+    barangay: ['', Validators.required],
+    city: ['', Validators.required],
+    province: ['', Validators.required],
+    is_permanent: [false],
+  });
+  
+  async ngOnInit() {
+    await this.loadCart();
     this.loadUserInfo();
 
-   this.checkoutForm.valueChanges.subscribe((values) => {
-  const fullAddress =
-    `${values.address || ''} ${values.barangay || ''} ${values.city || ''} ${values.province || ''}`.toLowerCase();
-  // ...unchanged below
+    this.checkoutForm.valueChanges.subscribe((values) => {
+      const fullAddress =
+        `${values.address || ''} ${values.barangay || ''} ${values.city || ''} ${values.province || ''}`.toLowerCase();
 
       let matchedRate = this.defaultShipping;
 
@@ -106,6 +106,8 @@ export class Checkout implements OnInit {
           break;
         }
       }
+
+      if (this.items().length === 0) return;
 
       this.shipping.set(matchedRate.fee);
       this.estimatedDelivery.set(matchedRate.delivery);
@@ -123,21 +125,21 @@ export class Checkout implements OnInit {
   }
 
   async loadUserInfo() {
-  try {
-    const response: UserInfoData = await this.userService.fetchUserData();
-    this.checkoutForm.patchValue({
-      first_name: response.first_name,
-      last_name: response.last_name,
-      phone_number: response.contact_no,
-      address: response.address,
-      barangay: (response as any).barangay ?? '',
-      city: response.city,
-      province: response.province,
-    });
-  } catch (error) {
-    console.error('Failed to load user info', error);
+    try {
+      const response: UserInfoData = await this.userService.fetchUserData();
+      this.checkoutForm.patchValue({
+        first_name: response.first_name,
+        last_name: response.last_name,
+        phone_number: response.contact_no,
+        address: response.address,
+        barangay: (response as any).barangay ?? '',
+        city: response.city,
+        province: response.province,
+      });
+    } catch (error) {
+      console.error('Failed to load user info', error);
+    }
   }
-}
 
   showConfirmModal = signal<boolean>(false);
   isProcessing = signal<boolean>(false);
@@ -162,42 +164,42 @@ export class Checkout implements OnInit {
     this.showConfirmModal.set(false);
   }
 
- async confirmOrder(): Promise<void> {
-  // ...
-  const formValues = this.checkoutForm.value;
-  const transactionData: TransactionInformation = {
-    first_name: formValues.first_name,
-    last_name: formValues.last_name,
-    address: `${formValues.address}, ${formValues.barangay}, ${formValues.city}, ${formValues.province}`,
-    contact_number: formValues.phone_number,
-    save_address: formValues.is_permanent,
-  };
+  async confirmOrder(): Promise<void> {
+    // ...
+    const formValues = this.checkoutForm.value;
+    const transactionData: TransactionInformation = {
+      first_name: formValues.first_name,
+      last_name: formValues.last_name,
+      address: `${formValues.address}, ${formValues.barangay}, ${formValues.city}, ${formValues.province}`,
+      contact_number: formValues.phone_number,
+      save_address: formValues.is_permanent,
+    };
 
-  const response = await this.transactionService.completeTransaction(transactionData);
+    const response = await this.transactionService.completeTransaction(transactionData);
 
-  const completeInformation = {
-    first_name: formValues.first_name,
-    last_name: formValues.last_name,
-    contact_no: formValues.phone_number,
-    address: formValues.address,
-    barangay: formValues.barangay,
-    city: formValues.city,
-    province: formValues.province,
-    fee: this.shipping(),
-    estimate_time: this.estimatedDelivery(),
-    code: response?.tracking_code ?? 'N/A',
-  };
-  // ...unchanged below
+    const completeInformation = {
+      first_name: formValues.first_name,
+      last_name: formValues.last_name,
+      contact_no: formValues.phone_number,
+      address: formValues.address,
+      barangay: formValues.barangay,
+      city: formValues.city,
+      province: formValues.province,
+      fee: this.shipping(),
+      estimate_time: this.estimatedDelivery(),
+      code: response?.tracking_code ?? 'N/A',
+    };
+    // ...unchanged below
 
+    this.transaction.setInformation(completeInformation);
+    this.transaction.setItems(this.items());
 
-      this.transaction.setInformation(completeInformation);
-      this.transaction.setItems(this.items());
-
-      // Navigate to confirmation page
-      await this.router.navigate(['../confirmation'], { relativeTo: this.route });
-    } catch (error: any) {
-      console.error('Transaction failed', error);
-      this.errorMessage.set(error?.message || 'Transaction failed. Please try again.');
-      this.isProcessing.set(false);
-    }
+    // Navigate to confirmation page
+    await this.router.navigate(['../confirmation'], { relativeTo: this.route });
   }
+  catch(error: any) {
+    console.error('Transaction failed', error);
+    this.errorMessage.set(error?.message || 'Transaction failed. Please try again.');
+    this.isProcessing.set(false);
+  }
+}

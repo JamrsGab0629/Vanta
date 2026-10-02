@@ -1,114 +1,119 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, Signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Transactions } from '../../components/admin/transactions/transactions';
+import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../helpers/transaction/transaction.service';
-import { ToastService } from '../../helpers/toast/toast.service';
-import { OrderRow } from '../../components/admin/history-item/history-item';
+import { TransactionModel } from '../../helpers/transaction/transaction.interface';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule, Transactions],
+  imports: [CommonModule, FormsModule],
   templateUrl: './history.html',
   styleUrl: './history.css',
 })
 export class History implements OnInit {
   private transactionService = inject(TransactionService);
-  private toastService = inject(ToastService);
 
-  rows = signal<OrderRow[]>([]);
-  isLoading = signal<boolean>(true);
-  searchTerm = signal<string>('');
+  // Writable signal for state management inside the component
+  public transactions: WritableSignal<TransactionModel[]> = signal([]);
 
-  filteredRows = computed(() => {
+  // Search filter query
+  public searchTerm: WritableSignal<string> = signal('');
+
+  // Computed signal for filtered transactions based on reference code (tracking_code)
+  public filteredTransactions: Signal<TransactionModel[]> = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
-    if (!term) return this.rows();
-    return this.rows().filter((r) => r.reference_code.toLowerCase().includes(term));
+    if (!term) return this.transactions();
+
+    return this.transactions().filter((t) =>
+      t.tracking_code?.toLowerCase().includes(term)
+    );
   });
 
-  ordersToday = computed(() => {
-    const today = new Date().toDateString();
-    return this.rows().filter((r) => r.order_date && new Date(r.order_date).toDateString() === today).length;
+  // Computed signal for dynamic stats calculations
+  public stats = computed(() => {
+  const list = this.transactions();
+
+  const totalTransactions = list.length;
+
+  const successfulOrders = list.filter((t) => {
+    const s = t.status?.toLowerCase();
+    return s === 'completed' || s === 'delivered';
   });
 
-  cashCollected = computed(() =>
-    this.rows()
-      .filter((r) => r.status === 'delivered')
-      .reduce((sum, r) => sum + (Number(r.cash) || 0), 0),
+  const totalCash = successfulOrders.reduce(
+    (sum, t) => sum + (Number(t.total_price) || 0),
+    0
   );
 
-  avgDeliveryHours = computed(() => {
-    const delivered = this.rows().filter((r) => r.order_date && r.delivery_date);
-    if (delivered.length === 0) return 0;
+  const pendingTransactions = list.filter((t) => {
+    const s = t.status?.toLowerCase();
+    return s !== 'completed' && s !== 'delivered' && s !== 'cancelled';
+  }).length;
 
-    const totalHours = delivered.reduce((sum, r) => {
-      const start = new Date(r.order_date!).getTime();
-      const end = new Date(r.delivery_date!).getTime();
-      return sum + (end - start) / (1000 * 60 * 60);
-    }, 0);
+  // 4th Stat: Avg. Order Value
+  const avgOrderValue = successfulOrders.length
+    ? totalCash / successfulOrders.length
+    : 0;
 
-    return totalHours / delivered.length;
-  });
+  return { totalTransactions, totalCash, pendingTransactions, avgOrderValue };
+});
 
-  pendingOrders = computed(() => this.rows().filter((r) => r.status === 'pending').length);
-
-  ngOnInit(): void {
-    this.loadTransactions();
+  async ngOnInit(): Promise<void> {
+    await this.initTransactions();
   }
 
-  onSearchChange(event: Event): void {
-    this.searchTerm.set((event.target as HTMLInputElement).value);
-  }
-
-  async loadTransactions(): Promise<void> {
-    this.isLoading.set(true);
+  async initTransactions(): Promise<void> {
     try {
-      const response = await this.transactionService.getAllTransactions();
-      const transactions = response?.transactions ?? [];
-
-      const mapped: OrderRow[] = transactions.map((t: any) => {
-        const order = t?.Receipt?.Order;
-        const receipt = t?.Receipt;
-        const items = order?.items ?? [];
-        const quantity = items.reduce((sum: number, i: any) => sum + (Number(i.quantity) || 0), 0);
-
-        return {
-          order_id: order?.order_id,
-          reference_code: `VN-${order?.order_id ?? '000'}`,
-          order_date: receipt?.receipt_date ?? null,
-          delivery_date: order?.delivered_at ?? null,
-          quantity,
-          cash: Number(receipt?.total_price ?? 0),
-          status: order?.status === 'paid' ? 'pending' : (order?.status ?? 'pending'),
-        };
-      });
-
-      this.rows.set(mapped);
+      const response = await this.transactionService.getTransactions({ all: true });
+      if (response) {
+        this.transactions.set(response);
+      }
     } catch (error) {
-      console.error('Failed to load transactions', error);
-      this.rows.set([]);
-    } finally {
-      this.isLoading.set(false);
+      console.error('Failed to load transactions:', error);
     }
   }
 
-  async onStatusChange(event: { orderId: string | number; status: string }): Promise<void> {
-    try {
-      const response = await this.transactionService.updateOrderStatus(event.orderId, event.status);
+  // Helper method to check if a status is terminal (cannot be changed)
+  isStatusLocked(status?: string): boolean {
+    if (!status) return false;
+    const lower = status.toLowerCase();
+    return lower === 'completed' || lower === 'delivered' || lower === 'cancelled';
+  }
 
-      this.rows.update((list) =>
-        list.map((r) =>
-          r.order_id === event.orderId
-            ? { ...r, status: event.status, delivery_date: (response as any)?.delivered_at ?? null }
-            : r,
-        ),
+  // Handle changing status for a specific transaction
+  async onStatusChange(transactionId: number | string, newStatus: string): Promise<void> {
+    const currentTransaction = this.transactions().find((t) => t.transaction_id === transactionId);
+
+    if (this.isStatusLocked(currentTransaction?.status)) {
+      console.warn(`Transaction ${transactionId} is already ${currentTransaction?.status} and cannot be modified.`);
+      return;
+    }
+
+    // Keep backup of old transactions list to revert on failure
+    const previousState = this.transactions();
+
+    try {
+      // Optimistically update status and delivery time (updated_at) to NOW
+      const nowIso = new Date().toISOString();
+      this.transactions.update((list) =>
+        list.map((t) =>
+          t.transaction_id === transactionId
+            ? { ...t, status: newStatus, updated_at: nowIso }
+            : t
+        )
       );
 
-      this.toastService.show('Order status updated', 'success');
+      // Execute backend API call
+      await this.transactionService.updateStatus({
+        transaction_id: String(transactionId),
+        status: newStatus,
+      });
     } catch (error) {
-      console.error('Failed to update status', error);
-      this.toastService.show("Couldn't update status — try again", 'error');
-      this.loadTransactions();
+      console.error('Failed to update status. Reverting changes:', error);
+
+      // Revert back to normal/original state on failure
+      this.transactions.set(previousState);
     }
   }
 }

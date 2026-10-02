@@ -15,18 +15,18 @@ TransactionModel.init(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
+        tracking_code: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         status: {
             type: DataTypes.STRING(30),
-            defaultValue: 'SUCCESS',
+            defaultValue: 'PENDING',
         },
-        debit: {
-            type: DataTypes.DECIMAL(10, 2),
-            defaultValue: 0.00,
-        },
-        credit: {
-            type: DataTypes.DECIMAL(10, 2),
-            defaultValue: 0.00,
-        },
+        updated_at: {
+            type: DataTypes.DATE,
+            defaultValue: null,
+        }
     },
     {
         sequelize,
