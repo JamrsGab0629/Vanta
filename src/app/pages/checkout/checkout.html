@@ -159,11 +159,13 @@
         <div class="sum-totals">
           <div class="sum-row"><span>Subtotal</span><span>{{ subtotal() | currency:'PHP':'symbol':'1.2-2' }}</span>
           </div>
-          <div class="sum-row"><span>
-  {{ items().length === 0
-      ? (0 | currency:'PHP':'symbol':'1.2-2')
-      : (shipping() === 0 ? 'FREE' : (shipping() | currency:'PHP':'symbol':'1.2-2')) }}
-</span></div>
+          <div class="sum-row">
+            <span>Fee</span>
+            <span>
+              {{ items().length === 0
+              ? (0 | currency:'PHP':'symbol':'1.2-2')
+              : (shipping() === 0 ? 'FREE' : (shipping() | currency:'PHP':'symbol':'1.2-2')) }}
+            </span></div>
           <div class="sum-row" style="font-size: 11px; color: var(--bone-dim); padding-top: 0;">
             <span>Est. Delivery</span>
             <span style="text-align: right;">{{ estimatedDelivery() }}</span>
