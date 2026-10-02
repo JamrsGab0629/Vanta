@@ -94,8 +94,8 @@
       <div class="totals-row"><span>Subtotal</span><span id="subtotal">₱{{ subtotal() | number:'1.2-2' }}</span></div>
       <div class="totals-row">
         <span>Shipping</span>
-        <span [ngClass]="{'free': shippingFee() === 0}">
-          {{ shippingFee() === 0 ? 'Free' : '₱' + (shippingFee() | number:'1.2-2') }}
+        <span [ngClass]="{'0': shippingFee() === 0}">
+          {{ shippingFee() === 0 ? '0' : '₱' + (shippingFee() | number:'1.2-2') }}
         </span>
       </div>
       <div class="totals-row"><span>Estimated Tax</span><span id="tax">₱{{ tax() | number:'1.2-2' }}</span></div>
