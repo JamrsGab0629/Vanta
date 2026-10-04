@@ -1,24 +1,43 @@
 import { Component, inject, signal, OnInit, computed, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Router, NavigationEnd, RouterLink } from '@angular/router';
-import { filter } from 'rxjs';
+import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs';
 import { AuthService } from '../../../helpers/auth/auth.services';
 import { UserInformation, FetchUserDataOutput } from '../../../helpers/auth/auth.interface';
 
 @Component({
   selector: 'app-nav',
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './nav.html',
   styleUrl: './nav.css',
 })
 export class Nav implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
-  private platformId = inject(PLATFORM_ID); // <--- Inject PLATFORM_ID
+  private platformId = inject(PLATFORM_ID);
+
+  // Track active URL as a signal
+  currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects)
+    ),
+    { initialValue: this.router.url }
+  );
+
+  // Signal that stays true for /app/cart, /app/checkout, or /app/confirmation
+  isCartActive = computed(() => {
+    const url = this.currentUrl().split('?')[0];
+    return (
+      url.startsWith('/app/cart') ||
+      url.startsWith('/app/checkout') ||
+      url.startsWith('/app/confirmation')
+    );
+  });
 
   // State Signals
   currentUser = signal<UserInformation | null>(null);
-  in_home = signal<boolean>(true);
   isMenuOpen = signal<boolean>(false);
 
   // Derived Computed Signals
@@ -44,15 +63,9 @@ export class Nav implements OnInit {
   });
 
   ngOnInit(): void {
-    // Only attempt to fetch user data inside the browser
     if (isPlatformBrowser(this.platformId)) {
       this.loadUserData();
     }
-
-    this.updateCart(this.router.url);
-    this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => this.updateCart(event.urlAfterRedirects));
   }
 
   private async loadUserData(): Promise<void> {
@@ -65,12 +78,6 @@ export class Nav implements OnInit {
       console.error('Failed to fetch user data', error);
       this.currentUser.set(null);
     }
-  }
-
-  private updateCart(url: string): void {
-    const clean = url.split('?')[0];
-    const last = clean.split('/').filter(Boolean).pop();
-    this.in_home.set(last === 'home');
   }
 
   toggleMenu(): void {
