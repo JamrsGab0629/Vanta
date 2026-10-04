@@ -8,6 +8,7 @@ import { Home } from './pages/home/home';
 import { Admin } from './templates/admin/admin';
 import { Product } from './pages/product/product';
 import { authGuard, guestGuard, transactionGuard, adminGuard } from './core/verify-auth';
+import { TransactLayoutComponent } from './templates/transact/transact-layout.component';
 
 export const routes: Routes = [
   {
@@ -34,14 +35,25 @@ export const routes: Routes = [
       { path: 'home', component: Home },
       { path: 'cart', loadComponent: () => import('./pages/cart/cart').then((m) => m.Cart) },
       { path: 'checkout', loadComponent: () => import('./pages/checkout/checkout').then((m) => m.Checkout) },
-      { path: 'confirmation',
+      { 
+        path: 'confirmation',
         canActivate: [transactionGuard],
         loadComponent: () => import('./pages/confirmation/confirmation').then((m) => m.Confirmation) 
+      },
+      {
+        path: 'transact',
+        component: TransactLayoutComponent,
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'processing' },
+          { path: 'processing', loadComponent: () => import('./pages/transact/processing-transactions.component').then(m => m.ProcessingTransactionsComponent) },
+          { path: 'in-transit', loadComponent: () => import('./pages/transact/delivering-transactions.component').then(m => m.DeliveringTransactionsComponent) },
+          { path: 'history', loadComponent: () => import('./pages/transact/transaction-history.component').then(m => m.TransactionHistoryComponent) },
+        ],
       }
     ]
   },
   {
-    path: "admin",
+    path: 'admin',
     component: Admin,
     canActivate: [adminGuard],
     children: [
