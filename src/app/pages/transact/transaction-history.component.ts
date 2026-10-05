@@ -1,8 +1,19 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
-import { TransactStore } from '../../../../transact.store';
-import { Order, OrderStatus, TAX_RATE, subtotal, tax, total } from '../../../../transact.models';
 import { VantaIconComponent } from '../../components/icons/vanta-icons.component';
+import { TransactionService } from '../../helpers/transaction/transaction.service';
+import { TransactionModel } from '../../helpers/transaction/transaction.interface';
+
+// Helper functions declared directly inside the main file
+function toNumber(val: unknown, fallback = 0): number {
+  if (val === null || val === undefined) return fallback;
+  const num = Number(val);
+  return Number.isNaN(num) ? fallback : num;
+}
+
+function calcItemTotal(price: unknown, quantity: unknown): number {
+  return toNumber(price) * toNumber(quantity);
+}
 
 @Component({
   selector: 'app-transaction-history',
@@ -12,117 +23,393 @@ import { VantaIconComponent } from '../../components/icons/vanta-icons.component
   template: `
     <div class="table" role="table" aria-label="Transaction history">
       <div class="grid head" role="row">
-        <span>ORDER / DATE</span><span>ITEMS</span><span>TOTAL</span><span>STATUS</span><span>ACTIONS</span>
+        <span>TRANSACTION / ORDER</span>
+        <span>ITEMS</span>
+        <span>TOTAL</span>
+        <span>STATUS</span>
+        <span>ACTIONS</span>
       </div>
 
-      @for (o of store.history(); track o.id) {
+      @for (t of transactions(); track t.transaction_id) {
         <div class="grid body" role="row">
-          <span><b class="mono">{{ o.id }}</b><small>{{ o.placedAt }}</small></span>
           <span>
-            {{ o.items[0].name }}
-            @if (o.items.length > 1) { <small>+{{ o.items.length - 1 }} more</small> }
+            <b class="mono">#{{ t.transaction_id }}</b>
+            <small>Order #{{ t.Receipt.order_id }}</small>
           </span>
-          <span class="mono amount">{{ totalOf(o) | currency:'PHP':'symbol-narrow' }}</span>
-          <span>
-            @switch (o.status) {
-              @case ('DELIVERED') { <em class="badge ok">DELIVERED</em> }
-              @case ('REFUNDED') { <em class="badge copper">REFUNDED</em> }
-              @default { <em class="badge err">CANCELLED</em> }
+          <span class="item-summary">
+            @if (t.Receipt.Order.items.length > 0) {
+              <img
+                class="row-thumb"
+                [src]="getImageUrl(t.Receipt.Order.items[0].product.image_url)"
+                [alt]="t.Receipt.Order.items[0].product.name"
+              />
+              <span class="item-text">
+                {{ t.Receipt.Order.items[0].product.name }}
+                @if (t.Receipt.Order.items.length > 1) {
+                  <small>+{{ toNumber(t.Receipt.Order.items.length) - 1 }} more</small>
+                }
+              </span>
             }
           </span>
-          <span><button class="btn-secondary" (click)="selected.set(o)"><vanta-icon name="eye" [size]="14" /> VIEW</button></span>
+          <span class="mono amount">{{
+            toNumber(t.Receipt.total_price) | currency: 'PHP' : 'symbol-narrow'
+          }}</span>
+          <span>
+            <em class="badge" [class]="badgeClass(t.status)">
+              {{ t.status }}
+            </em>
+          </span>
+          <span>
+            <button class="btn-secondary" (click)="viewDetails(t)">
+              <vanta-icon name="eye" [size]="14" /> VIEW
+            </button>
+          </span>
         </div>
       } @empty {
         <div class="empty">No finalized transactions yet.</div>
       }
     </div>
 
-    @if (selected(); as o) {
-      <div class="overlay" role="dialog" aria-modal="true" aria-labelledby="detail-title" (click)="selected.set(null)" (keydown.escape)="selected.set(null)">
+    @if (selected(); as t) {
+      <div
+        class="overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="detail-title"
+        (click)="closeDetails()"
+        (keydown.escape)="closeDetails()"
+      >
         <div class="modal" (click)="$event.stopPropagation()">
           <header class="mrow">
             <div>
-              <h2 id="detail-title">{{ o.id }}</h2>
-              <em class="badge" [class]="badgeClass(o.status)">{{ o.status }}</em>
+              <h2 id="detail-title">Transaction #{{ t.transaction_id }}</h2>
+              <em class="badge" [class]="badgeClass(t.status)">{{ t.status }}</em>
             </div>
-            <button class="x" aria-label="Close" (click)="selected.set(null)"><vanta-icon name="close" /></button>
+            <button class="x" aria-label="Close" (click)="closeDetails()">
+              <vanta-icon name="close" />
+            </button>
           </header>
 
           <section>
+            <h3>TELEMETRY</h3>
+            <dl class="telemetry">
+              <div>
+                <dt>ORDER ID</dt>
+                <dd>#{{ t.Receipt.order_id }}</dd>
+              </div>
+              <div>
+                <dt>TRACKING NO.</dt>
+                <dd class="copper">{{ t.tracking_code }}</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section>
             <h3>HARDWARE</h3>
-            @for (i of o.items; track i.sku) {
+            @for (item of t.Receipt.Order.items; track item.order_item_id) {
               <div class="item">
-                <div><span class="sku">SKU · {{ i.sku }}</span><b>{{ i.name }}</b><small>{{ i.specs }}</small>
-                  <small>Serial: <span class="mono">{{ i.serial }}</span></small></div>
-                <div class="mono right">{{ i.price * i.qty | currency:'PHP':'symbol-narrow' }}<small>qty {{ i.qty }}</small></div>
+                <div class="product-thumb">
+                  <img
+                    class="row-thumb"
+                    [src]="getImageUrl(item.product.image_url)"
+                    [alt]="item.product.name"
+                  />
+                </div>
+                <div class="item-info">
+                  <span class="sku">SKU · {{ item.product.sku }}</span>
+                  <b>{{ item.product.name }}</b>
+                </div>
+                <div class="mono right">
+                  {{ calcItemTotal(item.price, item.quantity) | currency: 'PHP' : 'symbol-narrow' }}
+                  <small>qty {{ toNumber(item.quantity) }}</small>
+                </div>
               </div>
             }
           </section>
 
           <section class="sums">
-            <div><span>Subtotal</span><span class="mono">{{ subtotalOf(o) | currency:'PHP':'symbol-narrow' }}</span></div>
-            <div><span>Tax ({{ rate * 100 }}%)</span><span class="mono">{{ taxOf(o) | currency:'PHP':'symbol-narrow' }}</span></div>
-            <div class="grand"><span>Total</span><span class="mono">{{ totalOf(o) | currency:'PHP':'symbol-narrow' }}</span></div>
-          </section>
-
-          <section>
-            <h3>TIMELINE</h3>
-            <ol class="timeline">
-              @for (e of o.timeline; track $index) {
-                <li><span class="pip"></span><b>{{ e.label }}</b><small>{{ e.at }}</small></li>
-              }
-            </ol>
+            <div class="grand">
+              <span>Total Amount</span>
+              <span class="mono">{{
+                toNumber(t.Receipt.total_price) | currency: 'PHP' : 'symbol-narrow'
+              }}</span>
+            </div>
           </section>
         </div>
       </div>
     }
   `,
   styles: `
-    :host { color: var(--text); font-family: var(--body); display: block; }
-    .table { border: 1px solid var(--border); background: var(--panel); }
-    .grid { display: grid; grid-template-columns: var(--history-grid-cols); gap: 16px; padding: 16px 20px; align-items: center; }
-    .head { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px; color: var(--text-dim); background: var(--bg-raised); border-bottom: 1px solid var(--border); }
-    .body { border-bottom: 1px solid var(--border-soft); font-size: 14px; }
-    .body:last-child { border-bottom: 0; }
-    .body:hover { background: var(--panel2); }
-    small { display: block; color: var(--text-dim); font-family: var(--font-mono); font-size: 11px; margin-top: 3px; }
-    .mono { font-family: var(--font-mono); }
-    .amount { color: var(--bone); }
-    .badge { font-style: normal; font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px; padding: 4px 8px; border: 1px solid; display: inline-block; }
-    .badge.ok, .badge.DELIVERED { color: var(--ok); border-color: var(--ok); background: color-mix(in srgb, var(--green) 10%, transparent); }
-    .badge.copper, .badge.REFUNDED { color: var(--copper); border-color: var(--copper); background: var(--copper-soft); }
-    .badge.err, .badge.CANCELLED { color: var(--error); border-color: var(--error); background: color-mix(in srgb, var(--red) 10%, transparent); }
-    .empty { padding: 48px; text-align: center; color: var(--text-dim); font-family: var(--font-mono); }
+    :host {
+      color: var(--text);
+      font-family: var(--body);
+      display: block;
+    }
+    .table {
+      border: 1px solid var(--border);
+      background: var(--panel);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 2fr 1.2fr 1fr 100px;
+      gap: 16px;
+      padding: 16px 20px;
+      align-items: center;
+    }
+    .head {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      background: var(--bg-raised);
+      border-bottom: 1px solid var(--border);
+    }
+    .body {
+      border-bottom: 1px solid var(--border-soft);
+      font-size: 14px;
+    }
+    .body:last-child {
+      border-bottom: 0;
+    }
+    .body:hover {
+      background: var(--panel2);
+    }
+    small {
+      display: block;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      margin-top: 3px;
+    }
+    .mono {
+      font-family: var(--font-mono);
+    }
+    .amount {
+      color: var(--bone);
+    }
+    .item-summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .row-thumb {
+      width: 36px;
+      height: 36px;
+      object-fit: cover;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .badge {
+      font-style: normal;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      display: inline-block;
+      text-transform: uppercase;
+    }
+    .badge.delivered,
+    .badge.completed {
+      color: var(--ok);
+      border-color: var(--ok);
+      background: color-mix(in srgb, var(--green) 10%, transparent);
+    }
+    .badge.refunded,
+    .badge.processing,
+    .badge.delivering {
+      color: var(--copper);
+      border-color: var(--copper);
+      background: var(--copper-soft);
+    }
+    .badge.cancelled,
+    .badge.failed {
+      color: var(--error);
+      border-color: var(--error);
+      background: color-mix(in srgb, var(--red) 10%, transparent);
+    }
+    .empty {
+      padding: 48px;
+      text-align: center;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
 
-    .overlay { background: rgba(11, 11, 12, 0.88); backdrop-filter: blur(8px); position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 24px; overflow-y: auto; }
-    .modal { width: min(620px, 100%); background: var(--panel); border: 1px solid var(--border); padding: 28px; display: grid; gap: 24px; }
-    .mrow { display: flex; justify-content: space-between; align-items: flex-start; }
-    h2 { font-family: var(--font-mono); font-size: 20px; margin: 0 0 8px; }
-    h3 { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px; color: var(--text-dim); margin: 0 0 10px; font-weight: 500; }
-    .x { background: none; border: 1px solid var(--border); color: var(--text-dim); padding: 6px; cursor: pointer; }
-    .x:hover { color: var(--copper); border-color: var(--copper); }
-    .item { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid var(--border-soft); }
-    .item b { display: block; margin: 2px 0; } .sku { font-family: var(--font-mono); font-size: 11px; color: var(--copper); }
-    .right { text-align: right; }
-    .sums { background: var(--bg-raised); border: 1px solid var(--border); padding: 14px; display: grid; gap: 8px; font-size: 14px; }
-    .sums div { display: flex; justify-content: space-between; }
-    .grand { border-top: 1px solid var(--border); padding-top: 10px; color: var(--copper); font-weight: 700; font-size: 16px; }
-    .timeline { list-style: none; margin: 0; padding: 0 0 0 14px; border-left: 1px solid var(--border); display: grid; gap: 14px; }
-    .timeline li { position: relative; padding-left: 14px; }
-    .pip { position: absolute; left: -19px; top: 5px; width: 9px; height: 9px; background: var(--copper); }
+    .overlay {
+      background: rgba(11, 11, 12, 0.88);
+      backdrop-filter: blur(8px);
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .modal {
+      width: min(620px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 28px;
+      display: grid;
+      gap: 24px;
+    }
+    .mrow {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    h2 {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      margin: 0 0 8px;
+    }
+    h3 {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      margin: 0 0 10px;
+      font-weight: 500;
+    }
+    .x {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 6px;
+      cursor: pointer;
+    }
+    .x:hover {
+      color: var(--copper);
+      border-color: var(--copper);
+    }
+    .telemetry {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin: 0;
+    }
+    .telemetry div {
+      background: var(--bg-raised);
+      padding: 12px;
+    }
+    dt {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+    dd {
+      margin: 4px 0 0;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    dd.copper {
+      color: var(--copper);
+    }
+    .item {
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 12px 0;
+      border-top: 1px solid var(--border-soft);
+    }
+    .product-thumb {
+      width: 48px;
+      height: 48px;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .product-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .item-info b {
+      display: block;
+      margin: 2px 0;
+      font-size: 14px;
+    }
+    .sku {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--copper);
+    }
+    .right {
+      text-align: right;
+    }
+    .sums {
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+      font-size: 14px;
+    }
+    .grand {
+      display: flex;
+      justify-content: space-between;
+      color: var(--copper);
+      font-weight: 700;
+      font-size: 16px;
+    }
 
     @media (max-width: 860px) {
-      .table { overflow-x: auto; } .grid { min-width: 760px; }
+      .table {
+        overflow-x: auto;
+      }
+      .grid {
+        min-width: 760px;
+      }
     }
   `,
 })
-export class TransactionHistoryComponent {
-  readonly store = inject(TransactStore);
-  readonly selected = signal<Order | null>(null);
-  readonly rate = TAX_RATE;
-  readonly totalOf = total;
-  readonly taxOf = tax;
-  readonly subtotalOf = subtotal;
+export class TransactionHistoryComponent implements OnInit {
+  private transactionService = inject(TransactionService);
 
-  badgeClass(s: OrderStatus) { return s; }
+  readonly transactions = signal<TransactionModel[]>([]);
+  readonly selected = signal<TransactionModel | null>(null);
+
+  // Expose helpers to template scope
+  readonly toNumber = toNumber;
+  readonly calcItemTotal = calcItemTotal;
+
+  async ngOnInit() {
+    await this.loadTransactions();
+  }
+
+  async loadTransactions() {
+    try {
+      const data = await this.transactionService.getAllTransaction({ status: 'ALL' });
+      this.transactions.set(data);
+    } catch (err) {
+      console.error('Error loading transaction history:', err);
+    }
+  }
+
+  viewDetails(t: TransactionModel) {
+    this.selected.set(t);
+  }
+
+  closeDetails() {
+    this.selected.set(null);
+  }
+
+  badgeClass(status: string): string {
+    return status.toLowerCase();
+  }
+
+  getImageUrl(path: string | null | undefined): string {
+    if (!path) {
+      return 'assets/images/placeholder.webp';
+    }
+    return `http://localhost:3000${path}`;
+  }
 }
