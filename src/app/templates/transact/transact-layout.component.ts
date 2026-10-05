@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { TransactStore } from '../../../../transact.store';
 import {
   VantaIconComponent,
   VantaIconSpriteComponent,
@@ -27,16 +26,10 @@ import {
 
       <nav class="tabs" aria-label="Transactions">
         <a routerLink="/app/transact/processing" routerLinkActive="active">
-          <vanta-icon name="box" /> PROCESSING
-          <span class="badge" aria-label="{{ store.processing().length }} processing">{{
-            store.processing().length
-          }}</span>
+          <vanta-icon name="box" /> PENDING
         </a>
         <a routerLink="/app/transact/in-transit" routerLinkActive="active">
-          <vanta-icon name="truck" /> IN-TRANSIT
-          <span class="badge" aria-label="{{ store.inTransit().length }} in transit">{{
-            store.inTransit().length
-          }}</span>
+          <vanta-icon name="truck" /> PROCESSING AND DELIVERING
         </a>
         <a routerLink="/app/transact/history" routerLinkActive="active">
           <vanta-icon name="history" /> PAST HISTORY
@@ -71,6 +64,11 @@ import {
       border-bottom: 1px solid var(--border);
       margin-bottom: 32px;
       overflow-x: auto;
+      scrollbar-width: none; /* Hide scrollbar for Firefox */
+      -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+    }
+    .tabs::-webkit-scrollbar {
+      display: none; /* Hide scrollbar for Chrome, Safari, Opera */
     }
     .tabs a {
       display: inline-flex;
@@ -99,17 +97,6 @@ import {
       border-bottom-color: var(--copper);
       background: var(--copper-soft);
     }
-    .badge {
-      background: var(--copper);
-      color: #000;
-      font-weight: 700;
-      min-width: 20px;
-      padding: 1px 6px;
-      text-align: center;
-      font-size: 11px;
-    }
   `,
 })
-export class TransactLayoutComponent {
-  readonly store = inject(TransactStore);
-}
+export class TransactLayoutComponent {}
