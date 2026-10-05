@@ -185,7 +185,8 @@
 }
 
 .status-pill.transit,
-.status-pill.processing {
+.status-pill.processing,
+.status-pill.delivering {
   color: var(--copper-bright);
   border: 1px solid var(--copper);
 }
