@@ -33,6 +33,7 @@ export class UserService {
     const { first_name, last_name, contact_no, address } = response.data;
 
     let temp_address = '';
+    let barangay = '';
     let city = '';
     let province = '';
 
@@ -41,6 +42,7 @@ export class UserService {
       if (parts.length > 0) {
         province = parts.pop() ?? '';
         city = parts.pop() ?? '';
+        barangay = parts.pop() ?? "";
         temp_address = parts.join(', ');
       }
     }
@@ -50,6 +52,7 @@ export class UserService {
       last_name: last_name ?? '',
       contact_no: contact_no ?? '',
       address: temp_address,
+      barangay: barangay,
       city: city,
       province: province,
     } as UserFetchDataOutput;
