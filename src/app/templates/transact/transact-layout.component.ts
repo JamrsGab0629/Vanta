@@ -25,14 +25,17 @@ import {
       </header>
 
       <nav class="tabs" aria-label="Transactions">
-        <a routerLink="/app/transact/processing" routerLinkActive="active">
-          <vanta-icon name="box" /> PENDING
+        <a routerLink="/app/transact/processing" routerLinkActive="active" title="PENDING">
+          <vanta-icon name="box" />
+          <span class="tab-label">PENDING</span>
         </a>
-        <a routerLink="/app/transact/in-transit" routerLinkActive="active">
-          <vanta-icon name="truck" /> PROCESSING AND DELIVERING
+        <a routerLink="/app/transact/in-transit" routerLinkActive="active" title="PROCESSING AND DELIVERING">
+          <vanta-icon name="truck" />
+          <span class="tab-label">PROCESSING AND DELIVERING</span>
         </a>
-        <a routerLink="/app/transact/history" routerLinkActive="active">
-          <vanta-icon name="history" /> PAST HISTORY
+        <a routerLink="/app/transact/history" routerLinkActive="active" title="PAST HISTORY">
+          <vanta-icon name="history" />
+          <span class="tab-label">PAST HISTORY</span>
         </a>
       </nav>
 
@@ -73,6 +76,7 @@ import {
     .tabs a {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       padding: 14px 20px;
       text-decoration: none;
@@ -96,6 +100,33 @@ import {
       color: var(--copper);
       border-bottom-color: var(--copper);
       background: var(--copper-soft);
+    }
+
+    @media (max-width: 768px) {
+      .wrap {
+        padding: 32px 16px 48px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .head p {
+        margin-bottom: 24px;
+      }
+
+      .tabs {
+        justify-content: space-around;
+      }
+
+      .tabs a {
+        padding: 12px 16px;
+        flex: 1;
+      }
+
+      .tab-label {
+        display: none;
+      }
     }
   `,
 })
