@@ -6,7 +6,7 @@ import adminMiddleware from '../middleware/adminMiddleware';
 const router = Router();
 
 // GET /api/transactions - user's own transactions
-router.get('/', authMiddleware, getUserTransactions);
+router.post('/', authMiddleware, getUserTransactions);
 
 // ADMIN routes
 

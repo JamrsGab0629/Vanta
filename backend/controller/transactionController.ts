@@ -5,6 +5,7 @@ import Receipt from '../model/receiptModel';
 import Order from '../model/orderModel';
 import { OrderItem } from '../model/orderItemModel';
 import Product from '../model/productModel';
+import { WhereOptions, Op } from 'sequelize';
 
 export const getUserTransactions = async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -14,12 +15,25 @@ export const getUserTransactions = async (req: AuthenticatedRequest, res: Respon
             return res.status(401).json({ message: 'Unauthorized: User ID not found in token' });
         }
 
+        const whereClause: WhereOptions = {};
+        const status = req.body?.status as string | undefined;
+
+        if (status === 'processing') {
+            whereClause.status = {
+                [Op.or] : ['delivering', 'processing'],
+            };
+        } else if (status && status !== "ALL") {
+            whereClause.status = status;
+        }
+
         // Fetch user-scoped transactions through receipts and orders
         const transactions = await TransactionModel.findAll({
+            where: whereClause,
             include: [
                 {
                     model: Receipt,
                     required: true,
+                    order: [['created_at', 'DESC']],
                     include: [
                         {
                             model: Order,
