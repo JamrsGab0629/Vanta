@@ -22,24 +22,28 @@ import { TransactionModel } from '../../helpers/transaction/transaction.interfac
 
         <dl class="telemetry">
           <div>
-            <dt>ORDER ID</dt>
-            <dd>#{{ t.Receipt.order_id }}</dd>
-          </div>
-          <div>
             <dt>TRACKING NO.</dt>
             <dd class="copper">{{ t.tracking_code }}</dd>
           </div>
           <div>
             <dt>STATUS</dt>
-            <dd>{{ t.status }}</dd>
+            <dd>{{ t.status.toUpperCase() }}</dd>
           </div>
         </dl>
 
         <ul class="items">
           @for (item of t.Receipt.Order.items; track item.order_item_id) {
             <li>
-              <span class="sku">{{ item.product.sku }}</span>
-              <span>{{ item.product.name }}</span>
+              <div class="product-thumb">
+                <img
+                  [src]="getImageUrl(item.product.image_url, item.product.category || 'GPU')"
+                  [alt]="item.product.name"
+                />
+              </div>
+              <div class="item-details">
+                <span class="sku">{{ item.product.sku }}</span>
+                <span class="name">{{ item.product.name }}</span>
+              </div>
               <span class="dim">× {{ item.quantity }}</span>
             </li>
           }
@@ -122,10 +126,39 @@ import { TransactionModel } from '../../helpers/transaction/transaction.interfac
     }
     .items li {
       display: grid;
-      grid-template-columns: 120px 1fr auto;
+      grid-template-columns: 48px 1fr auto;
       gap: 16px;
+      align-items: center;
       padding: 10px 0;
       border-bottom: 1px solid var(--border-soft);
+    }
+    .items li:last-child {
+      border-bottom: none;
+    }
+    .product-thumb {
+      width: 48px;
+      height: 48px;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .product-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .item-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .item-details .name {
+      font-size: 14px;
+      font-weight: 500;
     }
     .empty {
       border: 1px dashed var(--border);
@@ -147,5 +180,19 @@ export class DeliveringTransactionsComponent implements OnInit {
     } catch (err) {
       console.error('Error loading processing transactions:', err);
     }
+  }
+
+  getImageUrl(path: string | null | undefined, label = 'GPU'): string {
+    if (path) {
+      return `http://localhost:3000${path}`;
+    }
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#161616"/>
+      <line x1="0" y1="100" x2="100" y2="0" stroke="#d97736" stroke-width="7"/>
+      <text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" fill="#607080" font-family="monospace" font-size="12" font-weight="600" letter-spacing="1">${label}</text>
+    </svg>`;
+
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
   }
 }
