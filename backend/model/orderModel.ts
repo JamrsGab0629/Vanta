@@ -37,11 +37,7 @@ Order.init(
         delivered_at: {
             type: DataTypes.DATE,
             allowNull: true,
-        },
-        status: {
-            type: DataTypes.STRING,
-            defaultValue: 'paid',
-        },
+        }
     },
     {
         sequelize,

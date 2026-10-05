@@ -39,14 +39,6 @@ Receipt.init(
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
         },
-        cash_received: {
-            type: DataTypes.DECIMAL(10, 2),
-            allowNull: true, // Filled in when COD payment is finalized/collected
-        },
-        change_amount: {
-            type: DataTypes.DECIMAL(10, 2),
-            allowNull: true,
-        },
     },
     {
         sequelize,

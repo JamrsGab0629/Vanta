@@ -143,7 +143,6 @@ export const processCheckoutService = async (userId: number, data: CheckoutData)
             last_name,
             address,
             contact_number,
-            status: 'pending' 
         }, { transaction: t });
 
         const orderId = newOrder.get('order_id');
@@ -172,7 +171,7 @@ export const processCheckoutService = async (userId: number, data: CheckoutData)
         await TransactionModel.create({
             receipt_id: receiptId,
             tracking_code: trackingCode,
-            status: 'PENDING',
+            status: 'pending',
         }, { transaction: t });
 
         // 7. Update user profile default info if requested

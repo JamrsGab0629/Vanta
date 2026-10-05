@@ -21,7 +21,7 @@ TransactionModel.init(
         },
         status: {
             type: DataTypes.STRING(30),
-            defaultValue: 'PENDING',
+            defaultValue: 'pending',
         },
         updated_at: {
             type: DataTypes.DATE,
