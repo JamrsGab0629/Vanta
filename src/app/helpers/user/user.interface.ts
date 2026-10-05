@@ -16,6 +16,7 @@ export interface UserFetchDataOutput {
     last_name: string,
     contact_no: string,
     address: string,
+    barangay: string,
     city: string,
     province: string,
 }
