@@ -116,4 +116,9 @@ export class History implements OnInit {
       this.transactions.set(previousState);
     }
   }
+
+  is_delivered(status: string): boolean {
+    status = status.toLowerCase();
+    return status === "delivered" || status === 'completed';
+  }
 }

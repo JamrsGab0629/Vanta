@@ -58,7 +58,7 @@
         <td class="time-val">{{ (t.receipt_date || t.receipt_date) | date:'medium' }}</td>
         <td class="time-val">{{ (t.updated_at | date:'medium') || '—' }}</td>
         <td class="time-val">
-          @if (t.status?.toLowerCase() === "delivered") {
+          @if ( is_delivered(t.status) ) {
             {{ (t.updated_at | date:'medium') || '—' }}
           } @else {
             {{ '—' }}
