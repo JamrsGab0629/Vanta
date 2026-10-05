@@ -406,10 +406,19 @@ export class TransactionHistoryComponent implements OnInit {
     return status.toLowerCase();
   }
 
-  getImageUrl(path: string | null | undefined): string {
-    if (!path) {
-      return 'assets/images/placeholder.webp';
+  getImageUrl(path: string | null | undefined, label = 'GPU'): string {
+    if (path) {
+      return `http://localhost:3000${path}`;
     }
-    return `http://localhost:3000${path}`;
+
+    const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#161616"/>
+      <line x1="0" y1="100" x2="100" y2="0" stroke="#d97736" stroke-width="7"/>
+      <text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" fill="#607080" font-family="monospace" font-size="12" font-weight="600" letter-spacing="1">${label}</text>
+    </svg>
+    `;
+
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
   }
 }
