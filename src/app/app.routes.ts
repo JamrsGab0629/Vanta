@@ -61,6 +61,7 @@ export const routes: Routes = [
       { path: 'home', loadComponent: () => import('./pages/history/history').then((m) => m.History) },
       { path: 'database', loadComponent: () => import('./pages/database/database').then((m) => m.Database) },
       { path: 'product', component: Product },
+      { path: 'users', loadComponent: () => import('./pages/users/users').then((m) => m.Users) },
     ]
   }
 ];

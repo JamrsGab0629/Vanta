@@ -1,0 +1,117 @@
+<section class="page">
+  <header class="head">
+    <div>
+      <h1>USER ACCESS</h1>
+      <p class="sub">Find an account, then promote it to admin, demote it, or delete it.</p>
+    </div>
+
+    <div class="search">
+      <span class="icon">⌕</span>
+      <input
+        type="text"
+        placeholder="Search username or email..."
+        [ngModel]="query()"
+        (ngModelChange)="query.set($event)"
+        aria-label="Search users by username or email"
+      />
+      @if (query()) {
+        <button class="clear" (click)="clearSearch()" aria-label="Clear search">✕</button>
+      }
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><span class="label">TOTAL ACCOUNTS</span><span class="value">{{ users().length }}</span></div>
+    <div class="stat"><span class="label">ADMINS</span><span class="value">{{ adminCount() }}</span></div>
+    <div class="stat"><span class="label">REGULAR USERS</span><span class="value">{{ userCount() }}</span></div>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" [class.active]="filter() === 'ALL'" (click)="setFilter('ALL')">All ({{ users().length }})</button>
+    <button role="tab" [class.active]="filter() === 'ADMIN'" (click)="setFilter('ADMIN')">Admins ({{ adminCount() }})</button>
+    <button role="tab" [class.active]="filter() === 'USER'" (click)="setFilter('USER')">Users ({{ userCount() }})</button>
+    <span class="count">{{ results().length }} shown</span>
+  </div>
+
+  <div class="table">
+    <div class="row header">
+      <span>USER</span>
+      <span>EMAIL</span>
+      <span>JOINED</span>
+      <span>ROLE</span>
+      <span class="right">ACTIONS</span>
+    </div>
+
+    @if (loading()) {
+      <div class="empty"><p>Loading accounts...</p></div>
+    } @else if (loadError()) {
+      <div class="empty">
+        <p>{{ loadError() }}</p>
+        <button class="btn" (click)="load()">Try again</button>
+      </div>
+    } @else {
+    @for (u of results(); track u.id) {
+      <div class="row">
+        <span class="user">
+          <span class="avatar" [class.admin]="u.role === 'ADMIN'">{{ initials(u) }}</span>
+          <span class="name">
+            {{ u.username }}
+            @if (isSelf(u)) { <em class="you">you</em> }
+          </span>
+        </span>
+        <span class="muted">{{ u.email }}</span>
+        <span class="muted">{{ u.joinedAt }}</span>
+        <span><span class="badge" [class.admin]="u.role === 'ADMIN'">{{ u.role }}</span></span>
+        <span class="actions">
+          @if (isSelf(u)) {
+            <span class="hint">You can't change your own account</span>
+          } @else {
+            @if (u.role === 'USER') {
+              <button class="btn primary" [disabled]="busyId() === u.id" (click)="request(u, 'promote')">Promote to admin</button>
+            } @else {
+              <button class="btn" [disabled]="busyId() === u.id" (click)="request(u, 'demote')">Demote</button>
+            }
+            <button class="btn danger" [disabled]="busyId() === u.id" (click)="request(u, 'delete')" [attr.aria-label]="'Delete ' + u.username">Delete</button>
+          }
+        </span>
+      </div>
+    } @empty {
+      <div class="empty">
+        @if (query()) {
+          <p>No account matches "{{ query() }}".</p>
+          <button class="btn" (click)="clearSearch()">Clear search</button>
+        } @else {
+          <p>No accounts in this list yet.</p>
+        }
+      </div>
+    }
+    }
+  </div>
+</section>
+
+@if (pending(); as p) {
+  <div class="overlay" (click)="cancel()">
+    <div class="modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+      @switch (p.action) {
+        @case ('delete') {
+          <h2>Delete this account?</h2>
+          <p><strong>{{ p.user.username }}</strong> ({{ p.user.email }}) will lose access immediately. This can't be undone.</p>
+        }
+        @case ('demote') {
+          <h2>Remove admin access?</h2>
+          <p><strong>{{ p.user.username }}</strong> will become a regular user and can no longer open the admin console.</p>
+        }
+      }
+      <div class="modal-actions">
+        <button class="btn" (click)="cancel()">Cancel</button>
+        <button class="btn" [class.danger-solid]="p.action === 'delete'" [class.primary]="p.action === 'demote'" (click)="confirm()">
+          {{ p.action === 'delete' ? 'Delete account' : 'Demote to user' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (toast(); as t) {
+  <div class="toast" [class.error]="t.error" role="status">{{ t.text }}</div>
+}

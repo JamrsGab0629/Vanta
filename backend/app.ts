@@ -6,7 +6,10 @@ import multer from "multer";
 import authRoutes from "./routes/authRoutes";
 import protectedRoutes from "./routes/protectedRoutes";
 import productRoutes from "./routes/productRoutes";
+import userRoutes from "./routes/user.routes";
 import { rateLimiter } from "./middleware/rateLimiter";
+import authMiddleware from "./middleware/authMiddleware";
+import adminMiddleware from "./middleware/adminMiddleware";
 import cartRoutes from "./routes/cartRoutes";
 import checkoutRoutes from "./routes/checkoutRoutes";
 import transactionRoutes from './routes/transactionRoutes';
@@ -46,6 +49,10 @@ const createApp = () => {
 
     app.use("/api/auth", authRoutes);
     app.use("/api/products", productRoutes);
+
+    // Admin user management — must come BEFORE the generic "/api" mount below
+    app.use("/api/admin/users", authMiddleware, adminMiddleware, userRoutes);
+
     app.use("/api", protectedRoutes);
     app.use("/api/cart", cartRoutes);
     app.use("/api/checkout", checkoutRoutes); 

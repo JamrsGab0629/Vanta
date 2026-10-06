@@ -21,6 +21,7 @@ export class Nav implements OnInit {
     { url_suffix: 'home', attr_name: 'history', name: 'History', symbol: '▤' },
     { url_suffix: 'database', attr_name: 'database', name: 'Products', symbol: '◧' },
     { url_suffix: 'product', attr_name: 'add-product', name: 'Add Product', symbol: '+' },
+    { url_suffix: 'users', attr_name: 'users', name: 'Users', symbol: '◉' },
   ];
 
   firstName = computed(() => this.currentUser()?.first_name ?? '');
