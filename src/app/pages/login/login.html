@@ -40,8 +40,8 @@
             </div>
           </div>
 
-          <button type="submit" class="btn-solid" [disabled]="isLoading">
-            @if (isLoading) {
+          <button type="submit" class="btn-solid" [disabled]="isLoading()">
+            @if (isLoading()) {
               <span class="btn-spinner"></span> LOGGING IN...
             } @else {
               LOG IN →
@@ -54,7 +54,7 @@
     </div>
   </div>
 
-  @if (isLoading) {
+  @if (isLoading()) {
     <div class="auth-loading-overlay">
       <div class="loader-content">
         <div class="loader-spinner"></div>

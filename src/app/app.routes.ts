@@ -7,7 +7,7 @@ import { App } from './templates/app/app';
 import { Home } from './pages/home/home';
 import { Admin } from './templates/admin/admin';
 import { Product } from './pages/product/product';
-import { authGuard, guestGuard, transactionGuard, adminGuard } from './core/verify-auth';
+import { authGuard, guestGuard,transactionGuard, adminGuard } from './core/verify-auth';
 import { TransactLayoutComponent } from './templates/transact/transact-layout.component';
 
 export const routes: Routes = [

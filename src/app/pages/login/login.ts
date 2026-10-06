@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Footnote } from '../../components/auth/footnote/footnote';
 import { Router, RouterLink } from '@angular/router';
@@ -16,7 +16,7 @@ export class Login {
   private router = inject(Router);
 
   /** Loading state during API calls */
-  isLoading = false;
+  isLoading = signal(false);
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -46,31 +46,25 @@ export class Login {
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     try {
       await this.authService.login({ email: this.email, password: this.password });
 
       // Fetch user role for conditional routing
       const response = await this.authService.fetchUserData();
-      console.log(response);
 
       if (response.data?.role === 'admin') {
         await this.router.navigate(['/admin']);
       } else {
-        console.log(response.data?.role)
         await this.router.navigate(['/app']);
       }
     } catch (error: any) {
-      const status = error?.status || error?.statusCode;
-      if (status === 400 || status === 401) {
-        alert('Invalid email or password.');
-      } else {
-        alert(error?.error?.message || error?.message || 'Login failed. Please try again.');
-      }
+      // CoreService.fetcher throws Error(serverMessage), so there is no status code here
+      alert(error?.message || 'Login failed. Please try again.');
       console.error('Login error:', error);
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 }
