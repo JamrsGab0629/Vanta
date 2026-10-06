@@ -27,11 +27,11 @@ export const resendVerification = async (req: Request, res: Response) => {
         const otp = generateTimeBasedOtp(userId);
 
         // DEV LOGGING: Print to console for local testing only
-        if (process.env.NODE_ENV !== "production") {
-            console.log(`\n======================================================`);
-            console.log(`🔑 [DEV MODE] Resent OTP for ${parsed.data.email}: ${otp}`);
-            console.log(`======================================================\n`);
-        }
+        // if (process.env.NODE_ENV !== "production") {
+        //     console.log(`\n======================================================`);
+        //     console.log(`🔑 [DEV MODE] Resent OTP for ${parsed.data.email}: ${otp}`);
+        //     console.log(`======================================================\n`);
+        // }
 
         // UNCOMMENT BELOW TO ENABLE REAL EMAIL SENDING VIA SMTP:
         await sendVerificationEmail(parsed.data.email, username, otp);

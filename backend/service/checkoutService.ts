@@ -67,7 +67,7 @@ export const processCheckoutService = async (userId: number, data: CheckoutData)
         cartItems.sort((a: any, b: any) => 
             Number(a.get('product_id')) - Number(b.get('product_id'))
         );
-console.log('CART ITEMS AT CHECKOUT:', cartItems.map((i: any) => i.get({ plain: true })));
+        // console.log('CART ITEMS AT CHECKOUT:', cartItems.map((i: any) => i.get({ plain: true })));
         let subtotal = 0;
         const orderItemsData = [];
 

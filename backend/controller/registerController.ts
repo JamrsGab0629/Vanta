@@ -54,11 +54,11 @@ export const register = async (req: Request, res: Response) => {
     const otp = generateTimeBasedOtp(userId);
 
     // DEV LOGGING: Print to console for local testing only
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(`\n======================================================`);
-      console.log(`🔑 [DEV MODE] Initial Registration OTP for ${email}: ${otp}`);
-      console.log(`======================================================\n`);
-    }
+    // if (process.env.NODE_ENV !== 'production') {
+    //   console.log(`\n======================================================`);
+    //   console.log(`🔑 [DEV MODE] Initial Registration OTP for ${email}: ${otp}`);
+    //   console.log(`======================================================\n`);
+    // }
 
     /*
     // UNCOMMENT BELOW TO ENABLE REAL EMAIL SENDING VIA SMTP:
@@ -73,6 +73,7 @@ export const register = async (req: Request, res: Response) => {
     */
 
     await sendVerificationEmail(email, username, otp);
+
 
     return res.status(201).json({
       message: 'Registration successful! Please verify using the OTP code.',
