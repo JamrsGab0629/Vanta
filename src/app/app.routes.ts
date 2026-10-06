@@ -35,6 +35,7 @@ export const routes: Routes = [
       { path: 'home', component: Home },
       { path: 'cart', loadComponent: () => import('./pages/cart/cart').then((m) => m.Cart) },
       { path: 'checkout', loadComponent: () => import('./pages/checkout/checkout').then((m) => m.Checkout) },
+      { path: 'build-guides', loadComponent: () => import('./pages/build-guides/build-guides').then((m) => m.BuildGuide) },
       { 
         path: 'confirmation',
         canActivate: [transactionGuard],

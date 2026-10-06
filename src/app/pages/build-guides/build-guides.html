@@ -1,0 +1,99 @@
+<button class="back-btn" (click)="goBack()">&larr; Back</button>
+
+<div class="hero">
+  <h1>Build Guide</h1>
+  <p>Parts don't fail because they're bad — they fail because they don't fit each other. Here's what to check before you add anything to cart.</p>
+</div>
+
+<section>
+  <div class="section-head">
+    <h2>Before you buy, check these six</h2>
+    <p>In order of how often they actually trip people up.</p>
+  </div>
+
+  <div class="rules">
+    <div class="rule">
+      <span class="num">01</span>
+      <h3>CPU socket vs motherboard socket</h3>
+      <p>The CPU's socket has to match the motherboard's socket exactly. Not "close enough" — an LGA1700 chip will not physically seat in an AM5 board. Chipset (Z790, B650, etc.) affects features and overclocking, but socket is the hard gate.</p>
+      <div class="spec-row"><span>Where to look</span><span>Spec sheet, "Socket" field</span></div>
+      <div class="spec-row"><span>Common mismatch</span><span>Intel LGA1700 vs AMD AM4/AM5</span></div>
+    </div>
+
+    <div class="rule">
+      <span class="num">02</span>
+      <h3>RAM generation vs motherboard</h3>
+      <p>DDR4 and DDR5 sticks have different notch positions and voltages — they aren't interchangeable, even on boards from the same chipset family. Check the board's supported memory type before you look at speed or capacity.</p>
+      <div class="spec-row"><span>Where to look</span><span>Board spec, "Memory Type" field</span></div>
+      <div class="spec-row"><span>Common mismatch</span><span>DDR5 kit on a DDR4-only board</span></div>
+    </div>
+
+    <div class="rule">
+      <span class="num">03</span>
+      <h3>GPU length vs case clearance</h3>
+      <p>High-end cards run long. Compare the card's listed length against the case's max GPU clearance, and against any drive cages or front fans that might sit in the way.</p>
+      <div class="spec-row"><span>Where to look</span><span>GPU "Length (mm)", case "Max GPU Length"</span></div>
+      <div class="spec-row"><span>Common mismatch</span><span>300mm+ card in a compact mATX case</span></div>
+    </div>
+
+    <div class="rule">
+      <span class="num">04</span>
+      <h3>PSU wattage headroom</h3>
+      <p>Add up the CPU and GPU's rated power draw, then leave roughly 30% headroom above that total for the rest of the system and to keep the PSU out of its least efficient range under load.</p>
+      <div class="spec-row"><span>Where to look</span><span>CPU/GPU "TDP" or "Power Draw" fields</span></div>
+      <div class="spec-row"><span>Common mismatch</span><span>550W PSU paired with a 570W+ flagship GPU</span></div>
+    </div>
+
+    <div class="rule">
+      <span class="num">05</span>
+      <h3>PSU connector vs GPU power input</h3>
+      <p>Newer high-wattage cards expect a 12V-2x6 (or older 12VHPWR) connector, not just an 8-pin. A high-wattage PSU without the right cable still means an adapter or a compatibility gap.</p>
+      <div class="spec-row"><span>Where to look</span><span>GPU "Power Connector" field, PSU included cables</span></div>
+      <div class="spec-row"><span>Common mismatch</span><span>Flagship GPU, PSU only ships 8-pin cables</span></div>
+    </div>
+
+    <div class="rule">
+      <span class="num">06</span>
+      <h3>Storage interface vs motherboard slots</h3>
+      <p>NVMe M.2 drives need an M.2 slot, and boards vary in how many they have and whether a populated slot disables a SATA port. SATA SSDs need a free SATA port and cable regardless.</p>
+      <div class="spec-row"><span>Where to look</span><span>Board manual, "Storage" section</span></div>
+      <div class="spec-row"><span>Common mismatch</span><span>Second NVMe drive, board only has one M.2 slot</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>Quick pre-checkout pass</h2>
+    <p>Run through this in order before you finalize a build.</p>
+  </div>
+
+  <div class="checklist">
+    <div class="check-item">
+      <div class="n">1</div>
+      <div><strong>Sockets match</strong><span>CPU socket = motherboard socket, exactly.</span></div>
+    </div>
+    <div class="check-item">
+      <div class="n">2</div>
+      <div><strong>RAM type matches</strong><span>DDR4 or DDR5, whichever the board actually takes.</span></div>
+    </div>
+    <div class="check-item">
+      <div class="n">3</div>
+      <div><strong>GPU fits the case</strong><span>Card length is under the case's max clearance.</span></div>
+    </div>
+    <div class="check-item">
+      <div class="n">4</div>
+      <div><strong>PSU has enough headroom</strong><span>Wattage covers CPU + GPU draw with room to spare.</span></div>
+    </div>
+    <div class="check-item">
+      <div class="n">5</div>
+      <div><strong>PSU has the right cables</strong><span>Connector type matches what the GPU actually needs.</span></div>
+    </div>
+    <div class="check-item">
+      <div class="n">6</div>
+      <div><strong>Storage slots are free</strong><span>Enough M.2 or SATA ports for every drive in the build.</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>Vanta · Build Guide — a reference page, no orders are placed here.</footer>

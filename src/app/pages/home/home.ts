@@ -4,7 +4,7 @@ import { ProductService } from '../../helpers/product/product.service';
 import { CartService } from '../../helpers/cart/cart.service';
 import { ToastService } from '../../helpers/toast/toast.service';
 import { ConfirmService } from '../../helpers/confirm/confirm.service';
-
+import { RouterLink } from '@angular/router';
 export interface ProductItem {
   product_id: string | number;
   sku: string;
@@ -22,7 +22,7 @@ export interface ProductItem {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [Product],
+  imports: [Product,RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
