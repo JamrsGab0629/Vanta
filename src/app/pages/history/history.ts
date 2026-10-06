@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { TransactionService } from '../../helpers/transaction/transaction.service';
 import { TransactionModel } from '../../helpers/transaction/transaction.interface';
 
+// Orders only move forward through this list. "cancelled" is the one exit.
+const STATUS_FLOW = ['pending', 'processing', 'delivering', 'delivered'];
+
 @Component({
   selector: 'app-history',
   standalone: true,
@@ -19,6 +22,10 @@ export class History implements OnInit {
 
   // Search filter query
   public searchTerm: WritableSignal<string> = signal('');
+
+  // Shown above the table when a status change is refused
+  public statusError = signal<string | null>(null);
+  private errorTimer: any;
 
   // Computed signal for filtered transactions based on reference code (tracking_code)
   public filteredTransactions: Signal<TransactionModel[]> = computed(() => {
@@ -78,12 +85,37 @@ export class History implements OnInit {
     return lower === 'delivered' || lower === 'cancelled';
   }
 
+  // The dropdown options for a row: current status, later steps, and Cancelled.
+  // Earlier steps are left out, so going back isn't possible.
+  allowedStatuses(current?: string): string[] {
+    const s = (current ?? 'pending').toLowerCase();
+    if (this.isStatusLocked(s)) return [s];
+
+    const index = STATUS_FLOW.indexOf(s);
+    return [...STATUS_FLOW.slice(Math.max(index, 0)), 'cancelled'];
+  }
+
+  statusLabel(status: string): string {
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  }
+
+  private showError(message: string) {
+    this.statusError.set(message);
+    clearTimeout(this.errorTimer);
+    this.errorTimer = setTimeout(() => this.statusError.set(null), 5000);
+  }
+
   // Handle changing status for a specific transaction
   async onStatusChange(transactionId: number | string, newStatus: string): Promise<void> {
     const currentTransaction = this.transactions().find((t) => t.transaction_id === transactionId);
 
     if (this.isStatusLocked(currentTransaction?.status)) {
       console.warn(`Transaction ${transactionId} is already ${currentTransaction?.status} and cannot be modified.`);
+      return;
+    }
+
+    if (!this.allowedStatuses(currentTransaction?.status).includes(newStatus.toLowerCase())) {
+      this.showError(`An order can't go back from "${currentTransaction?.status}" to "${newStatus}".`);
       return;
     }
 
@@ -106,8 +138,10 @@ export class History implements OnInit {
         transaction_id: String(transactionId),
         status: newStatus,
       });
+      this.statusError.set(null);
     } catch (error) {
       console.error('Failed to update status. Reverting changes:', error);
+      this.showError(error instanceof Error ? error.message : "Couldn't update the status.");
 
       // Revert back to normal/original state on failure
       this.transactions.set(previousState);

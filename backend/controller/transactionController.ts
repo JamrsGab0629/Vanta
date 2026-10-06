@@ -7,6 +7,9 @@ import { OrderItem } from '../model/orderItemModel';
 import Product from '../model/productModel';
 import { WhereOptions, Op } from 'sequelize';
 
+
+const STATUS_FLOW = ['pending', 'processing', 'delivering', 'delivered'];
+const ALLOWED_STATUSES = [...STATUS_FLOW, 'cancelled'];
 export const getUserTransactions = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const userId = req.user?.userId;
@@ -157,11 +160,17 @@ export const getTransactions = async (req: Request, res: Response) => {
     }
 };
 
+
 export const editTransactionsStatus = async (req: Request, res: Response) => {
     const { transaction_id, status } = req.body;
 
     if (!transaction_id || !status) {
         return res.status(400).json({ message: 'Missing required fields: transaction_id and status' });
+    }
+
+    const nextStatus = String(status).toLowerCase();
+    if (!ALLOWED_STATUSES.includes(nextStatus)) {
+        return res.status(400).json({ message: `Invalid status. Use one of: ${ALLOWED_STATUSES.join(', ')}` });
     }
 
     try {
@@ -171,15 +180,27 @@ export const editTransactionsStatus = async (req: Request, res: Response) => {
             return res.status(404).json({ message: 'Transaction ID not found' });
         }
 
-        // Check current status before allowing an update
+        // Finished transactions can't be changed
         const currentStatus = (transaction.get('status') as string)?.toLowerCase();
-        if (currentStatus === 'cancelled' || currentStatus === 'completed') {
+        if (currentStatus === 'cancelled' || currentStatus === 'delivered') {
             return res.status(400).json({ message: 'Transaction is already finished and cannot be updated' });
         }
 
-        await transaction.update({ 
-            status, 
-            updated_at: new Date() 
+        // Same status again: nothing to do (and don't touch updated_at)
+        if (nextStatus === currentStatus) {
+            return res.status(200).json({ success: true, message: 'Status unchanged', transaction });
+        }
+
+        // Orders only move forward. Cancelled is allowed until the order is finished.
+        if (nextStatus !== 'cancelled' && STATUS_FLOW.indexOf(nextStatus) <= STATUS_FLOW.indexOf(currentStatus)) {
+            return res.status(400).json({
+                message: `An order can't go back from "${currentStatus}" to "${nextStatus}".`
+            });
+        }
+
+        await transaction.update({
+            status: nextStatus,
+            updated_at: new Date()
         });
 
         return res.status(200).json({
@@ -190,9 +211,9 @@ export const editTransactionsStatus = async (req: Request, res: Response) => {
 
     } catch (error: any) {
         console.error('Error updating transaction status:', error);
-        return res.status(500).json({ 
-            message: 'Internal server error while updating transaction status', 
-            error: error.message 
+        return res.status(500).json({
+            message: 'Internal server error while updating transaction status',
+            error: error.message
         });
     }
 };
