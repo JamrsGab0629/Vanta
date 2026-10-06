@@ -32,32 +32,29 @@ export class History implements OnInit {
 
   // Computed signal for dynamic stats calculations
   public stats = computed(() => {
-  const list = this.transactions();
+    const list = this.transactions();
 
-  const totalTransactions = list.length;
+    const totalTransactions = list.length;
 
-  const successfulOrders = list.filter((t) => {
-    const s = t.status?.toLowerCase();
-    return s === 'completed' || s === 'delivered';
+    const successfulOrders = list.filter((t) => t.status?.toLowerCase() === 'delivered');
+
+    const totalCash = successfulOrders.reduce(
+      (sum, t) => sum + (Number(t.total_price) || 0),
+      0
+    );
+
+    const pendingTransactions = list.filter((t) => {
+      const s = t.status?.toLowerCase();
+      return s !== 'delivered' && s !== 'cancelled';
+    }).length;
+
+    // 4th Stat: Avg. Order Value
+    const avgOrderValue = successfulOrders.length
+      ? totalCash / successfulOrders.length
+      : 0;
+
+    return { totalTransactions, totalCash, pendingTransactions, avgOrderValue };
   });
-
-  const totalCash = successfulOrders.reduce(
-    (sum, t) => sum + (Number(t.total_price) || 0),
-    0
-  );
-
-  const pendingTransactions = list.filter((t) => {
-    const s = t.status?.toLowerCase();
-    return s !== 'completed' && s !== 'delivered' && s !== 'cancelled';
-  }).length;
-
-  // 4th Stat: Avg. Order Value
-  const avgOrderValue = successfulOrders.length
-    ? totalCash / successfulOrders.length
-    : 0;
-
-  return { totalTransactions, totalCash, pendingTransactions, avgOrderValue };
-});
 
   async ngOnInit(): Promise<void> {
     await this.initTransactions();
@@ -78,7 +75,7 @@ export class History implements OnInit {
   isStatusLocked(status?: string): boolean {
     if (!status) return false;
     const lower = status.toLowerCase();
-    return lower === 'completed' || lower === 'delivered' || lower === 'cancelled';
+    return lower === 'delivered' || lower === 'cancelled';
   }
 
   // Handle changing status for a specific transaction
@@ -118,7 +115,6 @@ export class History implements OnInit {
   }
 
   is_delivered(status: string): boolean {
-    status = status.toLowerCase();
-    return status === "delivered" || status === 'completed';
+    return status.toLowerCase() === 'delivered';
   }
 }

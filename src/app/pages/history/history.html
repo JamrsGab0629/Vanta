@@ -55,7 +55,7 @@
       @for (t of filteredTransactions(); track t.transaction_id) {
       <tr>
         <td class="ref-code">{{ t.tracking_code }}</td>
-        <td class="time-val">{{ (t.receipt_date || t.receipt_date) | date:'medium' }}</td>
+        <td class="time-val">{{ t.receipt_date | date:'medium' }}</td>
         <td class="time-val">{{ (t.updated_at | date:'medium') || '—' }}</td>
         <td class="time-val">
           @if ( is_delivered(t.status) ) {
@@ -76,7 +76,6 @@
               <option value="processing">Processing</option>
               <option value="delivering">Delivering</option>
               <option value="delivered">Delivered</option>
-              <option value="completed">Completed</option>
               <option value="cancelled">Cancelled</option>
             </select>
           </div>
@@ -84,7 +83,7 @@
       </tr>
       } @empty {
       <tr>
-        <td colspan="5" class="no-data">No transactions found.</td>
+        <td colspan="6" class="no-data">No transactions found.</td>
       </tr>
       }
     </tbody>
