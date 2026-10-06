@@ -5,8 +5,13 @@ import { TransactionService } from '../../helpers/transaction/transaction.servic
 import { TransactionModel } from '../../helpers/transaction/transaction.interface';
 
 // Orders only move forward through this list. "cancelled" is the one exit.
-const STATUS_FLOW = ['pending', 'processing', 'delivering', 'delivered'];
-
+const STATUS_FLOW: Record<string, number> = {
+  pending: 1,
+  processing: 2,
+  delivering: 3,
+  delivered: 4,
+  cancelled: 4,
+};
 @Component({
   selector: 'app-history',
   standalone: true,
@@ -32,9 +37,7 @@ export class History implements OnInit {
     const term = this.searchTerm().trim().toLowerCase();
     if (!term) return this.transactions();
 
-    return this.transactions().filter((t) =>
-      t.tracking_code?.toLowerCase().includes(term)
-    );
+    return this.transactions().filter((t) => t.tracking_code?.toLowerCase().includes(term));
   });
 
   // Computed signal for dynamic stats calculations
@@ -45,10 +48,7 @@ export class History implements OnInit {
 
     const successfulOrders = list.filter((t) => t.status?.toLowerCase() === 'delivered');
 
-    const totalCash = successfulOrders.reduce(
-      (sum, t) => sum + (Number(t.total_price) || 0),
-      0
-    );
+    const totalCash = successfulOrders.reduce((sum, t) => sum + (Number(t.total_price) || 0), 0);
 
     const pendingTransactions = list.filter((t) => {
       const s = t.status?.toLowerCase();
@@ -56,9 +56,7 @@ export class History implements OnInit {
     }).length;
 
     // 4th Stat: Avg. Order Value
-    const avgOrderValue = successfulOrders.length
-      ? totalCash / successfulOrders.length
-      : 0;
+    const avgOrderValue = successfulOrders.length ? totalCash / successfulOrders.length : 0;
 
     return { totalTransactions, totalCash, pendingTransactions, avgOrderValue };
   });
@@ -91,8 +89,9 @@ export class History implements OnInit {
     const s = (current ?? 'pending').toLowerCase();
     if (this.isStatusLocked(s)) return [s];
 
-    const index = STATUS_FLOW.indexOf(s);
-    return [...STATUS_FLOW.slice(Math.max(index, 0)), 'cancelled'];
+    const currentLevel = STATUS_FLOW[s] ?? STATUS_FLOW['pending'];
+    
+    return Object.keys(STATUS_FLOW).filter((status) => STATUS_FLOW[status] >= currentLevel);
   }
 
   statusLabel(status: string): string {
@@ -110,12 +109,16 @@ export class History implements OnInit {
     const currentTransaction = this.transactions().find((t) => t.transaction_id === transactionId);
 
     if (this.isStatusLocked(currentTransaction?.status)) {
-      console.warn(`Transaction ${transactionId} is already ${currentTransaction?.status} and cannot be modified.`);
+      console.warn(
+        `Transaction ${transactionId} is already ${currentTransaction?.status} and cannot be modified.`,
+      );
       return;
     }
 
     if (!this.allowedStatuses(currentTransaction?.status).includes(newStatus.toLowerCase())) {
-      this.showError(`An order can't go back from "${currentTransaction?.status}" to "${newStatus}".`);
+      this.showError(
+        `An order can't go back from "${currentTransaction?.status}" to "${newStatus}".`,
+      );
       return;
     }
 
@@ -127,10 +130,8 @@ export class History implements OnInit {
       const nowIso = new Date().toISOString();
       this.transactions.update((list) =>
         list.map((t) =>
-          t.transaction_id === transactionId
-            ? { ...t, status: newStatus, updated_at: nowIso }
-            : t
-        )
+          t.transaction_id === transactionId ? { ...t, status: newStatus, updated_at: nowIso } : t,
+        ),
       );
 
       // Execute backend API call

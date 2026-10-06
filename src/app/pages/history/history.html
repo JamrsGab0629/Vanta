@@ -67,7 +67,7 @@
           } @else {
             {{ '—' }}
           }</td>
-        <td class="cash-val">{{ (t.total_price) | currency }}</td>
+        <td class="cash-val">{{ (t.total_price) | currency:'PHP' }}</td>
         <td>
           <div class="status-cell">
             <span class="status-pill" [ngClass]="t.status?.toLowerCase()">
