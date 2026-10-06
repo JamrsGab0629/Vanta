@@ -36,6 +36,7 @@ export const routes: Routes = [
       { path: 'cart', loadComponent: () => import('./pages/cart/cart').then((m) => m.Cart) },
       { path: 'checkout', loadComponent: () => import('./pages/checkout/checkout').then((m) => m.Checkout) },
       { path: 'build-guides', loadComponent: () => import('./pages/build-guides/build-guides').then((m) => m.BuildGuide) },
+      { path: 'change-password', loadComponent: () => import('./pages/change-password/change-password').then((m) => m.ChangePassword) },
       { 
         path: 'confirmation',
         canActivate: [transactionGuard],
