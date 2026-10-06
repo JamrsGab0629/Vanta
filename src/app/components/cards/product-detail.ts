@@ -42,18 +42,6 @@ import type { ProductItem } from '../../pages/home/home';
             } @else {
               <span class="flag err">OUT OF STOCK</span>
             }
-
-            @switch (p.bench_status?.status) {
-              @case ('Passed') {
-                <span class="flag ok">BENCH PASSED</span>
-              }
-              @case ('Failed') {
-                <span class="flag err">BENCH FAILED</span>
-              }
-              @default {
-                <span class="flag warn">BENCH PENDING</span>
-              }
-            }
           </div>
 
           @if (p.description) {
