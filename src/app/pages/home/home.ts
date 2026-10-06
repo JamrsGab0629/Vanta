@@ -5,6 +5,7 @@ import { CartService } from '../../helpers/cart/cart.service';
 import { ToastService } from '../../helpers/toast/toast.service';
 import { ConfirmService } from '../../helpers/confirm/confirm.service';
 import { RouterLink } from '@angular/router';
+import { ProductDetail } from '../../components/cards/product-detail';
 export interface ProductItem {
   product_id: string | number;
   sku: string;
@@ -22,7 +23,7 @@ export interface ProductItem {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [Product,RouterLink],
+  imports: [Product, RouterLink, ProductDetail],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -38,6 +39,7 @@ export class Home implements OnInit {
   categories: string[] = ['ALL', 'GPU', 'CPU', 'SSD', 'RAM', 'MOTHERBOARD'];
   selectedCategory: string = 'ALL';
   products: ProductItem[] = [];
+  selectedProduct: ProductItem | null = null;
 
   ngOnInit(): void {
     this.loadProducts();
@@ -81,5 +83,20 @@ export class Home implements OnInit {
       console.error('Failed to add product to cart:', error);
       this.toastService.show("Couldn't add to cart — try again", 'error');
     }
+  }
+
+  openDetails(item: ProductItem, event: Event): void {
+    // Ignore clicks on the card's own buttons (e.g. Add to Cart)
+    if ((event.target as HTMLElement).closest('button, a')) return;
+    this.selectedProduct = item;
+  }
+
+  closeDetails(): void {
+    this.selectedProduct = null;
+  }
+
+  async addFromDetails(productId: string | number): Promise<void> {
+    this.closeDetails(); // close first so the confirm dialog isn't hidden behind the popup
+    await this.onAddCart(productId);
   }
 }
