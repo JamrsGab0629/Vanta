@@ -1,8 +1,9 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AccountService } from '../../helpers/account/account.services';
+import { AuthService } from '../../helpers/auth/auth.services';
 
 @Component({
   selector: 'app-change-password',
@@ -13,6 +14,8 @@ import { AccountService } from '../../helpers/account/account.services';
 export class ChangePassword {
   private fb = inject(FormBuilder);
   private account = inject(AccountService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   form = this.fb.nonNullable.group({
     currentPassword: '',
@@ -44,7 +47,8 @@ export class ChangePassword {
       this.hasMinLength() &&
       this.differsFromCurrent() &&
       this.matchesConfirm() &&
-      !this.submitting()
+      !this.submitting() &&
+      !this.success()
   );
 
   toggleShow() {
@@ -56,7 +60,6 @@ export class ChangePassword {
 
     this.submitting.set(true);
     this.error.set(null);
-    this.success.set(false);
 
     const { currentPassword, newPassword } = this.form.getRawValue();
     const res = await this.account.changePassword(currentPassword, newPassword);
@@ -66,7 +69,21 @@ export class ChangePassword {
       this.error.set(res.message ?? 'Could not update your password.');
       return;
     }
+
     this.form.reset();
     this.success.set(true);
+
+    // Give people a moment to read the message, then sign out and go to login
+    setTimeout(() => this.signOutAndRedirect(), 2000);
+  }
+
+  private async signOutAndRedirect() {
+    try {
+      await this.authService.logout();
+    } catch (error) {
+      console.error('Logout after password change failed', error);
+    } finally {
+      this.router.navigate(['/auth/login']);
+    }
   }
 }
