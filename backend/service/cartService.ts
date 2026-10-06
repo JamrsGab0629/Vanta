@@ -192,3 +192,38 @@ export const deleteCartService = async (userId: string | number, product_id: str
     message: 'Item successfully removed from cart',
   };
 };
+
+export const updateCartItemService = async (
+  userId: number,
+  productId: number,
+  quantity: number,
+) => {
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    throw new CartServiceError('INVALID_QUANTITY', 'Quantity must be a whole number of at least 1.');
+  }
+
+  const cart = await Cart.findOne({ where: { user_id: userId } });
+  if (!cart) {
+    throw new CartServiceError('CART_NOT_FOUND', 'Cart not found');
+  }
+
+  const cartItem = await CartItem.findOne({
+    where: { cart_id: cart.get('cart_id') as number, product_id: productId },
+  });
+  if (!cartItem) {
+    throw new CartServiceError('ITEM_NOT_FOUND', 'Item not found in cart');
+  }
+
+  const product = await Product.findByPk(productId);
+  if (!product) {
+    throw new CartServiceError('PRODUCT_NOT_FOUND', 'Product not found');
+  }
+
+  const stock = product.get('stock_quantity') as number;
+  if (quantity > stock) {
+    throw new CartServiceError('INSUFFICIENT_STOCK', `Insufficient stock. Only ${stock} left.`);
+  }
+
+  await cartItem.update({ quantity });
+  return cartItem;
+};

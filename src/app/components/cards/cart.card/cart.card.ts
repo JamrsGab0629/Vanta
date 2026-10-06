@@ -1,7 +1,5 @@
-import { Component, input, output, computed, OnInit, OnDestroy } from '@angular/core';
-import { CurrencyPipe, NgIf } from '@angular/common';
-import { Subject, Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { Component, input, output, computed, linkedSignal } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 
 export interface CartItem {
   product_id: string;
@@ -21,16 +19,20 @@ export interface CartItem {
   templateUrl: './cart.card.html',
   styleUrl: './cart.card.css'
 })
-export class CartCard implements OnInit, OnDestroy {
+export class CartCard {
   item = input.required<CartItem>();
 
   quantityChange = output<{ productId: string; quantity: number }>();
   remove = output<string>();
 
-  private qtySubject = new Subject<number>();
-  private subSubscription!: Subscription;
+  // Follows item().quantity, so when the cart page reloads the real quantity
+  // (for example after a failed save) the card shows it too.
+  localQuantity = linkedSignal(() => this.item().quantity);
 
-  localQuantity = 1;
+  atMax = computed(() => {
+    const max = this.item().stock_quantity;
+    return !!max && this.localQuantity() >= max;
+  });
 
   // TODO: replace with your actual backend origin (or pull from environment.ts)
   private apiOrigin = 'http://localhost:3000';
@@ -41,36 +43,23 @@ export class CartCard implements OnInit, OnDestroy {
     return url.startsWith('http') ? url : `${this.apiOrigin}${url}`;
   });
 
-  ngOnInit() {
-    this.localQuantity = this.item().quantity;
-
-    this.subSubscription = this.qtySubject.pipe(
-      debounceTime(2000)
-    ).subscribe((newQty) => {
-      this.quantityChange.emit({ productId: this.item().product_id, quantity: newQty });
-    });
-  }
-
   increment() {
-    const maxStock = this.item().stock_quantity;
-    if (!maxStock || this.localQuantity < maxStock) {
-      this.localQuantity++;
-      this.qtySubject.next(this.localQuantity);
-    }
+    if (this.atMax()) return;
+    this.localQuantity.update((q) => q + 1);
+    this.emitChange();
   }
 
   decrement() {
-    if (this.localQuantity > 1) {
-      this.localQuantity--;
-      this.qtySubject.next(this.localQuantity);
-    }
+    if (this.localQuantity() <= 1) return;
+    this.localQuantity.update((q) => q - 1);
+    this.emitChange();
+  }
+
+  private emitChange() {
+    this.quantityChange.emit({ productId: this.item().product_id, quantity: this.localQuantity() });
   }
 
   onRemove() {
     this.remove.emit(this.item().product_id);
-  }
-
-  ngOnDestroy() {
-    this.subSubscription?.unsubscribe();
   }
 }

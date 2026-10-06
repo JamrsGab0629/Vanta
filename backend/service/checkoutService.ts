@@ -62,6 +62,12 @@ export const processCheckoutService = async (userId: number, data: CheckoutData)
             throw new CheckoutServiceError('CART_EMPTY', 'Your cart is empty');
         }
 
+        // CHANGED: always lock products in the same order (lowest id first) so two
+        // checkouts with the same products can never block each other (deadlock)
+        cartItems.sort((a: any, b: any) => 
+            Number(a.get('product_id')) - Number(b.get('product_id'))
+        );
+console.log('CART ITEMS AT CHECKOUT:', cartItems.map((i: any) => i.get({ plain: true })));
         let subtotal = 0;
         const orderItemsData = [];
 
@@ -70,8 +76,12 @@ export const processCheckoutService = async (userId: number, data: CheckoutData)
             const productId = item.product_id || item.get('product_id');
             const requestedQty = item.quantity || item.get('quantity');
 
-            // Fetch the product fresh from the database to ensure we have the latest stock & lock it for the transaction
-            const product = await Product.findByPk(productId, { transaction: t });
+            // CHANGED: lock the product row until this transaction finishes, so two
+            // buyers can't both pass the stock check for the last units
+            const product = await Product.findByPk(productId, { 
+                transaction: t, 
+                lock: t.LOCK.UPDATE 
+            });
             
             if (!product) {
                 throw new CheckoutServiceError('PRODUCT_NOT_FOUND', `Product with ID ${productId} not found`);

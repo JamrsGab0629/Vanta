@@ -5,6 +5,10 @@
     <h1>Your Cart</h1>
     <div class="subtext">Bench-tested &amp; guaranteed.</div>
 
+    @if (errorMessage()) {
+      <div role="alert" style="border:1px solid #e5604d; color:#e5604d; padding:10px 14px; margin-bottom:16px; font-size:14px;">{{ errorMessage() }}</div>
+    }
+
     <div class="cart-box" id="cartBox">
       @for (item of carted(); track item.product_id) {
         <app-cart-card
@@ -42,9 +46,9 @@
     </div>
     <button 
       class="checkout-btn" 
-      [disabled]="carted().length === 0" 
+      [disabled]="carted().length === 0 || saving()" 
       (click)="onCheckout()">
-      Continue to Checkout →
+      {{ saving() ? 'Saving...' : 'Continue to Checkout →' }}
     </button>
     <div class="legal">By proceeding, you agree to Vanta's <a href="#">Terms of Service</a> and <a href="#">Return Policy</a>.</div>
     <div class="badges">

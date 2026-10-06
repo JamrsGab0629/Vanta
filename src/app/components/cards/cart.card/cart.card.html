@@ -18,12 +18,12 @@
     <div class="category">{{ item().category }}</div>
   </div>
   <div class="qty">
-    <button class="dec" (click)="decrement()" [disabled]="localQuantity <= 1">−</button>
-    <span class="n" aria-readonly="true">{{ localQuantity }}</span>
-    <button class="inc" (click)="increment()">+</button>
+    <button class="dec" (click)="decrement()" [disabled]="localQuantity() <= 1">−</button>
+    <span class="n" aria-readonly="true">{{ localQuantity() }}</span>
+    <button class="inc" (click)="increment()" [disabled]="atMax()" [attr.title]="atMax() ? 'Stock limit reached' : null">+</button>
   </div>
   <div class="price-block">
-    <div class="price">{{ (item().price * localQuantity) | currency:'PHP':'symbol':'1.2-2' }}</div>
+    <div class="price">{{ (item().price * localQuantity()) | currency:'PHP':'symbol':'1.2-2' }}</div>
   </div>
   <button class="remove" (click)="onRemove()">✕</button>
 </div>
