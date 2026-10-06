@@ -13,7 +13,7 @@ export class CartService {
     return await this.coreService.fetcher('/api/cart/', 'GET');
   }
 
-  // Add an item to the cart
+  // Add an item to the cart (adds to any quantity already in the cart)
   async addToCart(
     product_id: number | string,
     quantity: number = 1
@@ -24,13 +24,12 @@ export class CartService {
     });
   }
 
-  // Modify item quantity in the cart
+  // Set the exact quantity of an item already in the cart
   async modifyQuantity(
     product_id: number | string,
     quantity: number
   ): Promise<{ message: string }> {
-    return await this.coreService.fetcher('/api/cart/', 'POST', {
-      product_id: Number(product_id),
+    return await this.coreService.fetcher(`/api/cart/${Number(product_id)}`, 'PATCH', {
       quantity: Number(quantity),
     });
   }

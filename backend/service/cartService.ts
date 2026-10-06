@@ -13,6 +13,7 @@ export class CartServiceError extends Error {
   }
 }
 
+// Adds to whatever is already in the cart (used by "Add to cart" buttons)
 export const addToCartService = async (userId: number, productId: number, quantity: number) => {
   // 1. Verify the product exists and is active
   const product = await Product.findOne({
@@ -24,9 +25,6 @@ export const addToCartService = async (userId: number, productId: number, quanti
   }
 
   const stock = product.get('stock_quantity') as number;
-  if (stock < quantity) {
-    throw new CartServiceError('INSUFFICIENT_STOCK', `Insufficient stock. Only ${stock} left.`);
-  }
 
   // 2. Find or create the user's main cart
   let [cart] = await Cart.findOrCreate({
@@ -41,25 +39,64 @@ export const addToCartService = async (userId: number, productId: number, quanti
     where: { cart_id: cartId, product_id: productId },
   });
 
+  const currentQty = cartItem ? Number(cartItem.get('quantity')) : 0;
+  const newQty = currentQty + quantity; // CHANGED: add to the existing quantity
+
+  if (newQty > stock) {
+    throw new CartServiceError(
+      'INSUFFICIENT_STOCK',
+      currentQty > 0
+        ? `You already have ${currentQty} in your cart. Only ${stock} in stock.`
+        : `Insufficient stock. Only ${stock} left.`,
+    );
+  }
+
   if (cartItem) {
-    const newQty = quantity;
-
-    if (stock < newQty) {
-      throw new CartServiceError(
-        'INSUFFICIENT_STOCK',
-        `Cannot add more. Stock limit reached (${stock}).`,
-      );
-    }
-
     await cartItem.update({ quantity: newQty });
   } else {
     cartItem = await CartItem.create({
       cart_id: cartId,
       product_id: productId,
-      quantity,
+      quantity: newQty,
     });
   }
 
+  return cartItem;
+};
+
+// Sets the exact quantity of an item already in the cart (used by the cart page +/-)
+export const updateCartItemService = async (
+  userId: number,
+  productId: number,
+  quantity: number,
+) => {
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    throw new CartServiceError('INVALID_QUANTITY', 'Quantity must be a whole number of at least 1.');
+  }
+
+  const cart = await Cart.findOne({ where: { user_id: userId } });
+  if (!cart) {
+    throw new CartServiceError('CART_NOT_FOUND', 'Cart not found');
+  }
+
+  const cartItem = await CartItem.findOne({
+    where: { cart_id: cart.get('cart_id') as number, product_id: productId },
+  });
+  if (!cartItem) {
+    throw new CartServiceError('ITEM_NOT_FOUND', 'Item not found in cart');
+  }
+
+  const product = await Product.findByPk(productId);
+  if (!product) {
+    throw new CartServiceError('PRODUCT_NOT_FOUND', 'Product not found');
+  }
+
+  const stock = product.get('stock_quantity') as number;
+  if (quantity > stock) {
+    throw new CartServiceError('INSUFFICIENT_STOCK', `Insufficient stock. Only ${stock} left.`);
+  }
+
+  await cartItem.update({ quantity });
   return cartItem;
 };
 
@@ -191,39 +228,4 @@ export const deleteCartService = async (userId: string | number, product_id: str
   return {
     message: 'Item successfully removed from cart',
   };
-};
-
-export const updateCartItemService = async (
-  userId: number,
-  productId: number,
-  quantity: number,
-) => {
-  if (!Number.isInteger(quantity) || quantity < 1) {
-    throw new CartServiceError('INVALID_QUANTITY', 'Quantity must be a whole number of at least 1.');
-  }
-
-  const cart = await Cart.findOne({ where: { user_id: userId } });
-  if (!cart) {
-    throw new CartServiceError('CART_NOT_FOUND', 'Cart not found');
-  }
-
-  const cartItem = await CartItem.findOne({
-    where: { cart_id: cart.get('cart_id') as number, product_id: productId },
-  });
-  if (!cartItem) {
-    throw new CartServiceError('ITEM_NOT_FOUND', 'Item not found in cart');
-  }
-
-  const product = await Product.findByPk(productId);
-  if (!product) {
-    throw new CartServiceError('PRODUCT_NOT_FOUND', 'Product not found');
-  }
-
-  const stock = product.get('stock_quantity') as number;
-  if (quantity > stock) {
-    throw new CartServiceError('INSUFFICIENT_STOCK', `Insufficient stock. Only ${stock} left.`);
-  }
-
-  await cartItem.update({ quantity });
-  return cartItem;
 };
