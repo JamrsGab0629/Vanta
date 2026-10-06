@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { VantaIconComponent } from '../../components/icons/vanta-icons.component';
 import { TransactionService } from '../../helpers/transaction/transaction.service';
 import { TransactionModel } from '../../helpers/transaction/transaction.interface';
+import { DATE_FORMAT, orderedAt, finalEvent } from '../../helpers/transaction/transaction-dates';
 
 // Helper functions declared directly inside the main file
 function toNumber(val: unknown, fallback = 0): number {
@@ -19,12 +20,13 @@ function calcItemTotal(price: unknown, quantity: unknown): number {
   selector: 'app-transaction-history',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, VantaIconComponent],
+  imports: [CurrencyPipe, DatePipe, VantaIconComponent],
   template: `
     <div class="table" role="table" aria-label="Transaction history">
       <div class="grid head" role="row">
         <span>TRANSACTION / ORDER</span>
         <span>ITEMS</span>
+        <span>DATE</span>
         <span>TOTAL</span>
         <span>STATUS</span>
         <span>ACTIONS</span>
@@ -49,6 +51,12 @@ function calcItemTotal(price: unknown, quantity: unknown): number {
                   <small>+{{ toNumber(t.Receipt.Order.items.length) - 1 }} more</small>
                 }
               </span>
+            }
+          </span>
+          <span class="dates">
+            <span>{{ (orderedAt(t) | date: dateFmt) ?? '—' }}<small>ORDERED</small></span>
+            @if (finalEvent(t); as ev) {
+              <span>{{ ev.date | date: dateFmt }}<small>{{ ev.label }}</small></span>
             }
           </span>
           <span class="mono amount">{{
@@ -101,6 +109,16 @@ function calcItemTotal(price: unknown, quantity: unknown): number {
                 <dt>TRACKING NO.</dt>
                 <dd class="copper">{{ t.tracking_code }}</dd>
               </div>
+              <div>
+                <dt>ORDERED</dt>
+                <dd>{{ (orderedAt(t) | date: dateFmt) ?? '—' }}</dd>
+              </div>
+              @if (finalEvent(t); as ev) {
+                <div>
+                  <dt>{{ ev.label }}</dt>
+                  <dd>{{ ev.date | date: dateFmt }}</dd>
+                </div>
+              }
             </dl>
           </section>
 
@@ -151,7 +169,7 @@ function calcItemTotal(price: unknown, quantity: unknown): number {
     }
     .grid {
       display: grid;
-      grid-template-columns: 1.2fr 2fr 1.2fr 1fr 100px;
+      grid-template-columns: 1.1fr 1.8fr 1.7fr 1.1fr 1fr 100px;
       gap: 16px;
       padding: 16px 20px;
       align-items: center;
@@ -186,6 +204,11 @@ function calcItemTotal(price: unknown, quantity: unknown): number {
     }
     .amount {
       color: var(--bone);
+    }
+    .dates {
+      display: grid;
+      gap: 8px;
+      font-size: 13px;
     }
     .item-summary {
       display: flex;
@@ -366,7 +389,7 @@ function calcItemTotal(price: unknown, quantity: unknown): number {
         overflow-x: auto;
       }
       .grid {
-        min-width: 760px;
+        min-width: 920px;
       }
     }
   `,
@@ -380,6 +403,9 @@ export class TransactionHistoryComponent implements OnInit {
   // Expose helpers to template scope
   readonly toNumber = toNumber;
   readonly calcItemTotal = calcItemTotal;
+  readonly orderedAt = orderedAt;
+  readonly finalEvent = finalEvent;
+  readonly dateFmt = DATE_FORMAT;
 
   async ngOnInit() {
     await this.loadTransactions();

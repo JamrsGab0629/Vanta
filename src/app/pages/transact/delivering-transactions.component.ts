@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { VantaIconComponent } from '../../components/icons/vanta-icons.component';
 import { TransactionService } from '../../helpers/transaction/transaction.service';
 import { TransactionModel } from '../../helpers/transaction/transaction.interface';
+import { DATE_FORMAT, orderedAt, lastUpdateAt } from '../../helpers/transaction/transaction-dates';
 
 @Component({
   selector: 'app-delivering-transactions',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, VantaIconComponent],
+  imports: [CurrencyPipe, DatePipe, VantaIconComponent],
   template: `
     @for (t of transactions(); track t.transaction_id) {
       <article class="card">
@@ -28,6 +29,14 @@ import { TransactionModel } from '../../helpers/transaction/transaction.interfac
           <div>
             <dt>STATUS</dt>
             <dd>{{ t.status.toUpperCase() }}</dd>
+          </div>
+          <div>
+            <dt>ORDERED</dt>
+            <dd>{{ (orderedAt(t) | date: dateFmt) ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>LAST UPDATE</dt>
+            <dd>{{ (lastUpdateAt(t) | date: dateFmt) ?? '—' }}</dd>
           </div>
         </dl>
 
@@ -173,12 +182,17 @@ export class DeliveringTransactionsComponent implements OnInit {
   private transactionService = inject(TransactionService);
   readonly transactions = signal<TransactionModel[]>([]);
 
+  // Exposed to the template
+  readonly orderedAt = orderedAt;
+  readonly lastUpdateAt = lastUpdateAt;
+  readonly dateFmt = DATE_FORMAT;
+
   async ngOnInit() {
     try {
       const data = await this.transactionService.getAllTransaction({ status: 'processing' });
       this.transactions.set(data);
     } catch (err) {
-      console.error('Error loading processing transactions:', err);
+      console.error('Error loading delivering transactions:', err);
     }
   }
 
