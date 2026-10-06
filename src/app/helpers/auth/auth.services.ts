@@ -97,4 +97,28 @@ export class AuthService {
       input
     );
   }
+
+  async requestPasswordReset(input: { "email": string }): Promise<AuthStatus> {
+    return this.core.fetcher<AuthStatus>(
+      `${this.baseUrl}/request-password-reset`,
+      'POST',
+      input
+    );
+  }
+
+  async verifyPasswordResetOtp(input: { "email": string, "otp": string }): Promise<AuthStatus> {
+    return this.core.fetcher<AuthStatus>(
+      `${this.baseUrl}/verify-password-reset-otp`,
+      'POST',
+      input
+    );
+  }
+
+  async resetPassword(input: { "email": string, "otp": string, "newPassword": string }): Promise<AuthStatus> {
+    return this.core.fetcher<AuthStatus>(
+      `${this.baseUrl}/reset-password`,
+      'POST',
+      input
+    );
+  }
 }
