@@ -1,10 +1,17 @@
-import { Op } from "sequelize";
+import { Op, ForeignKeyConstraintError, Transaction } from "sequelize";
+import { randomBytes } from "crypto";
+import sequelize from "../config/database";
 import User from "../model/userModel";
+import Cart from "../model/cartModel";
+import CartItem from "../model/cartItemModel";
 import { AppError } from "../utils/app-error";
 import { ListUsersQuery, UserDTO } from "../types/user.types";
 
 const ADMIN_ROLE = "admin";
 const USER_ROLE = "customer"; // the model's default role
+
+// Anonymized accounts get this email shape and are hidden from the list.
+const DELETED_EMAIL_PATTERN = "deleted-%@deleted.invalid";
 
 // Never expose password_hash or other private fields to the admin table.
 const PUBLIC_ATTRIBUTES = ["user_id", "username", "email", "role", "created_at"];
@@ -34,8 +41,41 @@ const assertNotLastAdmin = async (target: any, action: string) => {
     }
 };
 
+// A user's cart rows point at the user, so they have to go first.
+const removeCart = async (userId: number, t: Transaction) => {
+    const cart: any = await Cart.findOne({ where: { user_id: userId }, transaction: t });
+    if (!cart) return;
+    await CartItem.destroy({ where: { cart_id: cart.get("cart_id") }, transaction: t });
+    await cart.destroy({ transaction: t });
+};
+
+// For users who have orders: keep the order history, remove the person.
+const anonymizeUser = async (user: any) => {
+    const id = user.get("user_id") as number;
+    await sequelize.transaction(async (t) => {
+        await removeCart(id, t);
+        await user.update(
+            {
+                username: `deleted_user_${id}`,
+                first_name: "Deleted",
+                last_name: "User",
+                email: `deleted-${id}@deleted.invalid`,
+                // not a valid bcrypt hash, so no password can ever match it
+                password_hash: `!deleted!${randomBytes(24).toString("hex")}`,
+                address: null,
+                contact_no: null,
+                role: USER_ROLE,
+                is_verified: false,
+            },
+            { transaction: t }
+        );
+    });
+};
+
 export const listUsers = async ({ search, role }: ListUsersQuery): Promise<UserDTO[]> => {
-    const where: any = {};
+    const where: any = {
+        email: { [Op.notLike]: DELETED_EMAIL_PATTERN }, // hide anonymized accounts
+    };
 
     if (search) {
         const pattern = `%${escapeLike(search)}%`;
@@ -87,5 +127,16 @@ export const deleteUser = async (targetId: number, actingUserId: number): Promis
     }
     const user = await findOrFail(targetId);
     await assertNotLastAdmin(user, "delete");
-    await user.destroy();
+
+    try {
+        // Cleanest case: no orders, so remove the cart and the user completely
+        await sequelize.transaction(async (t) => {
+            await removeCart(targetId, t);
+            await user.destroy({ transaction: t });
+        });
+    } catch (err) {
+        if (!(err instanceof ForeignKeyConstraintError)) throw err;
+        // Orders (or other records) still reference this user: keep them, wipe the person
+        await anonymizeUser(user);
+    }
 };
