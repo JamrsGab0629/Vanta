@@ -48,11 +48,6 @@ const User = sequelize.define("User", {
         defaultValue: "customer"
     },
 
-    created_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
-    },
-
     is_verified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,

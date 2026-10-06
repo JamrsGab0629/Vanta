@@ -13,14 +13,14 @@ router.post('/', authMiddleware, getUserTransactions);
 // GET /api/transactions/transactions - Protected by your custom authMiddleware
 router.get('/transactions',
     authMiddleware,
-    // adminMiddleware,
+    adminMiddleware,
     getTransactions
 );
 
 // GET /api/transactions/transactions - Protected by your custom authMiddleware
 router.put('/update-transaction',
     authMiddleware,
-    // adminMiddleware,
+    adminMiddleware,
     editTransactionsStatus
 )
 
