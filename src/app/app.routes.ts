@@ -9,6 +9,7 @@ import { Admin } from './templates/admin/admin';
 import { Product } from './pages/product/product';
 import { authGuard, guestGuard,transactionGuard, adminGuard } from './core/verify-auth';
 import { TransactLayoutComponent } from './templates/transact/transact-layout.component';
+import { ForgotPassword } from './pages/forgot-password/forgot-password';
 
 export const routes: Routes = [
   {
@@ -23,7 +24,8 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'login', pathMatch: 'full' },
       { path: 'login', component: Login },
-      { path: 'signup', component: Signup }
+      { path: 'signup', component: Signup },
+      { path: 'forgot-password', component: ForgotPassword},
     ]
   },
   {
