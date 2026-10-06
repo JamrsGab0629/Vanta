@@ -49,8 +49,8 @@ export const requestPasswordReset = async (req: Request, res: Response): Promise
 
     // Generate current 5-minute window OTP based on user ID
     const otp = generateTimeBasedOtp(user.getDataValue('user_id') as string);
-    // await sendVerificationEmail(email, user.getDataValue('username'), otp);
-    console.log(otp);
+    await sendVerificationEmail(email, user.getDataValue('username') as string, otp);
+    // console.log(otp);
 
     res.status(200).json({
       message: 'If an account with that email exists, an OTP code has been sent.',

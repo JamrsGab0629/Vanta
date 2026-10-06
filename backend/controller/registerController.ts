@@ -72,6 +72,8 @@ export const register = async (req: Request, res: Response) => {
     }
     */
 
+    await sendVerificationEmail(email, username, otp);
+
     return res.status(201).json({
       message: 'Registration successful! Please verify using the OTP code.',
       user: {

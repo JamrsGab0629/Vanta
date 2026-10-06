@@ -33,10 +33,8 @@ export const resendVerification = async (req: Request, res: Response) => {
             console.log(`======================================================\n`);
         }
 
-        /*
         // UNCOMMENT BELOW TO ENABLE REAL EMAIL SENDING VIA SMTP:
         await sendVerificationEmail(parsed.data.email, username, otp);
-        */
 
         // Standard response: NEVER expose the raw OTP in JSON payload
         return res.status(200).json({ 
