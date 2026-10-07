@@ -89,6 +89,10 @@ Product.init(
                 key: "user_id",
             },
         },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
+        }
     },
     {
         sequelize,

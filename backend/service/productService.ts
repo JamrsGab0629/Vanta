@@ -121,7 +121,7 @@ export const deleteProductService = async (id: string) => {
   const imageUrl = product.image_url;
 
   // Delete database record
-  await product.destroy();
+  await product.update({ 'is_active': false });
 
   // Delete local image
   deleteLocalImageIfExists(imageUrl);
@@ -203,7 +203,7 @@ export const getProductsService = async (query: ProductQuery) => {
   // ===========================
 
   const { count, rows } = await Product.findAndCountAll({
-    where: whereClause,
+    where: { ...whereClause, is_active: true },
 
     order: [['createdAt', 'DESC']],
 
@@ -240,6 +240,7 @@ export const getProductByIdService = async (id: string) => {
   const product = await Product.findOne({
     where: {
       product_id: id, // <-- Changed from 'id' to 'product_id'
+      is_active: true,
     },
 
     include: [
@@ -266,6 +267,7 @@ export const getProductBySkuService = async (sku: string) => {
   const product = await Product.findOne({
     where: {
       sku,
+      is_active: true,
     },
 
     include: [

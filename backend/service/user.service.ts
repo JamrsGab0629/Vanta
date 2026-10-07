@@ -14,14 +14,14 @@ const USER_ROLE = "customer"; // the model's default role
 const DELETED_EMAIL_PATTERN = "deleted-%@deleted.invalid";
 
 // Never expose password_hash or other private fields to the admin table.
-const PUBLIC_ATTRIBUTES = ["user_id", "username", "email", "role", "created_at"];
+const PUBLIC_ATTRIBUTES = ["user_id", "username", "email", "role", "createdAt"];
 
 const toDTO = (row: any): UserDTO => ({
     id: row.user_id,
     username: row.username,
     email: row.email,
     role: row.role === ADMIN_ROLE ? "ADMIN" : "USER",
-    joinedAt: new Date(row.created_at).toISOString().slice(0, 10),
+    joinedAt: new Date(row.createdAt).toISOString().slice(0, 10),
 });
 
 // Escape % and _ so a search like "100%" is treated as plain text.
@@ -92,7 +92,7 @@ export const listUsers = async ({ search, role }: ListUsersQuery): Promise<UserD
     const rows = await User.findAll({
         where,
         attributes: PUBLIC_ATTRIBUTES,
-        order: [["created_at", "DESC"]],
+        order: [["createdAt", "DESC"]],
     });
 
     return rows.map((r) => toDTO(r.get({ plain: true })));
