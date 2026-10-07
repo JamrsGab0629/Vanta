@@ -6,6 +6,7 @@ import Order from '../model/orderModel';
 import { OrderItem } from '../model/orderItemModel';
 import Product from '../model/productModel';
 import { WhereOptions, Op } from 'sequelize';
+import sequelize from '../config/database';
 
 
 const STATUS_FLOW = ['pending', 'processing', 'delivering', 'delivered'];
@@ -158,49 +159,114 @@ export const getTransactions = async (req: Request, res: Response) => {
             error: error.message 
         });
     }
-};
-
+};// Adjust path to your Sequelize instance
 
 export const editTransactionsStatus = async (req: Request, res: Response) => {
     const { transaction_id, status } = req.body;
 
     if (!transaction_id || !status) {
-        return res.status(400).json({ message: 'Missing required fields: transaction_id and status' });
+        return res.status(400).json({ 
+            message: 'Missing required fields: transaction_id and status' 
+        });
     }
 
     const nextStatus = String(status).toLowerCase();
     if (!ALLOWED_STATUSES.includes(nextStatus)) {
-        return res.status(400).json({ message: `Invalid status. Use one of: ${ALLOWED_STATUSES.join(', ')}` });
+        return res.status(400).json({ 
+            message: `Invalid status. Use one of: ${ALLOWED_STATUSES.join(', ')}` 
+        });
     }
 
     try {
-        const transaction = await TransactionModel.findByPk(transaction_id);
+        const transaction = await TransactionModel.findOne({
+            where: { transaction_id },
+            include: [
+                {
+                    model: Receipt,
+                    required: true,
+                    include: [
+                        {
+                            model: Order,
+                            required: true,
+                            include: [
+                                {
+                                    model: OrderItem,
+                                    as: 'items',
+                                    attributes: ['product_id', 'quantity'],
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        });
 
         if (!transaction) {
             return res.status(404).json({ message: 'Transaction ID not found' });
         }
 
-        // Finished transactions can't be changed
         const currentStatus = (transaction.get('status') as string)?.toLowerCase();
+
+        // Finished transactions can't be changed
         if (currentStatus === 'cancelled' || currentStatus === 'delivered') {
-            return res.status(400).json({ message: 'Transaction is already finished and cannot be updated' });
+            return res.status(400).json({ 
+                message: 'Transaction is already finished and cannot be updated' 
+            });
         }
 
-        // Same status again: nothing to do (and don't touch updated_at)
+        // Same status again
         if (nextStatus === currentStatus) {
-            return res.status(200).json({ success: true, message: 'Status unchanged', transaction });
+            return res.status(200).json({ 
+                success: true, 
+                message: 'Status unchanged', 
+                transaction 
+            });
         }
 
-        // Orders only move forward. Cancelled is allowed until the order is finished.
-        if (nextStatus !== 'cancelled' && STATUS_FLOW.indexOf(nextStatus) <= STATUS_FLOW.indexOf(currentStatus)) {
+        // Validate forward-only flow for non-cancelled statuses
+        if (
+            nextStatus !== 'cancelled' && 
+            STATUS_FLOW.indexOf(nextStatus) <= STATUS_FLOW.indexOf(currentStatus)
+        ) {
             return res.status(400).json({
                 message: `An order can't go back from "${currentStatus}" to "${nextStatus}".`
             });
         }
 
-        await transaction.update({
-            status: nextStatus,
-            updated_at: new Date()
+        // Execute updates inside an atomic database transaction
+        await sequelize.transaction(async (t) => {
+            // Restore inventory when cancelling an active order
+            if (
+                nextStatus === 'cancelled' && 
+                (currentStatus === 'pending' || currentStatus === 'processing')
+            ) {
+                // Safely extract items from Sequelize nested associations
+                const receipt = transaction?.Receipt || transaction?.get('Receipt');
+                const order = receipt?.Order || receipt?.get('Order');
+                const items = order?.items || order?.get('items') || [];
+
+                for (const item of items) {
+                    const productId = item.product_id;
+                    const quantity = item.quantity;
+
+                    const product = await Product.findByPk(productId, { transaction: t });
+                    if (!product) {
+                        throw new Error(`Product ID ${productId} not found`);
+                    }
+
+                    // Increment atomically to prevent race conditions
+                    await product.increment('stock_quantity', {
+                        by: quantity,
+                        transaction: t
+                    });
+                }
+            }
+
+            // Update status on transaction instance
+            await transaction.update(
+                { status: nextStatus },
+                { transaction: t }
+            );
         });
 
         return res.status(200).json({
