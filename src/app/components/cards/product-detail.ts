@@ -20,11 +20,7 @@ import type { ProductItem } from '../../pages/home/home';
         <button class="x" type="button" aria-label="Close details" (click)="close.emit()">✕</button>
 
         <div class="media">
-          <img
-            class="row-thumb"
-            [src]="getImageUrl(p.image_url)"
-            [alt]="p.name"
-          />
+          <img class="row-thumb" [src]="getImageUrl(p.image_url)" [alt]="p.name" />
         </div>
 
         <div class="info">
@@ -83,6 +79,7 @@ import type { ProductItem } from '../../pages/home/home';
       background: rgba(11, 11, 12, 0.88);
       backdrop-filter: blur(8px);
       display: grid;
+      padding: auto 0;
       place-items: center;
       padding: 24px;
       overflow-y: auto;
@@ -90,6 +87,8 @@ import type { ProductItem } from '../../pages/home/home';
     .modal {
       position: relative;
       width: min(880px, 100%);
+      max-height: 85vh;
+      overflow: hidden; /* Prevent clipping at modal level */
       background: var(--panel);
       border: 1px solid var(--border);
       display: grid;
@@ -139,6 +138,8 @@ import type { ProductItem } from '../../pages/home/home';
       display: grid;
       gap: 12px;
       align-content: start;
+      max-height: 80vh;
+      overflow-y: auto; /* Allow info pane to scroll independently */
     }
     .sku,
     .cat,
@@ -260,8 +261,25 @@ import type { ProductItem } from '../../pages/home/home';
       color: var(--copper);
     }
     @media (max-width: 720px) {
+      .overlay {
+        padding: 16px;
+        place-items: normal;
+      }
       .modal {
         grid-template-columns: 1fr;
+        max-height: 75vh;
+      }
+      .info {
+        max-height: calc(85vh - 200px); /* Subtract image height so actions remain reachable */
+        overflow-y: auto;
+        padding: 20px;
+      }
+      .media {
+        min-height: 200px;
+        padding: 16px;
+      }
+      .media img {
+        max-height: 220px;
       }
     }
   `,

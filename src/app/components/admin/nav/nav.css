@@ -184,3 +184,9 @@
     padding-top: 0;
   }
 }
+
+@media (max-width: 620px) {
+  .nav-label{
+    display: none;
+  }
+}
