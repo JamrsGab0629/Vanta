@@ -60,25 +60,39 @@
             <div class="field-error"
               [class.show]="checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched">Required.</div>
           </div>
+
+          <!-- Province: type to search, then pick from the list -->
           <div class="field">
-            <label for="province">Province / Region</label>
-            <select id="province" formControlName="province" required>
-              <option value="" disabled selected>Select Province / Region</option>
-              <option value="Bulacan">Bulacan</option>
-              <option value="Manila">Manila</option>
-              <option value="Quezon City">Quezon City</option>
-              <option value="Caloocan">Caloocan</option>
-              <option value="Makati">Makati</option>
-              <option value="Pasig">Pasig</option>
-              <option value="NCR">NCR (Metro Manila)</option>
-              <option value="Cebu">Cebu</option>
-              <option value="Davao">Davao</option>
-              <option value="Visayas">Visayas</option>
-              <option value="Mindanao">Mindanao</option>
-            </select>
-            <div class="field-error"
-              [class.show]="checkoutForm.get('province')?.invalid && checkoutForm.get('province')?.touched">Required.
+            <label for="province">Province</label>
+            <div class="combo">
+              <input type="text" id="province" autocomplete="off" role="combobox" aria-autocomplete="list"
+                aria-controls="province-list" [attr.aria-expanded]="provinceOpen()"
+                [placeholder]="selectedProvince() || 'Search province...'"
+                [value]="provinceOpen() ? provinceQuery() : selectedProvince()"
+                (focus)="openProvince()" (click)="!provinceOpen() && openProvince()"
+                (input)="onProvinceInput($any($event.target).value)"
+                (keydown)="onProvinceKeydown($event)" (blur)="onProvinceBlur()">
+
+              @if (provinceOpen()) {
+              <ul class="combo-list" id="province-list" role="listbox">
+                @for (r of filteredProvinces(); track r.province; let i = $index) {
+                <li role="option" [class.active]="i === activeIndex()"
+                  [attr.aria-selected]="r.province === selectedProvince()"
+                  (mousedown)="$event.preventDefault(); selectProvince(r)" (mouseenter)="activeIndex.set(i)">
+                  <span class="p-name">{{ r.province }}</span>
+                  <span class="p-meta">{{ r.region }} · {{ r.fee | currency:'PHP':'symbol':'1.0-0' }}</span>
+                </li>
+                } @empty {
+                <li class="combo-empty">No province matches "{{ provinceQuery() }}".</li>
+                }
+              </ul>
+              }
             </div>
+            <div class="field-error"
+              [class.show]="checkoutForm.get('province')?.invalid && checkoutForm.get('province')?.touched">
+              Choose a province from the list.
+            </div>
+            <div class="field-note">We don't deliver to Sulu or Batanes yet.</div>
           </div>
         </div>
 
@@ -162,9 +176,13 @@
           <div class="sum-row">
             <span>Shipping</span>
             <span>
-              {{ items().length === 0
-              ? (0 | currency:'PHP':'symbol':'1.2-2')
-              : (shipping() === 0 ? 'FREE' : (shipping() | currency:'PHP':'symbol':'1.2-2')) }}
+              @if (items().length === 0) {
+                {{ 0 | currency:'PHP':'symbol':'1.2-2' }}
+              } @else if (!selectedRate()) {
+                Select province
+              } @else {
+                {{ shipping() | currency:'PHP':'symbol':'1.2-2' }}
+              }
             </span></div>
           <div class="sum-row" style="font-size: 11px; color: var(--bone-dim); padding-top: 0;">
             <span>Est. Delivery</span>
@@ -220,7 +238,7 @@
       <div class="summary-row">
         <span>Delivery Address</span>
         <b>{{ checkoutForm.get('address')?.value }}, {{ checkoutForm.get('barangay')?.value }}, {{
-          checkoutForm.get('city')?.value }}</b>
+          checkoutForm.get('city')?.value }}, {{ checkoutForm.get('province')?.value }}</b>
       </div>
       <div class="summary-row">
         <span>Contact</span>
@@ -229,6 +247,10 @@
       <div class="summary-row">
         <span>Items</span>
         <b>{{ items().length }} item(s)</b>
+      </div>
+      <div class="summary-row">
+        <span>Shipping</span>
+        <b>{{ shipping() | currency:'PHP':'symbol':'1.2-2' }}</b>
       </div>
       <div class="summary-row">
         <span>Estimated Delivery</span>

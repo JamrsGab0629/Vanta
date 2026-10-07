@@ -438,6 +438,19 @@
   padding: 20px;
 }
 
+   .combo { position: relative; }
+   .combo-list {
+     position: absolute; z-index: 30; left: 0; right: 0; top: calc(100% + 4px);
+     max-height: 280px; overflow-y: auto; margin: 0; padding: 4px 0; list-style: none;
+     background: var(--panel, #111); border: 1px solid var(--line, #2c2c31);
+     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+   }
+   .combo-list li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; cursor: pointer; font-size: 14px; }
+   .combo-list li.active { background: rgba(217, 129, 47, 0.14); }
+   .combo-list .p-meta { color: var(--bone-dim, #8a8886); font-size: 12px; white-space: nowrap; }
+   .combo-empty { padding: 12px 14px; color: var(--bone-dim, #8a8886); font-size: 13px; cursor: default; }
+   .field-note { margin-top: 6px; font-size: 12px; color: var(--bone-dim, #8a8886); }
+   
 .modal-card {
   background: #111110;
   border: 1px solid var(--copper);

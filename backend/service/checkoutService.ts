@@ -7,6 +7,7 @@ import User from '../model/userModel';
 import Receipt from '../model/receiptModel';
 import TransactionModel from '../model/transactionModel';
 import sequelize from '../config/database';
+import { getShippingQuote, isUnservedProvince } from '../utils/shipping'; // NEW
 
 export class CheckoutServiceError extends Error {
     code: string;
@@ -22,6 +23,7 @@ interface CheckoutData {
     first_name: string;
     last_name: string;
     address: string;
+    province: string; // NEW
     contact_number: string;
     save_address?: boolean;
 }
@@ -38,7 +40,18 @@ const generateTrackingCode = (): string => {
 };
 
 export const processCheckoutService = async (userId: number, data: CheckoutData) => {
-    const { first_name, last_name, address, contact_number, save_address } = data;
+    const { first_name, last_name, address, province, contact_number, save_address } = data;
+
+    // NEW: the shipping fee comes from the province, never from the browser
+    const rate = getShippingQuote(province);
+    if (!rate) {
+        throw new CheckoutServiceError(
+            'INVALID_PROVINCE',
+            isUnservedProvince(province)
+                ? "Sorry, we don't deliver to Sulu or Batanes yet."
+                : 'Please choose a valid province.'
+        );
+    }
 
     const t = await sequelize.transaction();
     let committed = false;
@@ -62,7 +75,7 @@ export const processCheckoutService = async (userId: number, data: CheckoutData)
             throw new CheckoutServiceError('CART_EMPTY', 'Your cart is empty');
         }
 
-        // CHANGED: always lock products in the same order (lowest id first) so two
+        // Always lock products in the same order (lowest id first) so two
         // checkouts with the same products can never block each other (deadlock)
         cartItems.sort((a: any, b: any) => 
             Number(a.get('product_id')) - Number(b.get('product_id'))
@@ -76,7 +89,7 @@ export const processCheckoutService = async (userId: number, data: CheckoutData)
             const productId = item.product_id || item.get('product_id');
             const requestedQty = item.quantity || item.get('quantity');
 
-            // CHANGED: lock the product row until this transaction finishes, so two
+            // Lock the product row until this transaction finishes, so two
             // buyers can't both pass the stock check for the last units
             const product = await Product.findByPk(productId, { 
                 transaction: t, 
@@ -113,33 +126,9 @@ export const processCheckoutService = async (userId: number, data: CheckoutData)
             });
         }
 
-        // Determine dynamic shipping fee & delivery time (Store is in Bulacan)
-        const lowerAddress = address.toLowerCase();
-        let shippingFee = 150.00;
-        let estimatedDelivery = "3 to 5 business days (Rest of Luzon)";
-
-        if (lowerAddress.includes('bulacan')) {
-            shippingFee = 80.00;
-            estimatedDelivery = "1 to 2 business days (Local Delivery)";
-        } else if (
-            lowerAddress.includes('manila') || 
-            lowerAddress.includes('quezon city') || 
-            lowerAddress.includes('caloocan') || 
-            lowerAddress.includes('makati') || 
-            lowerAddress.includes('pasig') || 
-            lowerAddress.includes('ncr')
-        ) {
-            shippingFee = 120.00;
-            estimatedDelivery = "2 to 3 business days (Metro Manila)";
-        } else if (
-            lowerAddress.includes('cebu') || 
-            lowerAddress.includes('davao') || 
-            lowerAddress.includes('visayas') || 
-            lowerAddress.includes('mindanao')
-        ) {
-            shippingFee = 250.00;
-            estimatedDelivery = "5 to 7 business days (Visayas/Mindanao)";
-        }
+        // CHANGED: distance-based shipping fee and delivery estimate for the province
+        const shippingFee = rate.fee;
+        const estimatedDelivery = rate.delivery;
 
         // Calculate 12% VAT Tax and Total in Pesos (₱)
         const tax = Number((subtotal * 0.12).toFixed(2));
